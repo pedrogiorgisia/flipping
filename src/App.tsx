@@ -17,13 +17,15 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/analyses" element={<AnalysisListPage />} />
         <Route path="/individual-analyses" element={<IndividualAnalysisPage />} />
-        <Route path="/analysis/:analysisId/*">
-          <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="properties" element={<PropertiesPage />} />
-          <Route path="property" element={<AnalysisPage />} />
-          <Route path="property/:propertyId" element={<PropertyDetailsPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-        </Route>
+        <Route path="/analysis/:analysisId/*" element={
+          <Routes>
+            <Route path="dashboard" element={<DashboardPage />} />
+            <Route path="properties" element={<PropertiesPage />} />
+            <Route path="property" element={<AnalysisPage />} />
+            <Route path="property/:propertyId" element={<PropertyDetailsPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+          </Routes>
+        } />
         <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
