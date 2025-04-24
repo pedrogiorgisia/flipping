@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Property } from '../../types/property';
 import { ChevronLeft, ChevronRight, Trash } from 'lucide-react';
@@ -29,10 +30,8 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = 
     <div className="bg-white rounded-lg shadow mt-6">
       <div className="px-4 py-3 flex justify-between items-center border-b border-gray-200">
         <div>
-          <div>
-            <h3 className="text-lg font-medium text-gray-900">Imóveis de Referência</h3>
-            <p className="text-sm text-gray-500">Comparativo com imóveis similares na região</p>
-          </div>
+          <h3 className="text-lg font-medium text-gray-900">Imóveis de Referência</h3>
+          <p className="text-sm text-gray-500">Comparativo com imóveis similares na região</p>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
@@ -55,12 +54,10 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = 
               </button>
             </div>
             <div className="space-y-4">
-              {/* Add your form fields here */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">Selecione o Imóvel</label>
                 <select className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
                   <option value="">Selecione...</option>
-                  {/* Add your options here */}
                 </select>
               </div>
               <div className="flex justify-end space-x-2">
@@ -71,10 +68,7 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = 
                   Cancelar
                 </button>
                 <button
-                  onClick={() => {
-                    // Add your logic here
-                    setIsModalOpen(false);
-                  }}
+                  onClick={() => setIsModalOpen(false)}
                   className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700"
                 >
                   Adicionar
@@ -85,6 +79,7 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = 
         </div>
       )}
 
+      <div>
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -121,6 +116,7 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = 
           </tbody>
         </table>
       </div>
+
       {totalPages > 1 && (
         <div className="px-4 py-3 border-t border-gray-200 flex items-center justify-between bg-gray-50">
           <button
