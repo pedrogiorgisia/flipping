@@ -1,5 +1,4 @@
-
-import React, { useEffect } from 'react';
+import React from 'react';
 import MainLayout from '../../components/Layout/MainLayout';
 import { useNavigate } from 'react-router-dom';
 import { FileText } from 'lucide-react';
@@ -18,10 +17,6 @@ interface Analysis {
 
 const IndividualAnalysisPage: React.FC = () => {
   const navigate = useNavigate();
-  
-  useEffect(() => {
-    console.log("IndividualAnalysisPage montado");
-  }, []);
 
   const analyses: Analysis[] = [
     {
@@ -55,22 +50,11 @@ const IndividualAnalysisPage: React.FC = () => {
     }).format(value);
   };
 
-  if (!analyses || analyses.length === 0) {
-    return (
-      <MainLayout>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">Análises Individuais</h1>
-          <p className="text-gray-600">Nenhuma análise encontrada.</p>
-        </div>
-      </MainLayout>
-    );
-  }
-
   return (
     <MainLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Análises Individuais</h1>
-        
+
         <div className="bg-white shadow-sm rounded-lg overflow-hidden">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
