@@ -20,6 +20,7 @@ function App() {
           <Route path="properties" element={<PropertiesPage />} />
           <Route path="property/:propertyId" element={<PropertyDetailsPage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="details" element={<IndividualAnalysisPage />} />
         </Route>
 
         <Route path="/" element={<Navigate to="/login" replace />} />
