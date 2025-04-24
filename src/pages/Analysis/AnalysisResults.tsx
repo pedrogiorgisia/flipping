@@ -8,14 +8,6 @@ interface AnalysisResultsProps {
     salePrice: number;
     netProfit: number;
     roi: number;
-    monthlyPayments: Array<{
-      month: number;
-      initialBalance: number;
-      amortization: number;
-      interest: number;
-      monthlyPayment: number;
-      finalBalance: number;
-    }>;
   };
 }
 
@@ -28,75 +20,59 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({ results }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow">
-      <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
-        <h3 className="text-lg font-medium text-gray-900">Análise de Investimento</h3>
-      </div>
-      <div className="px-4 py-5 sm:p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div>
-            <h4 className="font-medium text-gray-900 mb-4">Custos do Investimento</h4>
-            <dl className="space-y-2">
-              <div className="flex justify-between">
-                <dt className="text-gray-600">Investimento Total:</dt>
-                <dd className="font-medium">{formatCurrency(results.totalInvestment)}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-gray-600">Valor do Financiamento:</dt>
-                <dd className="font-medium">{formatCurrency(results.financingAmount)}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-gray-600">Parcela Mensal:</dt>
-                <dd className="font-medium">{formatCurrency(results.monthlyPayment)}</dd>
-              </div>
-            </dl>
-          </div>
-          <div>
-            <h4 className="font-medium text-gray-900 mb-4">Resultados</h4>
-            <dl className="space-y-2">
-              <div className="flex justify-between">
-                <dt className="text-gray-600">Preço de Venda:</dt>
-                <dd className="font-medium">{formatCurrency(results.salePrice)}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-gray-600">Lucro Líquido:</dt>
-                <dd className="font-medium text-green-600">{formatCurrency(results.netProfit)}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-gray-600">ROI:</dt>
-                <dd className="font-medium text-blue-600">{results.roi.toFixed(2)}%</dd>
-              </div>
-            </dl>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="bg-white rounded-lg shadow">
+        <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
+          <h3 className="text-lg font-medium text-gray-900">Custos do Investimento</h3>
+        </div>
+        <div className="px-6 py-5">
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm text-gray-500">Investimento Total</p>
+              <p className="mt-1 text-2xl font-semibold text-gray-900">
+                {formatCurrency(results.totalInvestment)}
+              </p>
+            </div>
+            <div className="pt-4 border-t">
+              <p className="text-sm text-gray-500">Valor do Financiamento</p>
+              <p className="mt-1 text-2xl font-semibold text-indigo-600">
+                {formatCurrency(results.financingAmount)}
+              </p>
+            </div>
+            <div className="pt-4 border-t">
+              <p className="text-sm text-gray-500">Parcela Mensal</p>
+              <p className="mt-1 text-xl font-medium text-gray-900">
+                {formatCurrency(results.monthlyPayment)}
+              </p>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div className="mt-8">
-          <h4 className="font-medium text-gray-900 mb-4">Tabela de Amortização</h4>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Mês</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">Saldo Devedor Inicial</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">Amortização</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">Juros</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">Parcela</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">Saldo Devedor Final</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {results.monthlyPayments.map((payment) => (
-                  <tr key={payment.month}>
-                    <td className="px-4 py-3 text-sm text-gray-900">{payment.month}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900 text-right">{formatCurrency(payment.initialBalance)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900 text-right">{formatCurrency(payment.amortization)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900 text-right">{formatCurrency(payment.interest)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900 text-right">{formatCurrency(payment.monthlyPayment)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900 text-right">{formatCurrency(payment.finalBalance)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      <div className="bg-white rounded-lg shadow">
+        <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
+          <h3 className="text-lg font-medium text-gray-900">Resultados da Operação</h3>
+        </div>
+        <div className="px-6 py-5">
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm text-gray-500">Preço de Venda</p>
+              <p className="mt-1 text-2xl font-semibold text-gray-900">
+                {formatCurrency(results.salePrice)}
+              </p>
+            </div>
+            <div className="pt-4 border-t">
+              <p className="text-sm text-gray-500">Lucro Líquido</p>
+              <p className="mt-1 text-2xl font-semibold text-green-600">
+                {formatCurrency(results.netProfit)}
+              </p>
+            </div>
+            <div className="pt-4 border-t">
+              <p className="text-sm text-gray-500">ROI da Operação</p>
+              <p className="mt-1 text-2xl font-semibold text-blue-600">
+                {results.roi.toFixed(2)}%
+              </p>
+            </div>
           </div>
         </div>
       </div>

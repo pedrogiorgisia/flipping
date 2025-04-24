@@ -8,12 +8,12 @@ interface ReferencePropertiesProps {
   onRemove?: (id: string) => void;
 }
 
-const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = [], onRemove }) => {
+const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = mockReferences, onRemove }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(references.length / itemsPerPage);
+  const totalPages = Math.ceil(mockReferences.length / itemsPerPage);
   
-  const currentItems = references.slice(
+  const currentItems = mockReferences.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -26,9 +26,10 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = 
   };
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div className="bg-white rounded-lg shadow mt-6">
       <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
         <h3 className="text-lg font-medium text-gray-900">Imóveis de Referência</h3>
+        <p className="mt-1 text-sm text-gray-500">Comparativo com imóveis similares na região</p>
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
@@ -37,6 +38,7 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = 
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Código</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Endereço</th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">Área</th>
+              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">Quartos</th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">Preço</th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">R$/m²</th>
               <th className="px-4 py-3 text-center text-xs font-medium text-gray-500">Ações</th>
@@ -44,10 +46,11 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = 
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {currentItems.map((property) => (
-              <tr key={property.id}>
+              <tr key={property.id} className="hover:bg-gray-50">
                 <td className="px-4 py-3 text-sm text-gray-900">{property.code}</td>
                 <td className="px-4 py-3 text-sm text-gray-900">{property.address}</td>
                 <td className="px-4 py-3 text-sm text-gray-900 text-right">{property.area}m²</td>
+                <td className="px-4 py-3 text-sm text-gray-900 text-right">{property.bedrooms}</td>
                 <td className="px-4 py-3 text-sm text-gray-900 text-right">{formatCurrency(property.price)}</td>
                 <td className="px-4 py-3 text-sm text-gray-900 text-right">
                   {formatCurrency(property.price / property.area)}
@@ -66,11 +69,11 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = 
         </table>
       </div>
       {totalPages > 1 && (
-        <div className="px-4 py-3 border-t border-gray-200 flex items-center justify-between">
+        <div className="px-4 py-3 border-t border-gray-200 flex items-center justify-between bg-gray-50">
           <button
             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             disabled={currentPage === 1}
-            className="px-2 py-1 border rounded text-sm disabled:opacity-50"
+            className="px-3 py-1 border rounded text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-50"
           >
             <ChevronLeft size={16} />
           </button>
@@ -80,7 +83,7 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = 
           <button
             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
-            className="px-2 py-1 border rounded text-sm disabled:opacity-50"
+            className="px-3 py-1 border rounded text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-50"
           >
             <ChevronRight size={16} />
           </button>
@@ -89,5 +92,53 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = 
     </div>
   );
 };
+
+const mockReferences = [
+  {
+    id: '1',
+    code: 'REF001',
+    address: 'Rua Augusta, 1000',
+    area: 95,
+    bedrooms: 3,
+    price: 850000,
+    url: '#'
+  },
+  {
+    id: '2',
+    code: 'REF002',
+    address: 'Av. Paulista, 1500',
+    area: 92,
+    bedrooms: 3,
+    price: 920000,
+    url: '#'
+  },
+  {
+    id: '3',
+    code: 'REF003',
+    address: 'Rua Oscar Freire, 500',
+    area: 88,
+    bedrooms: 2,
+    price: 780000,
+    url: '#'
+  },
+  {
+    id: '4',
+    code: 'REF004',
+    address: 'Al. Santos, 800',
+    area: 98,
+    bedrooms: 3,
+    price: 890000,
+    url: '#'
+  },
+  {
+    id: '5',
+    code: 'REF005',
+    address: 'Rua Bela Cintra, 300',
+    area: 85,
+    bedrooms: 2,
+    price: 750000,
+    url: '#'
+  }
+] as Property[];
 
 export default ReferenceProperties;
