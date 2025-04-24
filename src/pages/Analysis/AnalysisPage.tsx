@@ -11,20 +11,32 @@ import { Download, Calculator, Share2 } from 'lucide-react';
 const AnalysisPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [calculationResults, setCalculationResults] = useState({
-    totalInvestment: 427098,
-    monthlyPayment: 2800,
-    financingAmount: 504000,
-    salePrice: 720000,
-    netProfit: 154815,
-    roi: 36.25,
-    monthlyPayments: Array.from({ length: 19 }, (_, i) => ({
-      month: i + 1,
-      initialBalance: 504000 - (i * 1200),
-      amortization: 1200,
-      interest: 1600,
-      monthlyPayment: 2800,
-      finalBalance: 504000 - ((i + 1) * 1200)
-    }))
+    propertyPrice: 720000,
+    propertyArea: 97,
+    pricePerSqm: 7422.68,
+    acquisitionCosts: {
+      downPayment: 216000,
+      itbi: 21600,
+      bankAppraisal: 5000,
+      registry: 10800,
+      total: 253400
+    },
+    holdingCosts: {
+      financing: 49849.80,
+      condo: 15300,
+      utilities: 2300,
+      renovation: 151200,
+      total: 218649.80
+    },
+    totalInvestment: 472049.80,
+    salePrice: 1212500,
+    sellingCosts: {
+      financingPayoff: 493200,
+      brokerage: 72750,
+      incomeTax: 30684.40
+    },
+    netProfit: 143815.80,
+    roi: 30.47
   });
 
   const [parameters, setParameters] = useState({
