@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import MainLayout from '../../components/Layout/MainLayout';
 import { useNavigate } from 'react-router-dom';
 import { FileText } from 'lucide-react';
@@ -19,6 +19,10 @@ interface Analysis {
 const IndividualAnalysisPage: React.FC = () => {
   const navigate = useNavigate();
   
+  useEffect(() => {
+    console.log("IndividualAnalysisPage montado");
+  }, []);
+
   const analyses: Analysis[] = [
     {
       id: '1',
@@ -50,6 +54,17 @@ const IndividualAnalysisPage: React.FC = () => {
       currency: 'BRL'
     }).format(value);
   };
+
+  if (!analyses || analyses.length === 0) {
+    return (
+      <MainLayout>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <h1 className="text-2xl font-bold text-gray-900 mb-6">Análises Individuais</h1>
+          <p className="text-gray-600">Nenhuma análise encontrada.</p>
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
@@ -87,7 +102,8 @@ const IndividualAnalysisPage: React.FC = () => {
               {analyses.map((analysis) => (
                 <tr 
                   key={analysis.id}
-                  className="hover:bg-gray-50"
+                  className="hover:bg-gray-50 cursor-pointer"
+                  onClick={() => navigate(`/analysis/${analysis.id}/property`)}
                 >
                   <td className="px-6 py-4">{analysis.propertyName}</td>
                   <td className="px-6 py-4">{analysis.address}</td>
@@ -97,7 +113,6 @@ const IndividualAnalysisPage: React.FC = () => {
                   <td className="px-6 py-4">{analysis.createdAt.toLocaleDateString('pt-BR')}</td>
                   <td className="px-6 py-4 text-right">
                     <button
-                      onClick={() => navigate(`/analysis/${analysis.id}/property`)}
                       className="text-blue-600 hover:text-blue-800"
                       title="Ver análise"
                     >
