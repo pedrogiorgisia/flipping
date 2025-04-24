@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface AnalysisResultsProps {
@@ -43,9 +42,11 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({ results }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-xl font-bold text-gray-900 mb-6">Análise de Viabilidade</h2>
-      
+    <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
+        <h3 className="text-lg font-medium text-gray-900">Análise de Viabilidade</h3>
+        <p className="mt-1 text-sm text-gray-500">Custos e retorno esperado</p>
+      </div>
       <div className="grid grid-cols-1 gap-6">
         {/* Dados do Imóvel */}
         <div className="border rounded-lg p-4 bg-gray-50">

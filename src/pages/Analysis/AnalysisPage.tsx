@@ -135,19 +135,36 @@ const AnalysisPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <div className="space-y-6">
-              <AnalysisResults results={calculationResults} />
-              <ReferenceProperties />
+        {/* Property Details - Full width */}
+        <div className="mb-6">
+          <PropertyDetails property={property} />
+        </div>
+
+        {/* Analysis Results and Parameters - Two columns */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <AnalysisResults results={calculationResults} />
+          <CalculationParameters 
+            parameters={parameters}
+            onParameterChange={handleParameterChange}
+          />
+        </div>
+
+        {/* Reference Properties - Full width */}
+        <div className="mb-6">
+          <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="px-4 py-5 sm:px-6 flex justify-between items-center border-b border-gray-200">
+              <div>
+                <h3 className="text-lg font-medium text-gray-900">Imóveis de Referência</h3>
+                <p className="mt-1 text-sm text-gray-500">Comparativo com imóveis similares na região</p>
+              </div>
+              <button
+                onClick={() => {/* TODO: Implement reference property selection */}}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+              >
+                Adicionar Referência
+              </button>
             </div>
-          </div>
-          <div className="space-y-6">
-            <PropertyDetails property={property} />
-            <CalculationParameters 
-              parameters={parameters}
-              onParameterChange={handleParameterChange}
-            />
+            <ReferenceProperties />
           </div>
         </div>
       </div>

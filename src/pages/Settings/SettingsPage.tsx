@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import MainLayout from '../../components/Layout/MainLayout';
-import { Save, RefreshCw, AlertTriangle, Info } from 'lucide-react';
+import { Save, RefreshCw, Info } from 'lucide-react';
 
 const SettingsPage: React.FC = () => {
   const [settings, setSettings] = useState({
@@ -23,8 +24,7 @@ const SettingsPage: React.FC = () => {
   };
   
   const handleSave = () => {
-    // In a real app, this would save to a backend
-    alert('Settings saved!');
+    alert('Configurações salvas!');
     setSettingsChanged(false);
   };
   
@@ -54,7 +54,7 @@ const SettingsPage: React.FC = () => {
             className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             <RefreshCw size={16} className="mr-2" />
-            Reset Defaults
+            Restaurar Padrões
           </button>
           <button
             onClick={handleSave}
@@ -66,16 +66,16 @@ const SettingsPage: React.FC = () => {
             }`}
           >
             <Save size={16} className="mr-2" />
-            Save Changes
+            Salvar Alterações
           </button>
         </div>
       </div>
       
       <div className="bg-white shadow rounded-lg divide-y divide-gray-200">
         <div className="px-4 py-5 sm:px-6">
-          <h2 className="text-lg font-medium text-gray-900">Calculation Parameters</h2>
+          <h2 className="text-lg font-medium text-gray-900">Parâmetros de Cálculo</h2>
           <p className="mt-1 text-sm text-gray-500">
-            These parameters affect how the system identifies and analyzes flipping opportunities.
+            Esses parâmetros afetam como o sistema identifica e analisa oportunidades de flipping imobiliário.
           </p>
         </div>
         
@@ -83,7 +83,7 @@ const SettingsPage: React.FC = () => {
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <div>
               <label htmlFor="area-margin" className="block text-sm font-medium text-gray-700 mb-1">
-                Margin of reference area (%)
+                Margem da área de referência (%)
               </label>
               <div className="flex items-center">
                 <input
@@ -96,13 +96,13 @@ const SettingsPage: React.FC = () => {
                 <span className="ml-2 text-gray-500">%</span>
               </div>
               <p className="mt-1 text-xs text-gray-500">
-                Percentage variation allowed in property area when finding comparable renovated properties.
+                Variação percentual permitida na área do imóvel ao buscar propriedades reformadas comparáveis.
               </p>
             </div>
             
             <div>
               <label htmlFor="max-price-diff" className="block text-sm font-medium text-gray-700 mb-1">
-                Maximum price difference per m² for potential (R$)
+                Diferença máxima de preço por m² para potencial (R$)
               </label>
               <div className="flex items-center">
                 <span className="mr-2 text-gray-500">R$</span>
@@ -115,13 +115,13 @@ const SettingsPage: React.FC = () => {
                 />
               </div>
               <p className="mt-1 text-xs text-gray-500">
-                Maximum R$/m² difference allowed between target and reference to flag as potential opportunity.
+                Diferença máxima em R$/m² permitida entre o imóvel alvo e o imóvel de referência.
               </p>
             </div>
             
             <div>
               <label htmlFor="max-condo" className="block text-sm font-medium text-gray-700 mb-1">
-                Maximum acceptable condo fee (R$)
+                Valor máximo aceitável de condomínio (R$)
               </label>
               <div className="flex items-center">
                 <span className="mr-2 text-gray-500">R$</span>
@@ -134,13 +134,13 @@ const SettingsPage: React.FC = () => {
                 />
               </div>
               <p className="mt-1 text-xs text-gray-500">
-                Maximum monthly condo fee amount for a property to be considered viable.
+                Valor máximo da taxa mensal de condomínio para que o imóvel seja considerado viável.
               </p>
             </div>
             
             <div>
               <label htmlFor="max-value" className="block text-sm font-medium text-gray-700 mb-1">
-                Maximum target property value (R$)
+                Valor máximo do imóvel alvo (R$)
               </label>
               <div className="flex items-center">
                 <span className="mr-2 text-gray-500">R$</span>
@@ -153,13 +153,13 @@ const SettingsPage: React.FC = () => {
                 />
               </div>
               <p className="mt-1 text-xs text-gray-500">
-                Maximum price threshold for properties to be included in ROI analysis.
+                Valor máximo permitido para que os imóveis sejam incluídos na análise de ROI.
               </p>
             </div>
             
             <div>
               <label htmlFor="reference-reduction" className="block text-sm font-medium text-gray-700 mb-1">
-                Reduction percentage on reference sale price (%)
+                Percentual de redução sobre o preço de venda de referência (%)
               </label>
               <div className="flex items-center">
                 <input
@@ -172,13 +172,13 @@ const SettingsPage: React.FC = () => {
                 <span className="ml-2 text-gray-500">%</span>
               </div>
               <p className="mt-1 text-xs text-gray-500">
-                Discount applied to the average reference property price to account for market conditions.
+                Desconto aplicado sobre o preço médio das propriedades de referência para refletir as condições do mercado.
               </p>
             </div>
             
             <div>
               <label htmlFor="renovation-pct" className="block text-sm font-medium text-gray-700 mb-1">
-                Default renovation cost percentage (%)
+                Percentual padrão de custo de reforma (%)
               </label>
               <div className="flex items-center">
                 <input
@@ -191,7 +191,7 @@ const SettingsPage: React.FC = () => {
                 <span className="ml-2 text-gray-500">%</span>
               </div>
               <p className="mt-1 text-xs text-gray-500">
-                Percentage of purchase price used to estimate renovation costs when no custom value is provided.
+                Percentual do valor de compra utilizado para estimar o custo da reforma quando nenhum valor personalizado for fornecido.
               </p>
             </div>
           </div>
@@ -202,11 +202,11 @@ const SettingsPage: React.FC = () => {
             <Info size={20} className="text-blue-600" />
           </div>
           <div className="ml-3">
-            <h3 className="text-sm font-medium text-blue-800">Parameter Impact</h3>
+            <h3 className="text-sm font-medium text-blue-800">Impacto dos Parâmetros</h3>
             <div className="mt-2 text-sm text-blue-700">
               <p>
-                These parameters significantly affect how opportunities are identified and ROI is calculated. 
-                Adjust them based on your investment strategy and market conditions.
+                Esses parâmetros influenciam significativamente como as oportunidades são identificadas e como o ROI é calculado.
+                Ajuste-os conforme sua estratégia de investimento e as condições do mercado.
               </p>
             </div>
           </div>
