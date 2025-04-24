@@ -17,7 +17,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/analyses" element={<AnalysisListPage />} />
         <Route path="/individual-analyses" element={<IndividualAnalysisPage />} />
-        <Route path="/analysis/:analysisId/*" element={
+        <Route path="/analysis/:id/*" element={
           <Routes>
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="properties" element={<PropertiesPage />} />
