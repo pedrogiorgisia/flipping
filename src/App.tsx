@@ -22,7 +22,7 @@ function App() {
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="properties" element={<PropertiesPage />} />
             <Route path="property" element={<AnalysisPage />} />
-            <Route path="property/:propertyId" element={<PropertyDetailsPage />} />
+            <Route path="property/:propertyId?" element={<AnalysisPage />} />
             <Route path="settings" element={<SettingsPage />} />
           </Routes>
         } />

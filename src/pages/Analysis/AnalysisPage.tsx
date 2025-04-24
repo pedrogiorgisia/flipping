@@ -8,6 +8,7 @@ import { Download, Calculator, Share2, Plus, Trash } from 'lucide-react';
 
 const AnalysisPage: React.FC = () => {
   console.log("AnalysisPage renderizado");
+  console.log("Parâmetros da rota:", useParams());
   const { id } = useParams<{ id: string }>();
   const [isAddReferenceModalOpen, setIsAddReferenceModalOpen] = useState(false);
 
