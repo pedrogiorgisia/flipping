@@ -71,7 +71,7 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
         <div>
           <div className="flex items-center justify-between mb-2">
             <label htmlFor="cet-rate" className="text-sm font-medium text-gray-700">
-              CET (Taxa de Juros)
+              CET (Taxa de Juros %)
             </label>
             <span className="text-sm text-gray-500">{parameters.cetRate}%</span>
           </div>

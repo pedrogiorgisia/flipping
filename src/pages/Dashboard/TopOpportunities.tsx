@@ -100,7 +100,7 @@ const TopOpportunities: React.FC = () => {
   };
 
   const handleAnalyze = (propertyId: string) => {
-    navigate(`/analysis/${propertyId}`);
+    navigate(`/analysis/${propertyId}/property`);
   };
 
   return (
