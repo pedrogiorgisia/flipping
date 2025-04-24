@@ -152,18 +152,7 @@ const AnalysisPage: React.FC = () => {
         {/* Reference Properties - Full width */}
         <div className="mb-6">
           <div className="bg-white rounded-lg shadow overflow-hidden">
-            <div className="px-4 py-5 sm:px-6 flex justify-between items-center border-b border-gray-200">
-              <div>
-                <h3 className="text-lg font-medium text-gray-900">Imóveis de Referência</h3>
-                <p className="mt-1 text-sm text-gray-500">Comparativo com imóveis similares na região</p>
-              </div>
-              <button
-                onClick={() => {/* TODO: Implement reference property selection */}}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-              >
-                Adicionar Referência
-              </button>
-            </div>
+            
             <ReferenceProperties />
           </div>
         </div>

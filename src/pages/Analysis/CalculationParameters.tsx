@@ -10,6 +10,7 @@ interface Props {
     hasIncomeTax: boolean;
     itbiPercent: number;
     marketDiscountPercent: number;
+    propertyPrice?: number; // Added optional propertyPrice
   };
   onParameterChange: (field: string, value: any) => void;
 }
@@ -22,6 +23,10 @@ const CalculationParameters: React.FC<Props> = ({ parameters, onParameterChange 
     }).format(value);
   };
 
+  const defaultPropertyPrice = 720000; // Default value
+  const propertyPrice = parameters.propertyPrice || defaultPropertyPrice;
+
+
   return (
     <div className="bg-white rounded-lg shadow">
       <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
@@ -33,13 +38,13 @@ const CalculationParameters: React.FC<Props> = ({ parameters, onParameterChange 
             <label className="text-sm text-gray-600">Preço de Compra</label>
             <input
               type="number"
-              value={parameters.propertyPrice || ''}
+              value={propertyPrice}
               onChange={(e) => onParameterChange('propertyPrice', parseFloat(e.target.value))}
               className="border rounded px-2 py-1 text-sm w-full"
             />
           </div>
           <div className="grid grid-cols-2 gap-2 items-center">
-            <label className="text-sm text-gray-600">Entrada</label>
+            <label className="text-sm text-gray-600">Entrada (%)</label>
             <input
               type="number"
               value={parameters.downPaymentPercent}
