@@ -21,7 +21,7 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ property }) => {
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-medium text-gray-900 flex items-center">
             <Home size={20} className="mr-2 text-blue-600" />
-            Property Details
+            Detalhes do Imóvel
           </h3>
           <a
             href={property.url}
@@ -30,72 +30,72 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ property }) => {
             className="text-blue-600 hover:text-blue-800 flex items-center"
           >
             <ExternalLink size={16} className="mr-1" />
-            View Listing
+            Ver Anúncio
           </a>
         </div>
       </div>
-      <div className="px-4 py-5 sm:p-6">
-        <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+      <div className="px-4 py-3">
+        <dl className="grid grid-cols-2 md:grid-cols-4 gap-x-3 gap-y-2">
           <div>
-            <dt className="text-sm font-medium text-gray-500">Code</dt>
-            <dd className="mt-1 text-sm text-gray-900">{property.code}</dd>
+            <dt className="text-xs font-medium text-gray-500">Código</dt>
+            <dd className="text-sm text-gray-900">{property.code}</dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-gray-500">Agency</dt>
-            <dd className="mt-1 text-sm text-gray-900">{property.agency}</dd>
+            <dt className="text-xs font-medium text-gray-500">Imobiliária</dt>
+            <dd className="text-sm text-gray-900">{property.agency}</dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-gray-500">Price</dt>
-            <dd className="mt-1 text-sm text-gray-900 font-medium flex items-center">
-              <DollarSign size={16} className="mr-1 text-green-600" />
+            <dt className="text-xs font-medium text-gray-500">Preço</dt>
+            <dd className="text-sm text-gray-900 font-medium flex items-center">
+              <DollarSign size={14} className="mr-1 text-green-600" />
               {formatCurrency(property.price)}
             </dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-gray-500">Price/m²</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-xs font-medium text-gray-500">Preço/m²</dt>
+            <dd className="text-sm text-gray-900">
               {formatCurrency(property.price / property.area)}
             </dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-gray-500">Area</dt>
-            <dd className="mt-1 text-sm text-gray-900">{property.area} m²</dd>
+            <dt className="text-xs font-medium text-gray-500">Área</dt>
+            <dd className="text-sm text-gray-900">{property.area} m²</dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-gray-500">Beds/Baths</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-xs font-medium text-gray-500">Quartos/Banheiros</dt>
+            <dd className="text-sm text-gray-900">
               {property.bedrooms} / {property.bathrooms}
             </dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-gray-500">Parking</dt>
-            <dd className="mt-1 text-sm text-gray-900">{property.parkingSpaces} space(s)</dd>
+            <dt className="text-xs font-medium text-gray-500">Vagas</dt>
+            <dd className="text-sm text-gray-900">{property.parkingSpaces}</dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-gray-500">Condo Fee</dt>
-            <dd className="mt-1 text-sm text-gray-900">{formatCurrency(property.condoFee)}/month</dd>
+            <dt className="text-xs font-medium text-gray-500">Condomínio</dt>
+            <dd className="text-sm text-gray-900">{formatCurrency(property.condoFee)}/mês</dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-gray-500">Yearly Tax</dt>
-            <dd className="mt-1 text-sm text-gray-900">{formatCurrency(property.yearlyTax)}</dd>
+            <dt className="text-xs font-medium text-gray-500">IPTU</dt>
+            <dd className="text-sm text-gray-900">{formatCurrency(property.yearlyTax)}/ano</dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-gray-500">Listed On</dt>
-            <dd className="mt-1 text-sm text-gray-900 flex items-center">
-              <Calendar size={16} className="mr-1 text-gray-400" />
+            <dt className="text-xs font-medium text-gray-500">Anunciado em</dt>
+            <dd className="text-sm text-gray-900 flex items-center">
+              <Calendar size={14} className="mr-1 text-gray-400" />
               {formatDate(property.createdAt)}
             </dd>
           </div>
-          <div className="sm:col-span-2">
-            <dt className="text-sm font-medium text-gray-500">Address</dt>
-            <dd className="mt-1 text-sm text-gray-900 flex items-start">
-              <MapPin size={16} className="mr-1 mt-0.5 flex-shrink-0 text-gray-400" />
+          <div className="col-span-2">
+            <dt className="text-xs font-medium text-gray-500">Endereço</dt>
+            <dd className="text-sm text-gray-900 flex items-start">
+              <MapPin size={14} className="mr-1 mt-0.5 flex-shrink-0 text-gray-400" />
               <span>{property.address}</span>
             </dd>
           </div>
-          <div className="sm:col-span-2">
-            <dt className="text-sm font-medium text-gray-500">Status</dt>
-            <dd className="mt-1">
+          <div>
+            <dt className="text-xs font-medium text-gray-500">Status</dt>
+            <dd className="mt-0.5">
               <span
                 className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                   property.renovated
@@ -103,7 +103,7 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ property }) => {
                     : 'bg-yellow-100 text-yellow-800'
                 }`}
               >
-                {property.renovated ? 'Renovated' : 'Not Renovated'}
+                {property.renovated ? 'Reformado' : 'Não Reformado'}
               </span>
             </dd>
           </div>

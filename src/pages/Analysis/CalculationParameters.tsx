@@ -37,16 +37,28 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
             </label>
             <span className="text-sm text-gray-500">{parameters.downPaymentPercent}%</span>
           </div>
-          <input
-            type="range"
-            id="down-payment"
-            min="10"
-            max="50"
-            step="5"
-            value={parameters.downPaymentPercent}
-            onChange={(e) => onParameterChange('downPaymentPercent', parseInt(e.target.value))}
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-          />
+          <div className="grid grid-cols-2 gap-4">
+            <input
+              type="range"
+              id="down-payment"
+              min="10"
+              max="50"
+              step="5"
+              value={parameters.downPaymentPercent}
+              onChange={(e) => onParameterChange('downPaymentPercent', parseInt(e.target.value))}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+            />
+            <div className="flex items-center space-x-2">
+              <input
+                type="number"
+                value={parameters.downPaymentPercent}
+                onChange={(e) => onParameterChange('downPaymentPercent', parseInt(e.target.value))}
+                className="w-20 px-2 py-1 text-sm border rounded"
+              />
+              <span className="text-sm text-gray-500">=</span>
+              <span className="text-sm text-gray-700">{formatCurrency(parameters.propertyPrice * (parameters.downPaymentPercent / 100))}</span>
+            </div>
+          </div>
         </div>
 
         <div>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Property } from '../../types/property';
 import { ChevronLeft, ChevronRight, Trash } from 'lucide-react';
@@ -12,7 +11,7 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const totalPages = Math.ceil(mockReferences.length / itemsPerPage);
-  
+
   const currentItems = mockReferences.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -27,9 +26,9 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = 
 
   return (
     <div className="bg-white rounded-lg shadow mt-6">
-      <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
-        <h3 className="text-lg font-medium text-gray-900">Imóveis de Referência</h3>
-        <p className="mt-1 text-sm text-gray-500">Comparativo com imóveis similares na região</p>
+      <div className="px-4 py-3"> {/*This line has been updated*/}
+        {/*<h3 className="text-lg font-medium text-gray-900">Imóveis de Referência</h3>
+        <p className="mt-1 text-sm text-gray-500">Comparativo com imóveis similares na região</p>*/}
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
