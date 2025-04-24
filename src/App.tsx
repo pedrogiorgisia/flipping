@@ -17,11 +17,13 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/analyses" element={<AnalysisListPage />} />
         <Route path="/individual-analyses" element={<IndividualAnalysisPage />} />
-        <Route path="/analysis/:analysisId/dashboard" element={<DashboardPage />} />
-        <Route path="/analysis/:analysisId/properties" element={<PropertiesPage />} />
-        <Route path="/analysis/:analysisId/property" element={<AnalysisPage />} />
-        <Route path="/analysis/:analysisId/property/:propertyId" element={<PropertyDetailsPage />} />
-        <Route path="/analysis/:analysisId/settings" element={<SettingsPage />} />
+        <Route path="/analysis/:analysisId">
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="properties" element={<PropertiesPage />} />
+          <Route path="property" element={<AnalysisPage />} />
+          <Route path="property/:propertyId" element={<PropertyDetailsPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+        </Route>
         <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
