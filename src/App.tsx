@@ -6,6 +6,7 @@ import DashboardPage from './pages/Dashboard/DashboardPage';
 import PropertiesPage from './pages/Properties/PropertiesPage';
 import PropertyDetailsPage from './pages/PropertyDetails/PropertyDetailsPage';
 import SettingsPage from './pages/Settings/SettingsPage';
+import IndividualAnalysisPage from './pages/Analysis/IndividualAnalysisPage';
 
 function App() {
   return (
