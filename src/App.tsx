@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/Login/LoginPage';
@@ -14,16 +15,11 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/analyses" element={<AnalysisListPage />} />
-        
-        {/* Rotas específicas de análise */}
-        <Route path="/analysis/:analysisId">
-          <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="properties" element={<PropertiesPage />} />
-          <Route path="property/:propertyId" element={<PropertyDetailsPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-          <Route path="details" element={<IndividualAnalysisPage />} />
-        </Route>
-
+        <Route path="/analysis/:analysisId/dashboard" element={<DashboardPage />} />
+        <Route path="/analysis/:analysisId/properties" element={<PropertiesPage />} />
+        <Route path="/analysis/:analysisId/property/:propertyId" element={<PropertyDetailsPage />} />
+        <Route path="/analysis/:analysisId/settings" element={<SettingsPage />} />
+        <Route path="/analysis/:analysisId/details" element={<IndividualAnalysisPage />} />
         <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
