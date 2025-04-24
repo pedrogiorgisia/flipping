@@ -2,15 +2,18 @@
 import React from 'react';
 import MainLayout from '../../components/Layout/MainLayout';
 import { useNavigate } from 'react-router-dom';
+import { FileText } from 'lucide-react';
 
 interface Analysis {
   id: string;
   propertyName: string;
+  address: string;
   purchasePrice: number;
-  renovationCost: number;
-  expectedSalePrice: number;
-  roi: number;
-  date: Date;
+  area: number;
+  bedrooms: number;
+  bathrooms: number;
+  parkingSpaces: number;
+  createdAt: Date;
 }
 
 const IndividualAnalysisPage: React.FC = () => {
@@ -20,13 +23,25 @@ const IndividualAnalysisPage: React.FC = () => {
     {
       id: '1',
       propertyName: 'Apartamento Pinheiros',
+      address: 'Rua dos Pinheiros, 1000',
       purchasePrice: 720000,
-      renovationCost: 151200,
-      expectedSalePrice: 1312500,
-      roi: 50.5,
-      date: new Date('2024-01-15')
+      area: 68,
+      bedrooms: 2,
+      bathrooms: 1,
+      parkingSpaces: 1,
+      createdAt: new Date('2024-01-15')
     },
-    // Adicione mais análises conforme necessário
+    {
+      id: '2',
+      propertyName: 'Apartamento Vila Mariana',
+      address: 'Rua Vergueiro, 2000',
+      purchasePrice: 950000,
+      area: 85,
+      bedrooms: 3,
+      bathrooms: 2,
+      parkingSpaces: 1,
+      createdAt: new Date('2024-02-01')
+    }
   ];
 
   const formatCurrency = (value: number) => {
@@ -49,19 +64,22 @@ const IndividualAnalysisPage: React.FC = () => {
                   Imóvel
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Preço de Compra
+                  Endereço
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Custo Reforma
+                  Preço
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Preço Venda
+                  Área
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  ROI
+                  Quartos
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Data
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Ações
                 </th>
               </tr>
             </thead>
@@ -69,16 +87,22 @@ const IndividualAnalysisPage: React.FC = () => {
               {analyses.map((analysis) => (
                 <tr 
                   key={analysis.id}
-                  onClick={() => navigate(`/analysis/${analysis.id}/details`)}
-                  className="cursor-pointer hover:bg-gray-50"
+                  className="hover:bg-gray-50"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap">{analysis.propertyName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{formatCurrency(analysis.purchasePrice)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{formatCurrency(analysis.renovationCost)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{formatCurrency(analysis.expectedSalePrice)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{analysis.roi.toFixed(1)}%</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {analysis.date.toLocaleDateString('pt-BR')}
+                  <td className="px-6 py-4">{analysis.propertyName}</td>
+                  <td className="px-6 py-4">{analysis.address}</td>
+                  <td className="px-6 py-4">{formatCurrency(analysis.purchasePrice)}</td>
+                  <td className="px-6 py-4">{analysis.area}m²</td>
+                  <td className="px-6 py-4">{analysis.bedrooms}</td>
+                  <td className="px-6 py-4">{analysis.createdAt.toLocaleDateString('pt-BR')}</td>
+                  <td className="px-6 py-4 text-right">
+                    <button
+                      onClick={() => navigate(`/analysis/${analysis.id}/property`)}
+                      className="text-blue-600 hover:text-blue-800"
+                      title="Ver análise"
+                    >
+                      <FileText size={16} />
+                    </button>
                   </td>
                 </tr>
               ))}

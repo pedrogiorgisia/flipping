@@ -15,6 +15,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/analyses" element={<AnalysisListPage />} />
+        <Route path="/individual-analyses" element={<IndividualAnalysisPage />} />
         <Route path="/analysis/:analysisId/dashboard" element={<DashboardPage />} />
         <Route path="/analysis/:analysisId/properties" element={<PropertiesPage />} />
         <Route path="/analysis/:analysisId/property" element={<AnalysisPage />} />

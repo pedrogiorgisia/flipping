@@ -1,21 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import MainLayout from '../../components/Layout/MainLayout';
 import { Property } from '../../types/property';
 import PropertyDetails from './PropertyDetails';
 import ReferenceProperties from './ReferenceProperties';
-import CalculationParameters from './CalculationParameters';
-import AnalysisResults from './AnalysisResults';
-import { Download, Calculator, Share2 } from 'lucide-react';
+import { Download, Calculator, Share2, Plus, Trash } from 'lucide-react';
 
 const AnalysisPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  
-  // Mock data for demonstration
+  const [isAddReferenceModalOpen, setIsAddReferenceModalOpen] = useState(false);
+
+  const [parameters, setParameters] = useState({
+    downPaymentPercent: 20,
+    saleTimeMonths: 3,
+    cetRate: 14.25,
+    financingMonths: 360,
+    brokeragePercent: 5,
+    hasIncomeTax: false,
+    itbiPercent: 3,
+    marketDiscountPercent: 8
+  });
+
   const [property, setProperty] = useState<Property>({
     id: '1',
     url: 'https://example.com/property1',
-    agency: 'Modern Realty',
+    agency: 'Imobiliária Moderna',
     price: 500000,
     area: 120,
     bedrooms: 3,
@@ -23,12 +32,12 @@ const AnalysisPage: React.FC = () => {
     parkingSpaces: 1,
     condoFee: 500,
     yearlyTax: 2000,
-    address: '123 Main St, Cityville',
+    address: 'Rua Example, 123',
     code: 'PRO-001',
     createdAt: new Date('2023-01-15'),
     renovated: false,
   });
-  
+
   const [references, setReferences] = useState<Property[]>([
     {
       id: '2',
@@ -63,100 +72,80 @@ const AnalysisPage: React.FC = () => {
       renovated: true,
     }
   ]);
-  
-  const [calculations, setCalculations] = useState({
-    renovationPercent: 15,
-    sellingTimeMonths: 3,
-    areaMatchTolerance: 10,
-    estimatedSalePrice: 650000,
-    acquisitionCosts: 25000,
-    holdingCosts: 7500,
-    renovationCosts: 75000,
-    sellingCosts: 32500,
-    totalCosts: 140000,
-    profit: 110000,
-    roi: 22.0
-  });
-  
-  const [selectedReferences, setSelectedReferences] = useState<string[]>(['2', '5']);
-  
-  const handleReferenceToggle = (id: string) => {
-    if (selectedReferences.includes(id)) {
-      setSelectedReferences(selectedReferences.filter(refId => refId !== id));
-    } else {
-      setSelectedReferences([...selectedReferences, id]);
-    }
-  };
-  
-  const handleParameterChange = (field: string, value: number) => {
-    // In a real app, this would recalculate all the values
-    // For now, just update the parameter
-    setCalculations({
-      ...calculations,
+
+  const handleParameterChange = (field: string, value: any) => {
+    setParameters(prev => ({
+      ...prev,
       [field]: value
-    });
+    }));
+    recalculateValues();
   };
-  
-  const handleRecalculate = () => {
-    // In a real app, this would perform a complete recalculation
-    // For now, just update a few values for demonstration
-    setCalculations({
-      ...calculations,
-      renovationCosts: property.price * (calculations.renovationPercent / 100),
-      holdingCosts: property.condoFee * calculations.sellingTimeMonths,
-      // Other calculations would be done here
-    });
+
+  const recalculateValues = () => {
+    // Placeholder for recalculation logic.  This would need to be implemented
+    // based on the specific calculations required.  For now, it only logs a message.
+
+    console.log("Recalculating values...");
+  };
+
+  const handleAddReference = (referenceProperty: Property) => {
+    setReferences([...references, referenceProperty]);
+    setIsAddReferenceModalOpen(false);
+  };
+
+  const handleRemoveReference = (referenceId: string) => {
+    setReferences(references.filter(ref => ref.id !== referenceId));
   };
 
   return (
     <MainLayout>
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Property Analysis</h1>
-          <p className="text-gray-600 mt-1">Detailed investment analysis for {property.code}</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Análise de Investimento</h1>
+            <p className="text-gray-600 mt-1">Análise detalhada para {property.code}</p>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <button className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50">
+              <Download size={16} className="mr-2" />
+              Exportar PDF
+            </button>
+            <button className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50">
+              <Share2 size={16} className="mr-2" />
+              Compartilhar
+            </button>
+            <button 
+              onClick={recalculateValues}
+              className="inline-flex items-center px-4 py-2 border border-transparent bg-blue-600 text-sm font-medium rounded-md text-white hover:bg-blue-700"
+            >
+              <Calculator size={16} className="mr-2" />
+              Recalcular
+            </button>
+          </div>
         </div>
-        
-        <div className="flex flex-wrap gap-3">
-          <button 
-            className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            <Download size={16} className="mr-2" />
-            Export PDF
-          </button>
-          <button 
-            className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            <Share2 size={16} className="mr-2" />
-            Share
-          </button>
-          <button 
-            onClick={handleRecalculate}
-            className="inline-flex items-center px-4 py-2 border border-transparent bg-blue-600 text-sm font-medium rounded-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            <Calculator size={16} className="mr-2" />
-            Recalculate
-          </button>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div>
+            <PropertyDetails property={property} />
+          </div>
+          <div>
+            <ReferenceProperties references={references} onRemove={handleRemoveReference}/>
+          </div>
         </div>
+
+
       </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1 space-y-6">
-          <PropertyDetails property={property} />
-          <CalculationParameters 
-            parameters={calculations} 
-            onParameterChange={handleParameterChange}
-          />
+
+      {/* Modal para adicionar referência */}
+      {isAddReferenceModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-xl w-full">
+            <h2 className="text-xl font-bold mb-4">Adicionar Referência</h2>
+            {/* Adicione aqui o formulário para selecionar uma propriedade de referência */}
+          </div>
         </div>
-        
-        <div className="lg:col-span-2 space-y-6">
-          <ReferenceProperties 
-            references={references}
-            selectedReferences={selectedReferences}
-            onReferenceToggle={handleReferenceToggle}
-          />
-          <AnalysisResults calculations={calculations} />
-        </div>
-      </div>
+      )}
     </MainLayout>
   );
 };
