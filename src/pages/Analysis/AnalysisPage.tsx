@@ -4,13 +4,28 @@ import MainLayout from '../../components/Layout/MainLayout';
 import { Property } from '../../types/property';
 import PropertyDetails from './PropertyDetails';
 import ReferenceProperties from './ReferenceProperties';
-import { Download, Calculator, Share2, Plus, Trash } from 'lucide-react';
+import CalculationParameters from './CalculationParameters';
+import AnalysisResults from './AnalysisResults';
+import { Download, Calculator, Share2 } from 'lucide-react';
 
 const AnalysisPage: React.FC = () => {
-  console.log("AnalysisPage renderizado");
-  console.log("Parâmetros da rota:", useParams());
   const { id } = useParams<{ id: string }>();
-  const [isAddReferenceModalOpen, setIsAddReferenceModalOpen] = useState(false);
+  const [calculationResults, setCalculationResults] = useState({
+    totalInvestment: 427098,
+    monthlyPayment: 2800,
+    financingAmount: 504000,
+    salePrice: 720000,
+    netProfit: 154815,
+    roi: 36.25,
+    monthlyPayments: Array.from({ length: 19 }, (_, i) => ({
+      month: i + 1,
+      initialBalance: 504000 - (i * 1200),
+      amortization: 1200,
+      interest: 1600,
+      monthlyPayment: 2800,
+      finalBalance: 504000 - ((i + 1) * 1200)
+    }))
+  });
 
   const [parameters, setParameters] = useState({
     downPaymentPercent: 20,
@@ -27,8 +42,8 @@ const AnalysisPage: React.FC = () => {
     id: '1',
     url: 'https://example.com/property1',
     agency: 'Imobiliária Moderna',
-    price: 500000,
-    area: 120,
+    price: 720000,
+    area: 97,
     bedrooms: 3,
     bathrooms: 2,
     parkingSpaces: 1,
@@ -40,41 +55,6 @@ const AnalysisPage: React.FC = () => {
     renovated: false,
   });
 
-  const [references, setReferences] = useState<Property[]>([
-    {
-      id: '2',
-      url: 'https://example.com/property2',
-      agency: 'Luxury Homes',
-      price: 750000,
-      area: 200,
-      bedrooms: 4,
-      bathrooms: 3,
-      parkingSpaces: 2,
-      condoFee: 800,
-      yearlyTax: 3500,
-      address: '456 Park Ave, Townsburg',
-      code: 'PRO-002',
-      createdAt: new Date('2023-02-20'),
-      renovated: true,
-    },
-    {
-      id: '5',
-      url: 'https://example.com/property5',
-      agency: 'Elite Realty',
-      price: 850000,
-      area: 180,
-      bedrooms: 3,
-      bathrooms: 3,
-      parkingSpaces: 2,
-      condoFee: 900,
-      yearlyTax: 4000,
-      address: '222 Luxury Blvd, Richtown',
-      code: 'PRO-005',
-      createdAt: new Date('2023-05-15'),
-      renovated: true,
-    }
-  ]);
-
   const handleParameterChange = (field: string, value: any) => {
     setParameters(prev => ({
       ...prev,
@@ -84,19 +64,8 @@ const AnalysisPage: React.FC = () => {
   };
 
   const recalculateValues = () => {
-    // Placeholder for recalculation logic.  This would need to be implemented
-    // based on the specific calculations required.  For now, it only logs a message.
-
-    console.log("Recalculating values...");
-  };
-
-  const handleAddReference = (referenceProperty: Property) => {
-    setReferences([...references, referenceProperty]);
-    setIsAddReferenceModalOpen(false);
-  };
-
-  const handleRemoveReference = (referenceId: string) => {
-    setReferences(references.filter(ref => ref.id !== referenceId));
+    // Implement calculation logic here based on the image
+    console.log("Recalculating values with parameters:", parameters);
   };
 
   return (
@@ -128,26 +97,19 @@ const AnalysisPage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div>
+          <div className="space-y-6">
             <PropertyDetails property={property} />
+            <CalculationParameters 
+              parameters={parameters}
+              onParameterChange={handleParameterChange}
+            />
           </div>
-          <div>
-            <ReferenceProperties references={references} onRemove={handleRemoveReference}/>
+          <div className="space-y-6">
+            <AnalysisResults results={calculationResults} />
+            <ReferenceProperties />
           </div>
         </div>
-
-
       </div>
-
-      {/* Modal para adicionar referência */}
-      {isAddReferenceModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-xl w-full">
-            <h2 className="text-xl font-bold mb-4">Adicionar Referência</h2>
-            {/* Adicione aqui o formulário para selecionar uma propriedade de referência */}
-          </div>
-        </div>
-      )}
     </MainLayout>
   );
 };
