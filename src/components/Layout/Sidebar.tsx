@@ -42,11 +42,6 @@ const Sidebar: React.FC = () => {
       label: 'Base de Imóveis' 
     },
     { 
-      to: `/analysis/${analysisId}/property`, 
-      icon: <FileText size={20} />, 
-      label: 'Análises Individuais' 
-    },
-    { 
       to: `/analysis/${analysisId}/settings`, 
       icon: <Settings size={20} />, 
       label: 'Parâmetros' 

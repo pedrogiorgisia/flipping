@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import MainLayout from '../../components/Layout/MainLayout';
 import { Property } from '../../types/property';
@@ -76,13 +77,19 @@ const AnalysisPage: React.FC = () => {
   };
 
   const recalculateValues = () => {
-    // Implement calculation logic here based on the image
     console.log("Recalculating values with parameters:", parameters);
+  };
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
   };
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Análise de Investimento</h1>
@@ -108,17 +115,39 @@ const AnalysisPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* KPIs */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white rounded-lg shadow p-4">
+            <p className="text-sm text-gray-500">Valor de Compra</p>
+            <p className="text-2xl font-semibold text-gray-900">{formatCurrency(calculationResults.propertyPrice)}</p>
+          </div>
+          <div className="bg-white rounded-lg shadow p-4">
+            <p className="text-sm text-gray-500">Valor de Venda</p>
+            <p className="text-2xl font-semibold text-gray-900">{formatCurrency(calculationResults.salePrice)}</p>
+          </div>
+          <div className="bg-white rounded-lg shadow p-4">
+            <p className="text-sm text-gray-500">Investimento Total</p>
+            <p className="text-2xl font-semibold text-gray-900">{formatCurrency(calculationResults.totalInvestment)}</p>
+          </div>
+          <div className="bg-white rounded-lg shadow p-4">
+            <p className="text-sm text-gray-500">ROI da Operação</p>
+            <p className="text-2xl font-semibold text-blue-600">{calculationResults.roi.toFixed(2)}%</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <div className="space-y-6">
+              <AnalysisResults results={calculationResults} />
+              <ReferenceProperties />
+            </div>
+          </div>
           <div className="space-y-6">
             <PropertyDetails property={property} />
             <CalculationParameters 
               parameters={parameters}
               onParameterChange={handleParameterChange}
             />
-          </div>
-          <div className="space-y-6">
-            <AnalysisResults results={calculationResults} />
-            <ReferenceProperties />
           </div>
         </div>
       </div>
