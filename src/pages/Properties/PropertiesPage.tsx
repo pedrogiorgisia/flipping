@@ -92,7 +92,7 @@ const PropertiesPage: React.FC = () => {
       <div className="bg-white rounded-lg shadow mb-6">
         <div className="border-b border-gray-200 px-4 py-4 sm:px-6 flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-3">
-            
+
             <button
               onClick={handleAddNewProperty}
               className="inline-flex items-center px-4 py-2 border border-transparent bg-blue-600 text-sm font-medium rounded-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -111,7 +111,7 @@ const PropertiesPage: React.FC = () => {
                 <option value="not_renovated">Não Reformados</option>
               </select>
             </div>
-            
+
             <div className="flex items-center gap-2">
               <label className="text-sm text-gray-700">Área:</label>
               <input
@@ -131,10 +131,11 @@ const PropertiesPage: React.FC = () => {
               <label className="text-sm text-gray-700">Quartos:</label>
               <select className="rounded-md border border-gray-300 px-3 py-1.5 text-sm">
                 <option value="">Todos</option>
-                <option value="1">1+</option>
-                <option value="2">2+</option>
-                <option value="3">3+</option>
-                <option value="4">4+</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
               </select>
             </div>
 
@@ -142,10 +143,11 @@ const PropertiesPage: React.FC = () => {
               <label className="text-sm text-gray-700">Banheiros:</label>
               <select className="rounded-md border border-gray-300 px-3 py-1.5 text-sm">
                 <option value="">Todos</option>
-                <option value="1">1+</option>
-                <option value="2">2+</option>
-                <option value="3">3+</option>
-                <option value="4">4+</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
               </select>
             </div>
 
@@ -169,7 +171,7 @@ const PropertiesPage: React.FC = () => {
           <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Import HTML</h2>
             <p className="text-gray-600 mb-4">Upload an HTML file from a real estate listing to automatically import property details.</p>
-            
+
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-4">
               <Upload size={32} className="mx-auto text-gray-400 mb-2" />
               <p className="text-sm text-gray-600 mb-2">Drag and drop an HTML file, or click to browse</p>
@@ -178,7 +180,7 @@ const PropertiesPage: React.FC = () => {
                 Select File
               </button>
             </div>
-            
+
             <div className="flex justify-end gap-3">
               <button 
                 onClick={closeModals}
@@ -201,7 +203,7 @@ const PropertiesPage: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Add New Property</h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
                 <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-1">
@@ -214,7 +216,7 @@ const PropertiesPage: React.FC = () => {
                   placeholder="https://example.com/property"
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="agency" className="block text-sm font-medium text-gray-700 mb-1">
                   Agency
@@ -226,7 +228,7 @@ const PropertiesPage: React.FC = () => {
                   placeholder="Agency name"
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
                   Price (R$)
@@ -238,7 +240,7 @@ const PropertiesPage: React.FC = () => {
                   placeholder="500000"
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="area" className="block text-sm font-medium text-gray-700 mb-1">
                   Area (m²)
@@ -250,7 +252,7 @@ const PropertiesPage: React.FC = () => {
                   placeholder="100"
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="bedrooms" className="block text-sm font-medium text-gray-700 mb-1">
                   Bedrooms
@@ -262,7 +264,7 @@ const PropertiesPage: React.FC = () => {
                   placeholder="3"
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="bathrooms" className="block text-sm font-medium text-gray-700 mb-1">
                   Bathrooms
@@ -274,7 +276,7 @@ const PropertiesPage: React.FC = () => {
                   placeholder="2"
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="parking" className="block text-sm font-medium text-gray-700 mb-1">
                   Parking Spaces
@@ -286,7 +288,7 @@ const PropertiesPage: React.FC = () => {
                   placeholder="1"
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="condo" className="block text-sm font-medium text-gray-700 mb-1">
                   Condo Fee (R$/month)
@@ -298,7 +300,7 @@ const PropertiesPage: React.FC = () => {
                   placeholder="500"
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="tax" className="block text-sm font-medium text-gray-700 mb-1">
                   Yearly Tax (R$)
@@ -310,7 +312,7 @@ const PropertiesPage: React.FC = () => {
                   placeholder="2000"
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="code" className="block text-sm font-medium text-gray-700 mb-1">
                   Code
@@ -322,7 +324,7 @@ const PropertiesPage: React.FC = () => {
                   placeholder="PRO-001"
                 />
               </div>
-              
+
               <div className="md:col-span-2">
                 <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                   Address
@@ -334,7 +336,7 @@ const PropertiesPage: React.FC = () => {
                   placeholder="123 Main St, Cityville"
                 />
               </div>
-              
+
               <div className="md:col-span-2">
                 <div className="flex items-center">
                   <input
@@ -348,7 +350,7 @@ const PropertiesPage: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex justify-end gap-3">
               <button 
                 onClick={closeModals}

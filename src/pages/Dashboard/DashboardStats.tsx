@@ -30,8 +30,7 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({ stats }) => {
             </div>
           </div>
           <div className={`px-5 py-2 ${stat.positive ? 'bg-green-50' : 'bg-red-50'}`}>
-            <div className={`text-sm ${stat.positive ? 'text-green-600' : 'text-red-600'} flex justify-between`}>
-              <span>vs. last month</span>
+            <div className={`text-sm ${stat.positive ? 'text-green-600' : 'text-red-600'} text-right`}>
               <span className="font-medium">{stat.change}</span>
             </div>
           </div>

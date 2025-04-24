@@ -44,8 +44,8 @@ const SettingsPage: React.FC = () => {
     <MainLayout>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">System Parameters</h1>
-          <p className="text-gray-600 mt-1">Configure global analysis settings</p>
+          <h1 className="text-2xl font-bold text-gray-900">Parâmetros do Sistema</h1>
+          <p className="text-gray-600 mt-1">Configure os parâmetros globais de análise</p>
         </div>
         
         <div className="flex flex-wrap gap-3">

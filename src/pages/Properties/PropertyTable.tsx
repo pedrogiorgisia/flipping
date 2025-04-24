@@ -31,28 +31,28 @@ const PropertyTable: React.FC<PropertyTableProps> = ({ properties, onDelete, onT
         <thead className="bg-gray-50">
           <tr>
             <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Code
+              Código
             </th>
             <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Agency
+              Imobiliária
             </th>
             <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Price
+              Preço
             </th>
             <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Area (m²)
+              Área (m²)
             </th>
             <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               R$/m²
             </th>
             <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Beds/Baths
+              Quartos/Banheiros
             </th>
             <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Condo Fee
+              Condomínio
             </th>
             <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Created
+              Criado em
             </th>
             <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Status
