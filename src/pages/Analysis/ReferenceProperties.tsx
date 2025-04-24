@@ -27,15 +27,12 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = 
 
   return (
     <div className="bg-white rounded-lg shadow mt-6">
-      <div className="px-4 py-3"> {/*This line has been updated*/}
-        {/*<h3 className="text-lg font-medium text-gray-900">Imóveis de Referência</h3>
-        <p className="mt-1 text-sm text-gray-500">Comparativo com imóveis similares na região</p>*/}
-      </div>
-      <div className="overflow-x-auto">
-
       <div className="px-4 py-3 flex justify-between items-center border-b border-gray-200">
         <div>
-          <h3 className="text-lg font-medium text-gray-900">Imóveis de Referência</h3>
+          <div>
+            <h3 className="text-lg font-medium text-gray-900">Imóveis de Referência</h3>
+            <p className="text-sm text-gray-500">Comparativo com imóveis similares na região</p>
+          </div>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}

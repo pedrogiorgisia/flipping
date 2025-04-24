@@ -30,6 +30,15 @@ const CalculationParameters: React.FC<Props> = ({ parameters, onParameterChange 
       <div className="px-4 py-4">
         <div className="grid grid-cols-1 gap-4">
           <div className="grid grid-cols-2 gap-2 items-center">
+            <label className="text-sm text-gray-600">Preço de Compra</label>
+            <input
+              type="number"
+              value={parameters.propertyPrice || ''}
+              onChange={(e) => onParameterChange('propertyPrice', parseFloat(e.target.value))}
+              className="border rounded px-2 py-1 text-sm w-full"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-2 items-center">
             <label className="text-sm text-gray-600">Entrada</label>
             <input
               type="number"
