@@ -7,6 +7,7 @@ import ReferenceProperties from './ReferenceProperties';
 import { Download, Calculator, Share2, Plus, Trash } from 'lucide-react';
 
 const AnalysisPage: React.FC = () => {
+  console.log("AnalysisPage renderizado");
   const { id } = useParams<{ id: string }>();
   const [isAddReferenceModalOpen, setIsAddReferenceModalOpen] = useState(false);
 
