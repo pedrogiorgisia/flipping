@@ -115,6 +115,11 @@ const AnalysisPage: React.FC = () => {
           </div>
         </div>
 
+        {/* Property Details - Full width */}
+        <div className="mb-6">
+          <PropertyDetails property={property} />
+        </div>
+
         {/* KPIs */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white rounded-lg shadow p-4">
@@ -133,11 +138,6 @@ const AnalysisPage: React.FC = () => {
             <p className="text-sm text-gray-500">ROI da Operação</p>
             <p className="text-2xl font-semibold text-blue-600">{calculationResults.roi.toFixed(2)}%</p>
           </div>
-        </div>
-
-        {/* Property Details - Full width */}
-        <div className="mb-6">
-          <PropertyDetails property={property} />
         </div>
 
         {/* Analysis Results and Parameters - Two columns */}
