@@ -92,13 +92,7 @@ const PropertiesPage: React.FC = () => {
       <div className="bg-white rounded-lg shadow mb-6">
         <div className="border-b border-gray-200 px-4 py-4 sm:px-6 flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={handleImportHTML}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              <Upload size={16} className="mr-2" />
-              Import HTML
-            </button>
+            
             <button
               onClick={handleAddNewProperty}
               className="inline-flex items-center px-4 py-2 border border-transparent bg-blue-600 text-sm font-medium rounded-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -108,18 +102,56 @@ const PropertiesPage: React.FC = () => {
             </button>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <button className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-              <Filter size={16} className="mr-2" />
-              Filter
-            </button>
-            <button className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-gray-700">Status:</label>
+              <select className="rounded-md border border-gray-300 px-3 py-1.5 text-sm">
+                <option value="">Todos</option>
+                <option value="renovated">Reformados</option>
+                <option value="not_renovated">Não Reformados</option>
+              </select>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-gray-700">Área:</label>
+              <input
+                type="number"
+                placeholder="Min"
+                className="w-20 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+              />
+              <span>-</span>
+              <input
+                type="number"
+                placeholder="Max"
+                className="w-20 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-gray-700">Quartos:</label>
+              <select className="rounded-md border border-gray-300 px-3 py-1.5 text-sm">
+                <option value="">Todos</option>
+                <option value="1">1+</option>
+                <option value="2">2+</option>
+                <option value="3">3+</option>
+                <option value="4">4+</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-gray-700">Banheiros:</label>
+              <select className="rounded-md border border-gray-300 px-3 py-1.5 text-sm">
+                <option value="">Todos</option>
+                <option value="1">1+</option>
+                <option value="2">2+</option>
+                <option value="3">3+</option>
+                <option value="4">4+</option>
+              </select>
+            </div>
+
+            <button className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50">
               <Download size={16} className="mr-2" />
-              Export
-            </button>
-            <button className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-              <RefreshCw size={16} className="mr-2" />
-              Refresh
+              Exportar
             </button>
           </div>
         </div>
