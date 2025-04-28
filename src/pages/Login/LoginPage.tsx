@@ -14,16 +14,29 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
     setError('');
 
-    // For demo purposes, we're just using a setTimeout
-    // In a real app, you would make an API call here
-    setTimeout(() => {
-      if (email === 'demo@example.com' && password === 'password') {
+    try {
+      const response = await fetch('https://flippings.com.br/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          senha: password
+        })
+      });
+
+      if (response.ok) {
         navigate('/analyses');
       } else {
-        setError('Email ou senha inválidos');
+        const data = await response.json();
+        setError(data.message || 'Email ou senha inválidos');
       }
+    } catch (err) {
+      setError('Erro ao tentar fazer login. Tente novamente.');
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -31,7 +44,7 @@ const LoginPage: React.FC = () => {
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-md">
           <div className="text-center mb-10">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">FlipInvest</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Flippings</h1>
             <p className="text-gray-600">Análise de Oportunidades Imobiliárias</p>
           </div>
 
