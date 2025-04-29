@@ -28,8 +28,12 @@ const LoginPage: React.FC = () => {
 
       if (response.ok) {
         const data = await response.json();
-        login(data.usuario_id); // Use the user ID from the API response
-        navigate('/analyses');
+        if (data.usuario_id) {
+          login(data.usuario_id);
+          navigate('/analyses');
+        } else {
+          setError('Resposta inválida do servidor');
+        }
       } else {
         const data = await response.json();
         setError(data.message || 'Email ou senha inválidos');
