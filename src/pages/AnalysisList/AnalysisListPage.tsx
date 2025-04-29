@@ -2,15 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, FolderOpen } from 'lucide-react';
 import toast from 'react-hot-toast';
-
-interface Analysis {
-  id: string;
-  nome: string;
-}
-
 import { useAuth } from '../../context/AuthContext';
-import { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
 
 interface Analysis {
   id: string;
@@ -19,50 +11,6 @@ interface Analysis {
 
 const AnalysisListPage: React.FC = () => {
   const { userId } = useAuth();
-  const [analyses, setAnalyses] = useState<Analysis[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchAnalyses();
-  }, [userId]);
-
-  const fetchAnalyses = async () => {
-    try {
-      const response = await fetch(`https://flippings.com.br/analises?usuario_id=${userId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setAnalyses(data);
-      }
-    } catch (error) {
-      toast.error('Erro ao carregar análises');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const createAnalysis = async (name: string) => {
-    try {
-      const response = await fetch('https://flippings.com.br/analises', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id_usuario: userId,
-          nome: name
-        })
-      });
-
-      if (response.ok) {
-        toast.success('Análise criada com sucesso');
-        fetchAnalyses();
-      } else {
-        toast.error('Erro ao criar análise');
-      }
-    } catch (error) {
-      toast.error('Erro ao criar análise');
-    }
-  };
   const navigate = useNavigate();
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [isNewAnalysisModalOpen, setIsNewAnalysisModalOpen] = useState(false);
@@ -70,8 +18,8 @@ const AnalysisListPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchAnalyses = async () => {
+    setIsLoading(true);
     try {
-      const userId = localStorage.getItem('userId');
       const response = await fetch(`https://flippings.com.br/analises?usuario_id=${userId}`);
       if (response.ok) {
         const data = await response.json();
@@ -81,19 +29,20 @@ const AnalysisListPage: React.FC = () => {
       }
     } catch (error) {
       toast.error('Erro ao carregar análises');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchAnalyses();
-  }, []);
+  }, [userId]);
 
   const handleCreateAnalysis = async () => {
     if (!newAnalysisName.trim()) return;
 
     setIsLoading(true);
     try {
-      const userId = localStorage.getItem('userId');
       const response = await fetch('https://flippings.com.br/analises', {
         method: 'POST',
         headers: {
@@ -109,6 +58,7 @@ const AnalysisListPage: React.FC = () => {
         setIsNewAnalysisModalOpen(false);
         setNewAnalysisName('');
         fetchAnalyses();
+        toast.success('Análise criada com sucesso');
       } else {
         toast.error('Erro ao criar análise');
       }
