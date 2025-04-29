@@ -37,6 +37,7 @@ const DashboardPage: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [roiDistribution, setRoiDistribution] = useState<{range: string, count: number}[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedRoiRange, setSelectedRoiRange] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -80,6 +81,26 @@ const DashboardPage: React.FC = () => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
 
+  const getFilteredProperties = () => {
+    if (!selectedRoiRange) return properties;
+
+    return properties.filter(property => {
+      const roi = property.roi_liquido;
+      switch (selectedRoiRange) {
+        case '>30%':
+          return roi > 0.30;
+        case '20-30%':
+          return roi > 0.20 && roi <= 0.30;
+        case '15-20%':
+          return roi > 0.15 && roi <= 0.20;
+        case '<15%':
+          return roi <= 0.15;
+        default:
+          return true;
+      }
+    });
+  };
+
   if (isLoading) {
     return (
       <MainLayout>
@@ -116,28 +137,6 @@ const DashboardPage: React.FC = () => {
       color: 'bg-orange-100'
     }
   ] : [];
-
-  const [selectedRoiRange, setSelectedRoiRange] = useState<string | null>(null);
-
-  const getFilteredProperties = () => {
-    if (!selectedRoiRange) return properties;
-
-    return properties.filter(property => {
-      const roi = property.roi_liquido;
-      switch (selectedRoiRange) {
-        case '>30%':
-          return roi > 0.30;
-        case '20-30%':
-          return roi > 0.20 && roi <= 0.30;
-        case '15-20%':
-          return roi > 0.15 && roi <= 0.20;
-        case '<15%':
-          return roi <= 0.15;
-        default:
-          return true;
-      }
-    });
-  };
 
   return (
     <MainLayout>
