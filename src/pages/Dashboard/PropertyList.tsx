@@ -60,8 +60,8 @@ const PropertyList: React.FC<PropertyListProps> = ({ properties }) => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {properties.map((property) => (
-              <tr key={property.id_simulacao} className="hover:bg-gray-50">
+            {properties.map((property, index) => (
+              <tr key={property.id_simulacao || index} className="hover:bg-gray-50">
                 <td className="px-4 py-3 text-sm text-gray-900">{property.imovel.endereco}</td>
                 <td className="px-4 py-3 text-sm text-gray-900">{property.imovel.area}</td>
                 <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(property.imovel.preco_anunciado)}</td>

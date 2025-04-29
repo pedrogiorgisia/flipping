@@ -1,104 +1,83 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '../../components/Layout/MainLayout';
-import { Plus, Upload, Filter, Download, Trash2, RefreshCw } from 'lucide-react';
+import { Plus, Filter, Download } from 'lucide-react';
 import PropertyTable from './PropertyTable';
 import { Property } from '../../types/property';
+import { useAnalysis } from '../../context/AnalysisContext';
 
 const PropertiesPage: React.FC = () => {
-  const [properties, setProperties] = useState<Property[]>([
-    {
-      id: '1',
-      url: 'https://example.com/property1',
-      agency: 'Modern Realty',
-      price: 500000,
-      area: 120,
-      bedrooms: 3,
-      bathrooms: 2,
-      parkingSpaces: 1,
-      condoFee: 500,
-      yearlyTax: 2000,
-      address: '123 Main St, Cityville',
-      code: 'PRO-001',
-      createdAt: new Date('2023-01-15'),
-      renovated: false,
-    },
-    {
-      id: '2',
-      url: 'https://example.com/property2',
-      agency: 'Luxury Homes',
-      price: 750000,
-      area: 200,
-      bedrooms: 4,
-      bathrooms: 3,
-      parkingSpaces: 2,
-      condoFee: 800,
-      yearlyTax: 3500,
-      address: '456 Park Ave, Townsburg',
-      code: 'PRO-002',
-      createdAt: new Date('2023-02-20'),
-      renovated: true,
-    },
-    {
-      id: '3',
-      url: 'https://example.com/property3',
-      agency: 'City Properties',
-      price: 350000,
-      area: 85,
-      bedrooms: 2,
-      bathrooms: 1,
-      parkingSpaces: 1,
-      condoFee: 400,
-      yearlyTax: 1500,
-      address: '789 Oak St, Metropolis',
-      code: 'PRO-003',
-      createdAt: new Date('2023-03-10'),
-      renovated: false,
-    }
-  ]);
-
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isNewPropertyModalOpen, setIsNewPropertyModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false); // Added from original
+  const { analysisId } = useAnalysis();
 
-  const handleImportHTML = () => {
-    setIsImportModalOpen(true);
-  };
+  useEffect(() => {
+    const fetchProperties = async () => {
+      if (!analysisId) return;
+
+      try {
+        const response = await fetch(`https://flippings.com.br/imoveis?id_analise=${analysisId}`);
+        if (!response.ok) {
+          throw new Error('Erro ao carregar imóveis');
+        }
+        const data = await response.json();
+        setProperties(data);
+      } catch (error) {
+        console.error('Error fetching properties:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProperties();
+  }, [analysisId]);
 
   const handleAddNewProperty = () => {
     setIsNewPropertyModalOpen(true);
   };
 
+  const handleImportHTML = () => { // Added from original
+    setIsImportModalOpen(true);
+  };
+
   const closeModals = () => {
-    setIsImportModalOpen(false);
+    setIsImportModalOpen(false); // Added from original
     setIsNewPropertyModalOpen(false);
   };
 
-  const deleteProperty = (id: string) => {
-    setProperties(properties.filter(property => property.id !== id));
-  };
 
-  const toggleRenovated = (id: string) => {
-    setProperties(properties.map(property => 
-      property.id === id ? { ...property, renovated: !property.renovated } : property
-    ));
-  };
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <div>Carregando...</div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Property Database</h1>
-        <p className="text-gray-600 mt-1">Manage and organize your property listings</p>
+        <h1 className="text-2xl font-bold text-gray-900">Base de Imóveis</h1>
+        <p className="text-gray-600 mt-1">Gerencie os imóveis da sua análise</p>
       </div>
 
       <div className="bg-white rounded-lg shadow mb-6">
         <div className="border-b border-gray-200 px-4 py-4 sm:px-6 flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-3">
-
             <button
               onClick={handleAddNewProperty}
               className="inline-flex items-center px-4 py-2 border border-transparent bg-blue-600 text-sm font-medium rounded-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <Plus size={16} className="mr-2" />
-              New Property
+              Novo Imóvel
+            </button>
+            <button
+              onClick={handleImportHTML}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50"
+            >
+              <Download size={16} className="mr-2" />
+              Importar HTML
             </button>
           </div>
 
@@ -112,45 +91,6 @@ const PropertiesPage: React.FC = () => {
               </select>
             </div>
 
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-700">Área:</label>
-              <input
-                type="number"
-                placeholder="Min"
-                className="w-20 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
-              />
-              <span>-</span>
-              <input
-                type="number"
-                placeholder="Max"
-                className="w-20 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
-              />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-700">Quartos:</label>
-              <select className="rounded-md border border-gray-300 px-3 py-1.5 text-sm">
-                <option value="">Todos</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-700">Banheiros:</label>
-              <select className="rounded-md border border-gray-300 px-3 py-1.5 text-sm">
-                <option value="">Todos</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
-            </div>
-
             <button className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50">
               <Download size={16} className="mr-2" />
               Exportar
@@ -160,8 +100,8 @@ const PropertiesPage: React.FC = () => {
 
         <PropertyTable 
           properties={properties} 
-          onDelete={deleteProperty}
-          onToggleRenovated={toggleRenovated}
+          onEdit={(property) => console.log('Edit:', property)}
+          onDelete={(id) => console.log('Delete:', id)}
         />
       </div>
 
