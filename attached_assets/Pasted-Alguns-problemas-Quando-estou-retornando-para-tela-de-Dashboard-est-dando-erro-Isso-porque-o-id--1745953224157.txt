@@ -1,0 +1,218 @@
+Alguns problemas: Quando estou retornando para tela de Dashboard, está dando erro. Isso porque o id_analise não está mais definido. Isso deveria ficar trafegando sempre, igual o usuario_id. Acho que deveria funcionar com sessão tbm.. Só se o usuário mudar a analise_id que tem que mudar.
+
+Ao abrir a tela de base de imóveis, deveria estar chamando a API já http://127.0.0.1:8000/imoveis?id_analise=id_analise
+passando o id_analise correto. Isso para quando abrir a tela, já vir todos imóveis do banco de dados daquela análise preenchidas na tabela. Se quiser filtrar, ele pode filtrar usando a API, ou até mesmo em tela. Veja o que é melhor.
+
+isso não está ocorrendo, pois vi no console
+
+Adicionalmente no console tá dando outros erros:
+react_jsx-dev-runtime.js?v=d7e931c9:62 Warning: Each child in a list should have a unique "key" prop.
+
+Check the render method of `PropertyList`. See https://reactjs.org/link/warning-keys for more information.
+    at tr
+    at PropertyList (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/src/pages/Dashboard/PropertyList.tsx:18:25)
+    at div
+    at main
+    at div
+    at div
+    at MainLayout (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/src/components/Layout/MainLayout.tsx:19:23)
+    at DashboardPage (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/src/pages/Dashboard/DashboardPage.tsx:27:18)
+    at RenderedRoute (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=d7e931c9:4087:5)
+    at Routes (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=d7e931c9:4557:5)
+    at RenderedRoute (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=d7e931c9:4087:5)
+    at Routes (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=d7e931c9:4557:5)
+    at AuthProvider (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/src/context/AuthContext.tsx:21:32)
+    at Router (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=d7e931c9:4500:15)
+    at BrowserRouter (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=d7e931c9:5246:5)
+    at App
+printWarning @ react_jsx-dev-runtime.js?v=d7e931c9:62Understand this error
+DashboardPage.tsx:48 
+            
+            
+           GET https://flippings.com.br/imoveis/resumo?id_analise=undefined 422 (Unprocessable Entity)
+fetchData @ DashboardPage.tsx:48
+(anonymous) @ DashboardPage.tsx:76
+commitHookEffectListMount @ chunk-M324AGAM.js?v=d7e931c9:16913
+commitPassiveMountOnFiber @ chunk-M324AGAM.js?v=d7e931c9:18154
+commitPassiveMountEffects_complete @ chunk-M324AGAM.js?v=d7e931c9:18127
+commitPassiveMountEffects_begin @ chunk-M324AGAM.js?v=d7e931c9:18117
+commitPassiveMountEffects @ chunk-M324AGAM.js?v=d7e931c9:18107
+flushPassiveEffectsImpl @ chunk-M324AGAM.js?v=d7e931c9:19488
+flushPassiveEffects @ chunk-M324AGAM.js?v=d7e931c9:19445
+commitRootImpl @ chunk-M324AGAM.js?v=d7e931c9:19414
+commitRoot @ chunk-M324AGAM.js?v=d7e931c9:19275
+performSyncWorkOnRoot @ chunk-M324AGAM.js?v=d7e931c9:18893
+flushSyncCallbacks @ chunk-M324AGAM.js?v=d7e931c9:9117
+(anonymous) @ chunk-M324AGAM.js?v=d7e931c9:18625Understand this error
+DashboardPage.tsx:68 Error fetching data: Error: Erro ao carregar resumo
+    at fetchData (DashboardPage.tsx:49:40)
+fetchData @ DashboardPage.tsx:68
+await in fetchData
+(anonymous) @ DashboardPage.tsx:76
+commitHookEffectListMount @ chunk-M324AGAM.js?v=d7e931c9:16913
+commitPassiveMountOnFiber @ chunk-M324AGAM.js?v=d7e931c9:18154
+commitPassiveMountEffects_complete @ chunk-M324AGAM.js?v=d7e931c9:18127
+commitPassiveMountEffects_begin @ chunk-M324AGAM.js?v=d7e931c9:18117
+commitPassiveMountEffects @ chunk-M324AGAM.js?v=d7e931c9:18107
+flushPassiveEffectsImpl @ chunk-M324AGAM.js?v=d7e931c9:19488
+flushPassiveEffects @ chunk-M324AGAM.js?v=d7e931c9:19445
+commitRootImpl @ chunk-M324AGAM.js?v=d7e931c9:19414
+commitRoot @ chunk-M324AGAM.js?v=d7e931c9:19275
+performSyncWorkOnRoot @ chunk-M324AGAM.js?v=d7e931c9:18893
+flushSyncCallbacks @ chunk-M324AGAM.js?v=d7e931c9:9117
+(anonymous) @ chunk-M324AGAM.js?v=d7e931c9:18625Understand this error
+DashboardPage.tsx:48 
+            
+            
+           GET https://flippings.com.br/imoveis/resumo?id_analise=undefined 422 (Unprocessable Entity)
+fetchData @ DashboardPage.tsx:48
+(anonymous) @ DashboardPage.tsx:76
+commitHookEffectListMount @ chunk-M324AGAM.js?v=d7e931c9:16913
+invokePassiveEffectMountInDEV @ chunk-M324AGAM.js?v=d7e931c9:18322
+invokeEffectsInDev @ chunk-M324AGAM.js?v=d7e931c9:19699
+commitDoubleInvokeEffectsInDEV @ chunk-M324AGAM.js?v=d7e931c9:19684
+flushPassiveEffectsImpl @ chunk-M324AGAM.js?v=d7e931c9:19501
+flushPassiveEffects @ chunk-M324AGAM.js?v=d7e931c9:19445
+commitRootImpl @ chunk-M324AGAM.js?v=d7e931c9:19414
+commitRoot @ chunk-M324AGAM.js?v=d7e931c9:19275
+performSyncWorkOnRoot @ chunk-M324AGAM.js?v=d7e931c9:18893
+flushSyncCallbacks @ chunk-M324AGAM.js?v=d7e931c9:9117
+(anonymous) @ chunk-M324AGAM.js?v=d7e931c9:18625Understand this error
+DashboardPage.tsx:68 Error fetching data: Error: Erro ao carregar resumo
+    at fetchData (DashboardPage.tsx:49:40)
+fetchData @ DashboardPage.tsx:68
+await in fetchData
+(anonymous) @ DashboardPage.tsx:76
+commitHookEffectListMount @ chunk-M324AGAM.js?v=d7e931c9:16913
+invokePassiveEffectMountInDEV @ chunk-M324AGAM.js?v=d7e931c9:18322
+invokeEffectsInDev @ chunk-M324AGAM.js?v=d7e931c9:19699
+commitDoubleInvokeEffectsInDEV @ chunk-M324AGAM.js?v=d7e931c9:19684
+flushPassiveEffectsImpl @ chunk-M324AGAM.js?v=d7e931c9:19501
+flushPassiveEffects @ chunk-M324AGAM.js?v=d7e931c9:19445
+commitRootImpl @ chunk-M324AGAM.js?v=d7e931c9:19414
+commitRoot @ chunk-M324AGAM.js?v=d7e931c9:19275
+performSyncWorkOnRoot @ chunk-M324AGAM.js?v=d7e931c9:18893
+flushSyncCallbacks @ chunk-M324AGAM.js?v=d7e931c9:9117
+(anonymous) @ chunk-M324AGAM.js?v=d7e931c9:18625Understand this error
+DashboardPage.tsx:48 
+            
+            
+           GET https://flippings.com.br/imoveis/resumo?id_analise=undefined 422 (Unprocessable Entity)
+fetchData @ DashboardPage.tsx:48
+(anonymous) @ DashboardPage.tsx:76
+commitHookEffectListMount @ chunk-M324AGAM.js?v=d7e931c9:16913
+commitPassiveMountOnFiber @ chunk-M324AGAM.js?v=d7e931c9:18154
+commitPassiveMountEffects_complete @ chunk-M324AGAM.js?v=d7e931c9:18127
+commitPassiveMountEffects_begin @ chunk-M324AGAM.js?v=d7e931c9:18117
+commitPassiveMountEffects @ chunk-M324AGAM.js?v=d7e931c9:18107
+flushPassiveEffectsImpl @ chunk-M324AGAM.js?v=d7e931c9:19488
+flushPassiveEffects @ chunk-M324AGAM.js?v=d7e931c9:19445
+commitRootImpl @ chunk-M324AGAM.js?v=d7e931c9:19414
+commitRoot @ chunk-M324AGAM.js?v=d7e931c9:19275
+performSyncWorkOnRoot @ chunk-M324AGAM.js?v=d7e931c9:18893
+flushSyncCallbacks @ chunk-M324AGAM.js?v=d7e931c9:9117
+(anonymous) @ chunk-M324AGAM.js?v=d7e931c9:18625Understand this error
+DashboardPage.tsx:68 Error fetching data: Error: Erro ao carregar resumo
+    at fetchData (DashboardPage.tsx:49:40)
+fetchData @ DashboardPage.tsx:68
+await in fetchData
+(anonymous) @ DashboardPage.tsx:76
+commitHookEffectListMount @ chunk-M324AGAM.js?v=d7e931c9:16913
+commitPassiveMountOnFiber @ chunk-M324AGAM.js?v=d7e931c9:18154
+commitPassiveMountEffects_complete @ chunk-M324AGAM.js?v=d7e931c9:18127
+commitPassiveMountEffects_begin @ chunk-M324AGAM.js?v=d7e931c9:18117
+commitPassiveMountEffects @ chunk-M324AGAM.js?v=d7e931c9:18107
+flushPassiveEffectsImpl @ chunk-M324AGAM.js?v=d7e931c9:19488
+flushPassiveEffects @ chunk-M324AGAM.js?v=d7e931c9:19445
+commitRootImpl @ chunk-M324AGAM.js?v=d7e931c9:19414
+commitRoot @ chunk-M324AGAM.js?v=d7e931c9:19275
+performSyncWorkOnRoot @ chunk-M324AGAM.js?v=d7e931c9:18893
+flushSyncCallbacks @ chunk-M324AGAM.js?v=d7e931c9:9117
+(anonymous) @ chunk-M324AGAM.js?v=d7e931c9:18625Understand this error
+DashboardPage.tsx:48 
+            
+            
+           GET https://flippings.com.br/imoveis/resumo?id_analise=undefined 422 (Unprocessable Entity)
+fetchData @ DashboardPage.tsx:48
+(anonymous) @ DashboardPage.tsx:76
+commitHookEffectListMount @ chunk-M324AGAM.js?v=d7e931c9:16913
+invokePassiveEffectMountInDEV @ chunk-M324AGAM.js?v=d7e931c9:18322
+invokeEffectsInDev @ chunk-M324AGAM.js?v=d7e931c9:19699
+commitDoubleInvokeEffectsInDEV @ chunk-M324AGAM.js?v=d7e931c9:19684
+flushPassiveEffectsImpl @ chunk-M324AGAM.js?v=d7e931c9:19501
+flushPassiveEffects @ chunk-M324AGAM.js?v=d7e931c9:19445
+commitRootImpl @ chunk-M324AGAM.js?v=d7e931c9:19414
+commitRoot @ chunk-M324AGAM.js?v=d7e931c9:19275
+performSyncWorkOnRoot @ chunk-M324AGAM.js?v=d7e931c9:18893
+flushSyncCallbacks @ chunk-M324AGAM.js?v=d7e931c9:9117
+(anonymous) @ chunk-M324AGAM.js?v=d7e931c9:18625Understand this error
+DashboardPage.tsx:68 Error fetching data: Error: Erro ao carregar resumo
+    at fetchData (DashboardPage.tsx:49:40)
+fetchData @ DashboardPage.tsx:68
+await in fetchData
+(anonymous) @ DashboardPage.tsx:76
+commitHookEffectListMount @ chunk-M324AGAM.js?v=d7e931c9:16913
+invokePassiveEffectMountInDEV @ chunk-M324AGAM.js?v=d7e931c9:18322
+invokeEffectsInDev @ chunk-M324AGAM.js?v=d7e931c9:19699
+commitDoubleInvokeEffectsInDEV @ chunk-M324AGAM.js?v=d7e931c9:19684
+flushPassiveEffectsImpl @ chunk-M324AGAM.js?v=d7e931c9:19501
+flushPassiveEffects @ chunk-M324AGAM.js?v=d7e931c9:19445
+commitRootImpl @ chunk-M324AGAM.js?v=d7e931c9:19414
+commitRoot @ chunk-M324AGAM.js?v=d7e931c9:19275
+performSyncWorkOnRoot @ chunk-M324AGAM.js?v=d7e931c9:18893
+flushSyncCallbacks @ chunk-M324AGAM.js?v=d7e931c9:9117
+(anonymous) @ chunk-M324AGAM.js?v=d7e931c9:18625Understand this error
+DashboardPage.tsx:48 
+            
+            
+           GET https://flippings.com.br/imoveis/resumo?id_analise=undefined 422 (Unprocessable Entity)
+fetchData @ DashboardPage.tsx:48
+(anonymous) @ DashboardPage.tsx:76
+commitHookEffectListMount @ chunk-M324AGAM.js?v=d7e931c9:16913
+commitPassiveMountOnFiber @ chunk-M324AGAM.js?v=d7e931c9:18154
+commitPassiveMountEffects_complete @ chunk-M324AGAM.js?v=d7e931c9:18127
+commitPassiveMountEffects_begin @ chunk-M324AGAM.js?v=d7e931c9:18117
+commitPassiveMountEffects @ chunk-M324AGAM.js?v=d7e931c9:18107
+flushPassiveEffectsImpl @ chunk-M324AGAM.js?v=d7e931c9:19488
+flushPassiveEffects @ chunk-M324AGAM.js?v=d7e931c9:19445
+commitRootImpl @ chunk-M324AGAM.js?v=d7e931c9:19414
+commitRoot @ chunk-M324AGAM.js?v=d7e931c9:19275
+performSyncWorkOnRoot @ chunk-M324AGAM.js?v=d7e931c9:18893
+flushSyncCallbacks @ chunk-M324AGAM.js?v=d7e931c9:9117
+(anonymous) @ chunk-M324AGAM.js?v=d7e931c9:18625Understand this error
+DashboardPage.tsx:68 Error fetching data: Error: Erro ao carregar resumo
+    at fetchData (DashboardPage.tsx:49:40)
+fetchData @ DashboardPage.tsx:68
+await in fetchData
+(anonymous) @ DashboardPage.tsx:76
+commitHookEffectListMount @ chunk-M324AGAM.js?v=d7e931c9:16913
+commitPassiveMountOnFiber @ chunk-M324AGAM.js?v=d7e931c9:18154
+commitPassiveMountEffects_complete @ chunk-M324AGAM.js?v=d7e931c9:18127
+commitPassiveMountEffects_begin @ chunk-M324AGAM.js?v=d7e931c9:18117
+commitPassiveMountEffects @ chunk-M324AGAM.js?v=d7e931c9:18107
+flushPassiveEffectsImpl @ chunk-M324AGAM.js?v=d7e931c9:19488
+flushPassiveEffects @ chunk-M324AGAM.js?v=d7e931c9:19445
+commitRootImpl @ chunk-M324AGAM.js?v=d7e931c9:19414
+commitRoot @ chunk-M324AGAM.js?v=d7e931c9:19275
+performSyncWorkOnRoot @ chunk-M324AGAM.js?v=d7e931c9:18893
+flushSyncCallbacks @ chunk-M324AGAM.js?v=d7e931c9:9117
+(anonymous) @ chunk-M324AGAM.js?v=d7e931c9:18625Understand this error
+DashboardPage.tsx:48 
+            
+            
+           GET https://flippings.com.br/imoveis/resumo?id_analise=undefined 422 (Unprocessable Entity)
+fetchData @ DashboardPage.tsx:48
+(anonymous) @ DashboardPage.tsx:76
+commitHookEffectListMount @ chunk-M324AGAM.js?v=d7e931c9:16913
+invokePassiveEffectMountInDEV @ chunk-M324AGAM.js?v=d7e931c9:18322
+invokeEffectsInDev @ chunk-M324AGAM.js?v=d7e931c9:19699
+commitDoubleInvokeEffectsInDEV @ chunk-M324AGAM.js?v=d7e931c9:19684
+flushPassiveEffectsImpl @ chunk-M324AGAM.js?v=d7e931c9:19501
+flushPassiveEffects @ chunk-M324AGAM.js?v=d7e931c9:19445
+commitRootImpl @ chunk-M324AGAM.js?v=d7e931c9:19414
+commitRoot @ chunk-M324AGAM.js?v=d7e931c9:19275
+performSyncWorkOnRoot @ chunk-M324AGAM.js?v=d7e931c9:18893
+flushSyncCallbacks @ chunk-M324AGAM.js?v=d7e931c9:9117
+(anonymous) @ chunk-M324AGAM.js?v=d7e931c9:18625Understand this error
+DashboardPage.tsx:68 Error fetching data: Error: Erro ao carregar resumo
+    at fetchData (DashboardPage.tsx:49:40)
