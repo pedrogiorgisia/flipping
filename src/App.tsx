@@ -13,6 +13,7 @@ import IndividualAnalysisPage from './pages/Analysis/IndividualAnalysisPage';
 function App() {
   return (
     <Router>
+      <AuthProvider>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/analyses" element={<AnalysisListPage />} />
@@ -28,6 +29,7 @@ function App() {
         } />
         <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
+      </AuthProvider>
     </Router>
   );
 }

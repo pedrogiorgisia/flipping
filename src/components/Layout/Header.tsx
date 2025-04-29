@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { User, Settings, LogOut, Menu } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const Header: React.FC = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -43,9 +44,12 @@ const Header: React.FC = () => {
                 <a href="#" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                   <Settings size={16} className="mr-2" /> Settings
                 </a>
-                <a href="#" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <button 
+                  onClick={() => logout()} 
+                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                >
                   <LogOut size={16} className="mr-2" /> Logout
-                </a>
+                </button>
               </div>
             )}
           </div>

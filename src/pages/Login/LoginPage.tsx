@@ -27,6 +27,8 @@ const LoginPage: React.FC = () => {
       });
 
       if (response.ok) {
+        const data = await response.json();
+        login(data.usuario_id); // Use the user ID from the API response
         navigate('/analyses');
       } else {
         const data = await response.json();
