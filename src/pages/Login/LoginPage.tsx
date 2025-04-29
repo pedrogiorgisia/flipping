@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, Mail, AlertCircle } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    const { login } = useAuth();
 
     try {
       const response = await fetch('https://flippings.com.br/login', {
@@ -26,20 +28,17 @@ const LoginPage: React.FC = () => {
         })
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.usuario_id) {
-          login(data.usuario_id);
-          navigate('/analyses');
-        } else {
-          setError('Resposta inválida do servidor');
-        }
+      const data = await response.json();
+      
+      if (response.ok && data.usuario_id) {
+        login(data.usuario_id);
+        navigate('/analyses');
       } else {
-        const data = await response.json();
         setError(data.message || 'Email ou senha inválidos');
       }
     } catch (err) {
-      setError('Erro ao tentar fazer login. Tente novamente.');
+      console.error('Erro no login:', err);
+      setError('Erro de conexão com o servidor. Tente novamente.');
     } finally {
       setIsLoading(false);
     }
