@@ -93,7 +93,7 @@ const AnalysisListPage: React.FC = () => {
             <div
               key={analysis.id}
               className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow cursor-pointer"
-              onClick={() => navigate(`/analysis/${analysis.id}/dashboard`)}
+              onClick={() => navigate(`/analysis/${analysis.id}/dashboard`, { state: { id_analise: analysis.id } })}
             >
               <div className="p-5">
                 <div className="flex items-center">

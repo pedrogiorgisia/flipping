@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import MainLayout from '../../components/Layout/MainLayout';
 import { Home, DollarSign } from 'lucide-react';
 import DashboardStats from './DashboardStats';
@@ -30,7 +30,9 @@ interface Property {
 }
 
 const DashboardPage: React.FC = () => {
-  const { id_analise } = useParams<{ id_analise: string }>();
+  const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const id_analise = id || (location.state as any)?.id_analise;
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [properties, setProperties] = useState<Property[]>([]);
   const [roiDistribution, setRoiDistribution] = useState<{range: string, count: number}[]>([]);
