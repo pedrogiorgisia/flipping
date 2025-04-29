@@ -1,0 +1,97 @@
+🧾 Tela: Base de Imóveis
+✅ Objetivo da Tela
+Listar, adicionar, editar e excluir imóveis cadastrados dentro da análise selecionada.
+
+🔄 Dados recebidos da tela anterior
+
+id_analise (ID da análise selecionada)
+
+🔍 Funcionalidade 1: Listagem de Imóveis
+🔌 API:
+GET https://flippings.com.br/imoveis?id_analise={id_analise}
+(Usar os filtros se houver: valor_min, valor_max, quartos, banheiros, reformado, etc.)
+
+🖼️ Colunas da tabela:
+
+Endereço → endereco
+
+Imobiliária → imobiliaria
+
+Reforma → reformado (mostrar como “Sim” ou “Não”)
+
+Preço Anunciado → preco_anunciado
+
+Área (m²) → area
+
+Quartos → quartos
+
+Banheiros → banheiros
+
+Vagas → vagas
+
+Condomínio Mensal (R$) → condominio_mensal
+
+IPTU Anual (R$) → iptu_anual
+
+Comentários → comentarios
+
+Se comentarios.length > 50, truncar para 30 caracteres e adicionar reticências ...
+
+🛠️ Observação:
+
+Traduzir todos os textos da interface para português (títulos de colunas, botão “New Property”, status, botões de ação, etc.)
+
+➕ Funcionalidade 2: Adicionar Novo Imóvel
+🔹 Ação:
+Ao clicar no botão “+ Novo Imóvel”, abrir popup com formulário.
+
+📋 Campos do formulário (com mapeamento para API):
+
+url → URL do anúncio
+
+imobiliaria → Imobiliária
+
+preco_anunciado → Preço (R$)
+
+area → Área (m²)
+
+quartos → Quartos
+
+banheiros → Banheiros
+
+vagas → Vagas
+
+condominio_mensal → Condomínio (R$)
+
+iptu_anual → IPTU (R$)
+
+codigo_ref_externo → Código
+
+data_anuncio → Data do anúncio
+
+endereco → Endereço
+
+reformado → Checkbox "Reformado"
+
+comentarios → Comentários
+
+🔌 API:
+POST https://flippings.com.br/imoveis
+(Enviar todos os campos do formulário + id_analise)
+
+📝 Funcionalidade 3: Editar Imóvel
+🔹 Ação:
+Ao clicar no botão de lápis (✏️), abrir o mesmo popup de adicionar imóvel, já preenchido com os dados atuais do imóvel.
+
+🔌 API:
+(Atualização ainda não apresentada na documentação — se existir, será via PUT /imoveis/{id} com os mesmos campos da criação.)
+
+🗑️ Funcionalidade 4: Excluir Imóvel
+🔹 Ação: Ao clicar no ícone de lixeira, abrir popup de confirmação:
+
+Tem certeza que deseja excluir este imóvel?
+[Cancelar] [Confirmar]
+
+Se confirmado:
+🔌 API:
+DELETE https://flippings.com.br/imoveis/{id_imovel}
