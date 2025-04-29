@@ -5,6 +5,7 @@ import MainLayout from '../../components/Layout/MainLayout';
 import { Home, DollarSign } from 'lucide-react';
 import DashboardStats from './DashboardStats';
 import PropertyList from './PropertyList';
+import toast from 'react-hot-toast';
 
 interface DashboardSummary {
   reformados: number;
@@ -33,17 +34,22 @@ const DashboardPage: React.FC = () => {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [properties, setProperties] = useState<Property[]>([]);
   const [roiDistribution, setRoiDistribution] = useState<{range: string, count: number}[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
+        
         // Fetch summary data
         const summaryResponse = await fetch(`https://flippings.com.br/imoveis/resumo?id_analise=${id_analise}`);
+        if (!summaryResponse.ok) throw new Error('Erro ao carregar resumo');
         const summaryData = await summaryResponse.json();
         setSummary(summaryData);
 
         // Fetch properties data
         const propertiesResponse = await fetch(`https://flippings.com.br/simulacoes?id_analise=${id_analise}&simulacao_principal=true`);
+        if (!propertiesResponse.ok) throw new Error('Erro ao carregar simulações');
         const propertiesData = await propertiesResponse.json();
         setProperties(propertiesData);
 
@@ -57,6 +63,9 @@ const DashboardPage: React.FC = () => {
         setRoiDistribution(distribution);
       } catch (error) {
         console.error('Error fetching data:', error);
+        toast.error('Erro ao carregar dados do dashboard');
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -68,6 +77,16 @@ const DashboardPage: React.FC = () => {
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
+
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <div className="flex items-center justify-center h-full">
+          <div className="text-gray-600">Carregando...</div>
+        </div>
+      </MainLayout>
+    );
+  }
 
   const stats = summary ? [
     {
@@ -123,9 +142,11 @@ const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="mt-6">
-        <PropertyList properties={properties} />
-      </div>
+      {properties.length > 0 && (
+        <div className="mt-6">
+          <PropertyList properties={properties} />
+        </div>
+      )}
     </MainLayout>
   );
 };
