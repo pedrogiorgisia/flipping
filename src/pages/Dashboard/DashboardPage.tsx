@@ -117,6 +117,28 @@ const DashboardPage: React.FC = () => {
     }
   ] : [];
 
+  const [selectedRoiRange, setSelectedRoiRange] = useState<string | null>(null);
+
+  const getFilteredProperties = () => {
+    if (!selectedRoiRange) return properties;
+
+    return properties.filter(property => {
+      const roi = property.roi_liquido;
+      switch (selectedRoiRange) {
+        case '>30%':
+          return roi > 0.30;
+        case '20-30%':
+          return roi > 0.20 && roi <= 0.30;
+        case '15-20%':
+          return roi > 0.15 && roi <= 0.20;
+        case '<15%':
+          return roi <= 0.15;
+        default:
+          return true;
+      }
+    });
+  };
+
   return (
     <MainLayout>
       <div className="mb-6">
@@ -134,7 +156,13 @@ const DashboardPage: React.FC = () => {
           <div className="p-6">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {roiDistribution.map((item) => (
-                <div key={item.range} className="bg-gray-50 rounded-lg p-4">
+                <div 
+                  key={item.range} 
+                  className={`bg-gray-50 rounded-lg p-4 cursor-pointer transition-colors duration-200 ${
+                    selectedRoiRange === item.range ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-100'
+                  }`}
+                  onClick={() => setSelectedRoiRange(selectedRoiRange === item.range ? null : item.range)}
+                >
                   <div className="text-sm text-gray-500">{item.range} ROI</div>
                   <div className="text-lg font-medium text-gray-900">{item.count} imóveis</div>
                 </div>
@@ -146,7 +174,17 @@ const DashboardPage: React.FC = () => {
 
       {properties.length > 0 && (
         <div className="mt-6">
-          <PropertyList properties={properties} />
+          <PropertyList properties={getFilteredProperties()} />
+          {selectedRoiRange && (
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setSelectedRoiRange(null)}
+                className="text-sm text-blue-600 hover:text-blue-800"
+              >
+                Limpar filtro
+              </button>
+            </div>
+          )}
         </div>
       )}
     </MainLayout>
