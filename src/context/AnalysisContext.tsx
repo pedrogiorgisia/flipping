@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface AnalysisContextType {
   analysisId: string | null;
@@ -9,7 +9,17 @@ interface AnalysisContextType {
 const AnalysisContext = createContext<AnalysisContextType | undefined>(undefined);
 
 export const AnalysisProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [analysisId, setAnalysisId] = useState<string | null>(null);
+  const [analysisId, setAnalysisId] = useState<string | null>(() => {
+    return sessionStorage.getItem('analysisId');
+  });
+
+  useEffect(() => {
+    if (analysisId) {
+      sessionStorage.setItem('analysisId', analysisId);
+    } else {
+      sessionStorage.removeItem('analysisId');
+    }
+  }, [analysisId]);
 
   return (
     <AnalysisContext.Provider value={{ analysisId, setAnalysisId }}>

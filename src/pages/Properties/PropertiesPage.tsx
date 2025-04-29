@@ -1,20 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import MainLayout from '../../components/Layout/MainLayout';
-import { Plus, Filter, Download } from 'lucide-react';
+import { Plus, Filter, Download, Upload } from 'lucide-react';
 import PropertyTable from './PropertyTable';
 import { Property } from '../../types/property';
 import { useAnalysis } from '../../context/AnalysisContext';
+import toast from 'react-hot-toast';
 
 const PropertiesPage: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isNewPropertyModalOpen, setIsNewPropertyModalOpen] = useState(false);
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false); // Added from original
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const { analysisId } = useAnalysis();
 
   useEffect(() => {
     const fetchProperties = async () => {
-      if (!analysisId) return;
+      if (!analysisId) {
+        toast.error('Nenhuma análise selecionada');
+        setIsLoading(false);
+        return;
+      }
 
       try {
         const response = await fetch(`https://flippings.com.br/imoveis?id_analise=${analysisId}`);
@@ -25,6 +30,7 @@ const PropertiesPage: React.FC = () => {
         setProperties(data);
       } catch (error) {
         console.error('Error fetching properties:', error);
+        toast.error('Erro ao carregar imóveis');
       } finally {
         setIsLoading(false);
       }
@@ -37,20 +43,21 @@ const PropertiesPage: React.FC = () => {
     setIsNewPropertyModalOpen(true);
   };
 
-  const handleImportHTML = () => { // Added from original
+  const handleImportHTML = () => {
     setIsImportModalOpen(true);
   };
 
   const closeModals = () => {
-    setIsImportModalOpen(false); // Added from original
+    setIsImportModalOpen(false);
     setIsNewPropertyModalOpen(false);
   };
-
 
   if (isLoading) {
     return (
       <MainLayout>
-        <div>Carregando...</div>
+        <div className="flex items-center justify-center h-full">
+          <div className="text-gray-600">Carregando...</div>
+        </div>
       </MainLayout>
     );
   }
@@ -76,7 +83,7 @@ const PropertiesPage: React.FC = () => {
               onClick={handleImportHTML}
               className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50"
             >
-              <Download size={16} className="mr-2" />
+              <Upload size={16} className="mr-2" />
               Importar HTML
             </button>
           </div>
