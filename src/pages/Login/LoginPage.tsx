@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, Mail, AlertCircle } from 'lucide-react';
@@ -5,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -14,7 +16,6 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    const { login } = useAuth();
 
     try {
       const response = await fetch('https://flippings.com.br/login', {
