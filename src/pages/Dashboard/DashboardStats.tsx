@@ -1,10 +1,9 @@
+
 import React from 'react';
 
 interface Stat {
   label: string;
   value: string | number;
-  change: string;
-  positive: boolean;
   icon: React.ReactNode;
   color: string;
 }
@@ -27,11 +26,6 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({ stats }) => {
                 <div className="mt-1 text-3xl font-semibold text-gray-900">{stat.value}</div>
                 <div className="mt-1 text-sm text-gray-500">{stat.label}</div>
               </div>
-            </div>
-          </div>
-          <div className="px-5 py-2">
-            <div className={`text-sm ${stat.positive ? 'text-green-600' : 'text-red-600'} text-right`}>
-              <span className="font-medium">{stat.change}</span>
             </div>
           </div>
         </div>
