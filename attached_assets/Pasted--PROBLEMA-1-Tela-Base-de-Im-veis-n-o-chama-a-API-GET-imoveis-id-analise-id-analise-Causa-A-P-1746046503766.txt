@@ -1,0 +1,94 @@
+✅ PROBLEMA 1: Tela "Base de Imóveis" não chama a API GET /imoveis?id_analise={id_analise}
+Causa:
+A PropertiesPage depende do analysisId vindo do contexto (useAnalysis()), mas o ID só é salvo no contexto via setAnalysisId() ao navegar pela AnalysisListPage (clicando em uma análise). Se o usuário acessa direto pela rota /analysis/:id/properties, o analysisId pode não estar setado.
+
+✅ Correção técnica recomendada:
+Adicione um fallback que busque o id da URL se analysisId estiver nulo.
+
+tsx
+Copiar
+Editar
+// Em PropertiesPage.tsx
+import { useParams } from 'react-router-dom';
+
+// Dentro do componente
+const { id } = useParams();
+const effectiveId = analysisId || id; // Fallback da URL
+
+useEffect(() => {
+  if (!effectiveId) {
+    toast.error('Nenhuma análise selecionada');
+    setIsLoading(false);
+    return;
+  }
+
+  fetch(`https://flippings.com.br/imoveis?id_analise=${effectiveId}`)
+    .then(...) // manter a lógica atual
+⚠️ Importante: considere também setar setAnalysisId(effectiveId) ao fazer esse fallback.
+
+✅ PROBLEMA 2: Ao clicar em "+ Novo imóvel", o id_analise está nulo no POST
+Causa:
+O formulário de criação de imóvel está usando analysisId do contexto, que pode estar null por causa da mesma falha do problema 1.
+
+✅ Correção técnica recomendada:
+No mesmo ponto acima, garanta que o analysisId esteja sempre presente:
+
+tsx
+Copiar
+Editar
+const { setAnalysisId } = useAnalysis();
+const { id } = useParams();
+
+useEffect(() => {
+  if (!analysisId && id) {
+    setAnalysisId(id); // atualiza o contexto para evitar id nulo no post
+  }
+}, [analysisId, id]);
+Ou melhor ainda: centralize essa lógica em um hook useEffectiveAnalysisId() para reaproveitar.
+
+✅ PROBLEMA 3: Ao voltar para Dashboard por meio direto, perde o id_analise
+Causa:
+A navegação direta para /analysis/:id/dashboard não garante que setAnalysisId seja chamado. O DashboardPage também usa useParams().id, mas não persiste no contexto.
+
+✅ Correção técnica recomendada:
+Mesmo ajuste do problema 2:
+
+tsx
+Copiar
+Editar
+// Dentro de DashboardPage
+const { id } = useParams();
+const { analysisId, setAnalysisId } = useAnalysis();
+
+useEffect(() => {
+  if (!analysisId && id) {
+    setAnalysisId(id);
+  }
+}, [analysisId, id]);
+✅ Resumo das ações para o DEV implementar:
+Criar um hook utilitário chamado useEffectiveAnalysisId(), que:
+
+Usa useParams() para extrair id
+
+Usa useAnalysis() para ler e setar o contexto
+
+Retorna sempre um analysisId válido
+
+tsx
+Copiar
+Editar
+export function useEffectiveAnalysisId() {
+  const { id } = useParams();
+  const { analysisId, setAnalysisId } = useAnalysis();
+
+  useEffect(() => {
+    if (!analysisId && id) {
+      setAnalysisId(id);
+    }
+  }, [analysisId, id]);
+
+  return analysisId || id || null;
+}
+Usar esse hook em DashboardPage, PropertiesPage, AnalysisPage, etc. no lugar de useAnalysis() direto.
+
+Garantir que todos os lugares que usam analysisId verifiquem se ele está setado, e sempre o persistam via setAnalysisId.
