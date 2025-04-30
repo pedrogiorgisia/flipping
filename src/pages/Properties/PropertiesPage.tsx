@@ -155,22 +155,48 @@ const PropertiesPage: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Adicionar Novo Imóvel</h2>
-            <form onSubmit={(e) => {
+            <form onSubmit={async (e) => {
               e.preventDefault();
               const formElement = e.target as HTMLFormElement;
               const formData = new FormData(formElement);
               const data = Object.fromEntries(formData);
-              handleAddProperty({
-                ...data,
-                preco_anunciado: Number(data.preco_anunciado),
-                area: Number(data.area),
-                quartos: Number(data.quartos),
-                banheiros: Number(data.banheiros),
-                vagas: Number(data.vagas),
-                condominio_mensal: Number(data.condominio_mensal),
-                iptu_anual: Number(data.iptu_anual),
-                reformado: Boolean(data.reformado),
-              });
+              
+              try {
+                const response = await fetch('https://flippings.com.br/imoveis', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    id_analise: analysisId,
+                    url: data.url,
+                    imobiliaria: data.imobiliaria,
+                    preco_anunciado: Number(data.preco_anunciado),
+                    area: Number(data.area),
+                    quartos: Number(data.quartos),
+                    banheiros: Number(data.banheiros),
+                    vagas: Number(data.vagas) || 0,
+                    condominio_mensal: Number(data.condominio_mensal),
+                    iptu_anual: Number(data.iptu_anual),
+                    codigo_ref_externo: data.codigo_ref_externo,
+                    data_anuncio: data.data_anuncio,
+                    endereco: data.endereco,
+                    reformado: Boolean(data.reformado),
+                    comentarios: data.comentarios
+                  })
+                });
+
+                if (!response.ok) {
+                  throw new Error('Erro ao adicionar imóvel');
+                }
+
+                await fetchProperties();
+                setIsNewPropertyModalOpen(false);
+                toast.success('Imóvel adicionado com sucesso');
+              } catch (error) {
+                console.error('Erro ao adicionar imóvel:', error);
+                toast.error('Erro ao adicionar imóvel');
+              }
             }}>
               <div className="grid grid-cols-2 gap-4">
                 <div>
