@@ -189,12 +189,12 @@ const PropertiesPage: React.FC = () => {
       await fetchProperties();
       setIsNewPropertyModalOpen(false);
       toast.success("Imóvel adicionado com sucesso");
-      setIsNewPropertyModalOpen(false);
-      setIsSaving(false);
     } catch (error) {
       console.error("Error adding property:", error);
       toast.error("Erro ao adicionar imóvel");
-      setIsSaving(false);
+    } finally {
+      setIsSaving(false); // Reset isSaving in finally block
+      setIsNewPropertyModalOpen(false);
     }
   };
 
