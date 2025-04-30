@@ -160,7 +160,7 @@ const PropertiesPage: React.FC = () => {
               const formElement = e.target as HTMLFormElement;
               const formData = new FormData(formElement);
               const data = Object.fromEntries(formData);
-              
+
               try {
                 const response = await fetch('https://flippings.com.br/imoveis', {
                   method: 'POST',
