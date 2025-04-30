@@ -150,24 +150,77 @@ const PropertiesPage: React.FC = () => {
               e.preventDefault();
               const formElement = e.target as HTMLFormElement;
               const formData = new FormData(formElement);
-              handleAddProperty(Object.fromEntries(formData));
+              const data = Object.fromEntries(formData);
+              handleAddProperty({
+                ...data,
+                preco_anunciado: Number(data.preco_anunciado),
+                area: Number(data.area),
+                quartos: Number(data.quartos),
+                banheiros: Number(data.banheiros),
+                vagas: Number(data.vagas),
+                condominio_mensal: Number(data.condominio_mensal),
+                iptu_anual: Number(data.iptu_anual),
+                reformado: Boolean(data.reformado),
+              });
             }}>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">URL</label>
-                  <input name="url" type="text" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                  <label className="block text-sm font-medium text-gray-700">URL do anúncio</label>
+                  <input name="url" type="text" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Preço</label>
-                  <input name="preco" type="number" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                  <label className="block text-sm font-medium text-gray-700">Imobiliária</label>
+                  <input name="imobiliaria" type="text" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Área</label>
-                  <input name="area" type="number" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                  <label className="block text-sm font-medium text-gray-700">Preço (R$)</label>
+                  <input name="preco_anunciado" type="number" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Área (m²)</label>
+                  <input name="area" type="number" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Quartos</label>
+                  <input name="quartos" type="number" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Banheiros</label>
+                  <input name="banheiros" type="number" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Vagas</label>
+                  <input name="vagas" type="number" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Condomínio (R$)</label>
+                  <input name="condominio_mensal" type="number" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">IPTU (R$)</label>
+                  <input name="iptu_anual" type="number" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Código</label>
+                  <input name="codigo_ref_externo" type="text" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Data do anúncio</label>
+                  <input name="data_anuncio" type="date" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Endereço</label>
-                  <input name="endereco" type="text" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                  <input name="endereco" type="text" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    <input name="reformado" type="checkbox" className="mr-2 rounded border-gray-300" />
+                    Reformado
+                  </label>
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700">Comentários</label>
+                  <textarea name="comentarios" rows={3} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></textarea>
                 </div>
               </div>
               <div className="mt-4 flex justify-end gap-2">
