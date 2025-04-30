@@ -385,7 +385,10 @@ const PropertiesPage: React.FC = () => {
                 const formElement = e.target as HTMLFormElement;
                 const formData = new FormData(formElement);
                 const data = Object.fromEntries(formData);
-                const payload: any = { id_analise: effectiveAnalysisId };
+                const payload: any = { 
+                  id_analise: effectiveAnalysisId,
+                  reformado: Boolean(data.reformado) // Always include reformado as boolean
+                };
 
                 // Only include non-empty fields
                 if (data.url) payload.url = data.url;
@@ -400,7 +403,6 @@ const PropertiesPage: React.FC = () => {
                 if (data.codigo_ref_externo) payload.codigo_ref_externo = data.codigo_ref_externo;
                 if (data.data_anuncio) payload.data_anuncio = data.data_anuncio;
                 if (data.endereco) payload.endereco = data.endereco;
-                if (data.reformado) payload.reformado = true;
                 if (data.comentarios) payload.comentarios = data.comentarios;
 
                 try {
