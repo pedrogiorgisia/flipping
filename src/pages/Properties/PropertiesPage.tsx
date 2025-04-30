@@ -8,9 +8,25 @@ import { Plus, Upload, Download } from "lucide-react";
 
 const PropertiesPage: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
+  const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isNewPropertyModalOpen, setIsNewPropertyModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
+  const [filters, setFilters] = useState({
+    valor_min: '',
+    valor_max: '',
+    area_min: '',
+    area_max: '',
+    quartos: '',
+    banheiros: '',
+    reformado: '',
+    condominio_min: '',
+    condominio_max: '',
+    m2_min: '',
+    m2_max: '',
+  });
   const effectiveAnalysisId = useEffectiveAnalysisId();
   console.log(effectiveAnalysisId);
 
@@ -49,6 +65,76 @@ const PropertiesPage: React.FC = () => {
       fetchProperties();
     }
   }, [effectiveAnalysisId]);
+
+  useEffect(() => {
+    let filtered = [...properties];
+
+    if (filters.valor_min) filtered = filtered.filter(p => p.preco_anunciado >= Number(filters.valor_min));
+    if (filters.valor_max) filtered = filtered.filter(p => p.preco_anunciado <= Number(filters.valor_max));
+    if (filters.area_min) filtered = filtered.filter(p => p.area >= Number(filters.area_min));
+    if (filters.area_max) filtered = filtered.filter(p => p.area <= Number(filters.area_max));
+    if (filters.quartos) filtered = filtered.filter(p => p.quartos === Number(filters.quartos));
+    if (filters.banheiros) filtered = filtered.filter(p => p.banheiros === Number(filters.banheiros));
+    if (filters.reformado) filtered = filtered.filter(p => p.reformado === (filters.reformado === 'true'));
+    if (filters.condominio_min) filtered = filtered.filter(p => p.condominio_mensal >= Number(filters.condominio_min));
+    if (filters.condominio_max) filtered = filtered.filter(p => p.condominio_mensal <= Number(filters.condominio_max));
+    if (filters.m2_min) filtered = filtered.filter(p => p.preco_m2 >= Number(filters.m2_min));
+    if (filters.m2_max) filtered = filtered.filter(p => p.preco_m2 <= Number(filters.m2_max));
+
+    setFilteredProperties(filtered);
+  }, [filters, properties]);
+
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await fetch(`https://flippings.com.br/imoveis/${id}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) throw new Error('Erro ao excluir imóvel');
+      
+      await fetchProperties();
+      toast.success('Imóvel excluído com sucesso');
+    } catch (error) {
+      console.error('Error deleting property:', error);
+      toast.error('Erro ao excluir imóvel');
+    }
+    setPropertyToDelete(null);
+    setIsDeleteModalOpen(false);
+  };
+
+  const handleExport = () => {
+    const csv = [
+      ['ID', 'URL', 'Imobiliária', 'Preço', 'Área', 'Quartos', 'Banheiros', 'Vagas', 
+       'Condomínio', 'IPTU', 'Endereço', 'Código', 'Data Anúncio', 'Comentários', 
+       'Criado Em', 'Reformado', 'Preço/m²'],
+      ...filteredProperties.map(p => [
+        p.id,
+        p.url,
+        p.imobiliaria,
+        p.preco_anunciado,
+        p.area,
+        p.quartos,
+        p.banheiros,
+        p.vagas,
+        p.condominio_mensal,
+        p.iptu_anual,
+        p.endereco,
+        p.codigo_ref_externo,
+        new Date(p.data_anuncio).toLocaleDateString(),
+        p.comentarios,
+        new Date(p.criado_em).toLocaleString(),
+        p.reformado ? 'Sim' : 'Não',
+        p.preco_m2
+      ])
+    ].map(row => row.join(','));
+
+    const blob = new Blob([csv.join('\n')], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'imoveis.csv';
+    a.click();
+  };
 
   const handleAddProperty = async (formData: any) => {
     if (!analysisId) {
@@ -141,16 +227,65 @@ const PropertiesPage: React.FC = () => {
             </button>
           </div>
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-700">Status:</label>
-              <select className="rounded-md border border-gray-300 px-3 py-1.5 text-sm">
-                <option value="">Todos</option>
-                <option value="renovated">Reformados</option>
-                <option value="not_renovated">Não Reformados</option>
-              </select>
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="text-sm text-gray-700">Preço min/max:</label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    value={filters.valor_min}
+                    onChange={(e) => setFilters({...filters, valor_min: e.target.value})}
+                    className="w-24 rounded-md border border-gray-300 px-2 py-1 text-sm"
+                    placeholder="Min"
+                  />
+                  <input
+                    type="number"
+                    value={filters.valor_max}
+                    onChange={(e) => setFilters({...filters, valor_max: e.target.value})}
+                    className="w-24 rounded-md border border-gray-300 px-2 py-1 text-sm"
+                    placeholder="Max"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="text-sm text-gray-700">Área min/max:</label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    value={filters.area_min}
+                    onChange={(e) => setFilters({...filters, area_min: e.target.value})}
+                    className="w-24 rounded-md border border-gray-300 px-2 py-1 text-sm"
+                    placeholder="Min"
+                  />
+                  <input
+                    type="number"
+                    value={filters.area_max}
+                    onChange={(e) => setFilters({...filters, area_max: e.target.value})}
+                    className="w-24 rounded-md border border-gray-300 px-2 py-1 text-sm"
+                    placeholder="Max"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-700">Status:</label>
+                <select 
+                  value={filters.reformado}
+                  onChange={(e) => setFilters({...filters, reformado: e.target.value})}
+                  className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+                >
+                  <option value="">Todos</option>
+                  <option value="true">Reformados</option>
+                  <option value="false">Não Reformados</option>
+                </select>
+              </div>
             </div>
 
-            <button className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50">
+            <button 
+              onClick={handleExport}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50"
+            >
               <Download size={16} className="mr-2" />
               Exportar
             </button>
@@ -158,10 +293,44 @@ const PropertiesPage: React.FC = () => {
         </div>
 
         <PropertyTable
-          properties={properties}
+          properties={filteredProperties}
           onEdit={(property) => console.log("Edit:", property)}
-          onDelete={(id) => console.log("Delete:", id)}
+          onDelete={(id) => {
+            setPropertyToDelete(id);
+            setIsDeleteModalOpen(true);
+          }}
         />
+
+        {/* Delete Confirmation Modal */}
+        {isDeleteModalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-sm w-full">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Confirmar exclusão
+              </h3>
+              <p className="text-sm text-gray-500 mb-4">
+                Deseja realmente excluir o imóvel?
+              </p>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => {
+                    setIsDeleteModalOpen(false);
+                    setPropertyToDelete(null);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => propertyToDelete && handleDelete(propertyToDelete)}
+                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+                >
+                  Excluir
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {isNewPropertyModalOpen && (

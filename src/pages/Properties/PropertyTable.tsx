@@ -70,7 +70,13 @@ const PropertyTable: React.FC<PropertyTableProps> = ({
               scope="col"
               className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
-              Quartos/Banheiros
+              Quartos
+            </th>
+            <th
+              scope="col"
+              className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Banheiros
             </th>
             <th
               scope="col"
@@ -136,7 +142,12 @@ const PropertyTable: React.FC<PropertyTableProps> = ({
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
                 <div className="text-sm text-gray-900">
-                  {property.quartos} / {property.banheiros}
+                  {property.quartos}
+                </div>
+              </td>
+              <td className="px-4 py-3 whitespace-nowrap">
+                <div className="text-sm text-gray-900">
+                  {property.banheiros}
                 </div>
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
