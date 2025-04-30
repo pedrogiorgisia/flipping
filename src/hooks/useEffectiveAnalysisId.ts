@@ -1,17 +1,24 @@
 
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAnalysis } from '../context/AnalysisContext';
 
 export function useEffectiveAnalysisId() {
   const { id } = useParams();
   const { analysisId, setAnalysisId } = useAnalysis();
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (!analysisId && !id) {
+      navigate('/analyses');
+      return;
+    }
+    
     if (!analysisId && id) {
       setAnalysisId(id);
     }
-  }, [analysisId, id]);
+  }, [analysisId, id, navigate]);
 
-  return analysisId || id || null;
+  const effectiveId = analysisId || id;
+  return effectiveId || null;
 }

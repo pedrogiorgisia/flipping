@@ -20,6 +20,12 @@ const PropertiesPage: React.FC = () => {
       return;
     }
 
+    if (effectiveAnalysisId === 'undefined') {
+      toast.error('ID da análise inválido');
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch(`https://flippings.com.br/imoveis?id_analise=${effectiveAnalysisId}`);
       if (!response.ok) {
