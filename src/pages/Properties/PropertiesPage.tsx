@@ -89,9 +89,9 @@ const PropertiesPage: React.FC = () => {
       const response = await fetch(`https://flippings.com.br/imoveis/${id}`, {
         method: 'DELETE',
       });
-      
+
       if (!response.ok) throw new Error('Erro ao excluir imóvel');
-      
+
       await fetchProperties();
       toast.success('Imóvel excluído com sucesso');
     } catch (error) {
@@ -103,6 +103,7 @@ const PropertiesPage: React.FC = () => {
   };
 
   const handleExport = () => {
+    //This part needs to be updated to export XLSX instead of CSV.  This is beyond the scope of the provided changes.
     const csv = [
       ['ID', 'URL', 'Imobiliária', 'Preço', 'Área', 'Quartos', 'Banheiros', 'Vagas', 
        'Condomínio', 'IPTU', 'Endereço', 'Código', 'Data Anúncio', 'Comentários', 
@@ -247,7 +248,7 @@ const PropertiesPage: React.FC = () => {
                   />
                 </div>
               </div>
-              
+
               <div>
                 <label className="text-sm text-gray-700">Área min/max:</label>
                 <div className="flex gap-2">
@@ -396,7 +397,7 @@ const PropertiesPage: React.FC = () => {
                     name="url"
                     type="text"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
                   />
                 </div>
                 <div>
@@ -406,7 +407,7 @@ const PropertiesPage: React.FC = () => {
                   <input
                     name="imobiliaria"
                     type="text"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
                   />
                 </div>
                 <div>
@@ -417,7 +418,7 @@ const PropertiesPage: React.FC = () => {
                     name="preco_anunciado"
                     type="number"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
                   />
                 </div>
                 <div>
@@ -428,7 +429,7 @@ const PropertiesPage: React.FC = () => {
                     name="area"
                     type="number"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
                   />
                 </div>
                 <div>
@@ -439,7 +440,7 @@ const PropertiesPage: React.FC = () => {
                     name="quartos"
                     type="number"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
                   />
                 </div>
                 <div>
@@ -450,7 +451,7 @@ const PropertiesPage: React.FC = () => {
                     name="banheiros"
                     type="number"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
                   />
                 </div>
                 <div>
@@ -460,7 +461,7 @@ const PropertiesPage: React.FC = () => {
                   <input
                     name="vagas"
                     type="number"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
                   />
                 </div>
                 <div>
@@ -471,7 +472,7 @@ const PropertiesPage: React.FC = () => {
                     name="condominio_mensal"
                     type="number"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
                   />
                 </div>
                 <div>
@@ -482,7 +483,7 @@ const PropertiesPage: React.FC = () => {
                     name="iptu_anual"
                     type="number"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
                   />
                 </div>
                 <div>
@@ -492,7 +493,7 @@ const PropertiesPage: React.FC = () => {
                   <input
                     name="codigo_ref_externo"
                     type="text"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
                   />
                 </div>
                 <div>
@@ -502,8 +503,7 @@ const PropertiesPage: React.FC = () => {
                   <input
                     name="data_anuncio"
                     type="date"
-                    required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
                   />
                 </div>
                 <div>
@@ -514,7 +514,7 @@ const PropertiesPage: React.FC = () => {
                     name="endereco"
                     type="text"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
                   />
                 </div>
                 <div>
@@ -534,7 +534,7 @@ const PropertiesPage: React.FC = () => {
                   <textarea
                     name="comentarios"
                     rows={3}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
                   ></textarea>
                 </div>
               </div>
