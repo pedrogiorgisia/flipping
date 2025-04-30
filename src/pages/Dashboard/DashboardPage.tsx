@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import MainLayout from '../../components/Layout/MainLayout';
 import { Home, DollarSign } from 'lucide-react';
@@ -29,10 +28,19 @@ interface Property {
   roi_liquido: number;
 }
 
-const DashboardPage: React.FC = () => {
+const useEffectiveAnalysisId = () => {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
-  const id_analise = id || (location.state as any)?.id_analise;
+  const analysisIdFromParams = id;
+  const analysisIdFromState = (location.state as any)?.id_analise;
+
+  //Prioritize id from params, then state, otherwise return null;
+  return analysisIdFromParams || analysisIdFromState || null;
+};
+
+
+const DashboardPage: React.FC = () => {
+  const effectiveAnalysisId = useEffectiveAnalysisId();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [properties, setProperties] = useState<Property[]>([]);
   const [roiDistribution, setRoiDistribution] = useState<{range: string, count: number}[]>([]);
@@ -43,15 +51,15 @@ const DashboardPage: React.FC = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        
+
         // Fetch summary data
-        const summaryResponse = await fetch(`https://flippings.com.br/imoveis/resumo?id_analise=${id_analise}`);
+        const summaryResponse = await fetch(`https://flippings.com.br/imoveis/resumo?id_analise=${effectiveAnalysisId}`);
         if (!summaryResponse.ok) throw new Error('Erro ao carregar resumo');
         const summaryData = await summaryResponse.json();
         setSummary(summaryData);
 
         // Fetch properties data
-        const propertiesResponse = await fetch(`https://flippings.com.br/simulacoes?id_analise=${id_analise}&simulacao_principal=true`);
+        const propertiesResponse = await fetch(`https://flippings.com.br/simulacoes?id_analise=${effectiveAnalysisId}&simulacao_principal=true`);
         if (!propertiesResponse.ok) throw new Error('Erro ao carregar simulações');
         const propertiesData = await propertiesResponse.json();
         setProperties(propertiesData);
@@ -72,10 +80,10 @@ const DashboardPage: React.FC = () => {
       }
     };
 
-    if (id_analise) {
+    if (effectiveAnalysisId) {
       fetchData();
     }
-  }, [id_analise]);
+  }, [effectiveAnalysisId]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);

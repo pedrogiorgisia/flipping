@@ -11,17 +11,17 @@ const PropertiesPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isNewPropertyModalOpen, setIsNewPropertyModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  const { analysisId } = useAnalysis();
+  const effectiveAnalysisId = useEffectiveAnalysisId();
 
   const fetchProperties = async () => {
-    if (!analysisId) {
+    if (!effectiveAnalysisId) {
       toast.error('Nenhuma análise selecionada');
       setIsLoading(false);
       return;
     }
 
     try {
-      const response = await fetch(`https://flippings.com.br/imoveis?id_analise=${analysisId}`);
+      const response = await fetch(`https://flippings.com.br/imoveis?id_analise=${effectiveAnalysisId}`);
       if (!response.ok) {
         throw new Error('Erro ao carregar imóveis');
       }
@@ -168,7 +168,7 @@ const PropertiesPage: React.FC = () => {
                     'Content-Type': 'application/json'
                   },
                   body: JSON.stringify({
-                    id_analise: analysisId,
+                    id_analise: effectiveAnalysisId,
                     url: data.url,
                     imobiliaria: data.imobiliaria,
                     preco_anunciado: Number(data.preco_anunciado),
