@@ -1,6 +1,7 @@
-import React from 'react';
-import { Home, Database, FileText, Settings } from 'lucide-react';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { useEffectiveAnalysisId } from "../../hooks/useEffectiveAnalysisId";
+import React from "react";
+import { Home, Database, FileText, Settings } from "lucide-react";
+import { Link, useLocation, useParams } from "react-router-dom";
 
 interface NavItemProps {
   to: string;
@@ -14,9 +15,10 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon, label, isActive }) => {
     <Link
       to={to}
       className={`flex items-center px-4 py-3 text-sm font-medium transition-colors duration-150 ease-in-out
-        ${isActive
-          ? 'bg-blue-50 text-blue-700 border-r-4 border-blue-600'
-          : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+        ${
+          isActive
+            ? "bg-blue-50 text-blue-700 border-r-4 border-blue-600"
+            : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
         }`}
     >
       <span className="mr-3">{icon}</span>
@@ -27,24 +29,24 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon, label, isActive }) => {
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
-  const { analysisId } = useParams();
+  const analysisId = useEffectiveAnalysisId();
   const currentPath = location.pathname;
 
   const navItems = [
-    { 
-      to: `/analysis/${analysisId}/dashboard`, 
-      icon: <Home size={20} />, 
-      label: 'Dashboard' 
+    {
+      to: `/analysis/${analysisId}/dashboard`,
+      icon: <Home size={20} />,
+      label: "Dashboard",
     },
-    { 
-      to: `/analysis/${analysisId}/properties`, 
-      icon: <Database size={20} />, 
-      label: 'Base de Imóveis' 
+    {
+      to: `/analysis/${analysisId}/properties`,
+      icon: <Database size={20} />,
+      label: "Base de Imóveis",
     },
-    { 
-      to: `/analysis/${analysisId}/settings`, 
-      icon: <Settings size={20} />, 
-      label: 'Parâmetros' 
+    {
+      to: `/analysis/${analysisId}/settings`,
+      icon: <Settings size={20} />,
+      label: "Parâmetros",
     },
   ];
 

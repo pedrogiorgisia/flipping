@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import MainLayout from '../../components/Layout/MainLayout';
-import { Plus, Filter, Download, Upload } from 'lucide-react';
-import PropertyTable from './PropertyTable';
-import { Property } from '../../types/property';
-import { useAnalysis } from '../../context/AnalysisContext';
-import toast from 'react-hot-toast';
+import { useEffectiveAnalysisId } from "../../hooks/useEffectiveAnalysisId";
+import React, { useState, useEffect } from "react";
+import MainLayout from "../../components/Layout/MainLayout";
+import PropertyTable from "./PropertyTable";
+import { Property } from "../../types/property";
+import toast from "react-hot-toast";
+import { Plus, Upload, Download } from "lucide-react";
 
 const PropertiesPage: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -12,30 +12,33 @@ const PropertiesPage: React.FC = () => {
   const [isNewPropertyModalOpen, setIsNewPropertyModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const effectiveAnalysisId = useEffectiveAnalysisId();
+  console.log(effectiveAnalysisId);
 
   const fetchProperties = async () => {
     if (!effectiveAnalysisId) {
-      toast.error('Nenhuma análise selecionada');
+      toast.error("Nenhuma análise selecionada");
       setIsLoading(false);
       return;
     }
 
-    if (effectiveAnalysisId === 'undefined') {
-      toast.error('ID da análise inválido');
+    if (effectiveAnalysisId === "undefined") {
+      toast.error("ID da análise inválido");
       setIsLoading(false);
       return;
     }
 
     try {
-      const response = await fetch(`https://flippings.com.br/imoveis?id_analise=${effectiveAnalysisId}`);
+      const response = await fetch(
+        `https://flippings.com.br/imoveis?id_analise=${effectiveAnalysisId}`,
+      );
       if (!response.ok) {
-        throw new Error('Erro ao carregar imóveis');
+        throw new Error("Erro ao carregar imóveis");
       }
       const data = await response.json();
       setProperties(data);
     } catch (error) {
-      console.error('Error fetching properties:', error);
-      toast.error('Erro ao carregar imóveis');
+      console.error("Error fetching properties:", error);
+      toast.error("Erro ao carregar imóveis");
     } finally {
       setIsLoading(false);
     }
@@ -49,15 +52,15 @@ const PropertiesPage: React.FC = () => {
 
   const handleAddProperty = async (formData: any) => {
     if (!analysisId) {
-      toast.error('Nenhuma análise selecionada');
+      toast.error("Nenhuma análise selecionada");
       return;
     }
 
     try {
-      const response = await fetch('https://flippings.com.br/imoveis', {
-        method: 'POST',
+      const response = await fetch("https://flippings.com.br/imoveis", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...formData,
@@ -70,20 +73,22 @@ const PropertiesPage: React.FC = () => {
           condominio_mensal: Number(formData.condominio_mensal),
           iptu_anual: Number(formData.iptu_anual),
           reformado: Boolean(formData.reformado),
-        })
+        }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(`Erro ao adicionar imóvel: ${JSON.stringify(errorData)}`);
+        throw new Error(
+          `Erro ao adicionar imóvel: ${JSON.stringify(errorData)}`,
+        );
       }
 
       await fetchProperties();
       setIsNewPropertyModalOpen(false);
-      toast.success('Imóvel adicionado com sucesso');
+      toast.success("Imóvel adicionado com sucesso");
     } catch (error) {
-      console.error('Error adding property:', error);
-      toast.error('Erro ao adicionar imóvel');
+      console.error("Error adding property:", error);
+      toast.error("Erro ao adicionar imóvel");
     }
   };
 
@@ -152,125 +157,230 @@ const PropertiesPage: React.FC = () => {
           </div>
         </div>
 
-        <PropertyTable 
+        <PropertyTable
           properties={properties}
-          onEdit={(property) => console.log('Edit:', property)}
-          onDelete={(id) => console.log('Delete:', id)}
+          onEdit={(property) => console.log("Edit:", property)}
+          onDelete={(id) => console.log("Delete:", id)}
         />
       </div>
 
       {isNewPropertyModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Adicionar Novo Imóvel</h2>
-            <form onSubmit={async (e) => {
-              e.preventDefault();
-              const formElement = e.target as HTMLFormElement;
-              const formData = new FormData(formElement);
-              const data = Object.fromEntries(formData);
+            <h2 className="text-xl font-bold text-gray-900 mb-4">
+              Adicionar Novo Imóvel
+            </h2>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const formElement = e.target as HTMLFormElement;
+                const formData = new FormData(formElement);
+                const data = Object.fromEntries(formData);
 
-              try {
-                const response = await fetch('https://flippings.com.br/imoveis', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                    id_analise: effectiveAnalysisId,
-                    url: data.url,
-                    imobiliaria: data.imobiliaria,
-                    preco_anunciado: Number(data.preco_anunciado),
-                    area: Number(data.area),
-                    quartos: Number(data.quartos),
-                    banheiros: Number(data.banheiros),
-                    vagas: Number(data.vagas) || 0,
-                    condominio_mensal: Number(data.condominio_mensal),
-                    iptu_anual: Number(data.iptu_anual),
-                    codigo_ref_externo: data.codigo_ref_externo,
-                    data_anuncio: data.data_anuncio,
-                    endereco: data.endereco,
-                    reformado: Boolean(data.reformado),
-                    comentarios: data.comentarios
-                  })
-                });
+                try {
+                  const response = await fetch(
+                    "https://flippings.com.br/imoveis",
+                    {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        id_analise: effectiveAnalysisId,
+                        url: data.url,
+                        imobiliaria: data.imobiliaria,
+                        preco_anunciado: Number(data.preco_anunciado),
+                        area: Number(data.area),
+                        quartos: Number(data.quartos),
+                        banheiros: Number(data.banheiros),
+                        vagas: Number(data.vagas) || 0,
+                        condominio_mensal: Number(data.condominio_mensal),
+                        iptu_anual: Number(data.iptu_anual),
+                        codigo_ref_externo: data.codigo_ref_externo,
+                        data_anuncio: data.data_anuncio,
+                        endereco: data.endereco,
+                        reformado: Boolean(data.reformado),
+                        comentarios: data.comentarios,
+                      }),
+                    },
+                  );
 
-                if (!response.ok) {
-                  throw new Error('Erro ao adicionar imóvel');
+                  if (!response.ok) {
+                    throw new Error("Erro ao adicionar imóvel");
+                  }
+
+                  await fetchProperties();
+                  setIsNewPropertyModalOpen(false);
+                  toast.success("Imóvel adicionado com sucesso");
+                } catch (error) {
+                  console.error("Erro ao adicionar imóvel:", error);
+                  toast.error("Erro ao adicionar imóvel");
                 }
-
-                await fetchProperties();
-                setIsNewPropertyModalOpen(false);
-                toast.success('Imóvel adicionado com sucesso');
-              } catch (error) {
-                console.error('Erro ao adicionar imóvel:', error);
-                toast.error('Erro ao adicionar imóvel');
-              }
-            }}>
+              }}
+            >
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">URL do anúncio</label>
-                  <input name="url" type="text" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Imobiliária</label>
-                  <input name="imobiliaria" type="text" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Preço (R$)</label>
-                  <input name="preco_anunciado" type="number" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Área (m²)</label>
-                  <input name="area" type="number" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Quartos</label>
-                  <input name="quartos" type="number" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Banheiros</label>
-                  <input name="banheiros" type="number" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Vagas</label>
-                  <input name="vagas" type="number" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Condomínio mensal (R$)</label>
-                  <input name="condominio_mensal" type="number" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">IPTU anual (R$)</label>
-                  <input name="iptu_anual" type="number" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Código</label>
-                  <input name="codigo_ref_externo" type="text" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Data do anúncio</label>
-                  <input name="data_anuncio" type="date" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Endereço</label>
-                  <input name="endereco" type="text" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                  <label className="block text-sm font-medium text-gray-700">
+                    URL do anúncio
+                  </label>
+                  <input
+                    name="url"
+                    type="text"
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    <input name="reformado" type="checkbox" className="mr-2 rounded border-gray-300" />
+                    Imobiliária
+                  </label>
+                  <input
+                    name="imobiliaria"
+                    type="text"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Preço (R$)
+                  </label>
+                  <input
+                    name="preco_anunciado"
+                    type="number"
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Área (m²)
+                  </label>
+                  <input
+                    name="area"
+                    type="number"
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Quartos
+                  </label>
+                  <input
+                    name="quartos"
+                    type="number"
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Banheiros
+                  </label>
+                  <input
+                    name="banheiros"
+                    type="number"
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Vagas
+                  </label>
+                  <input
+                    name="vagas"
+                    type="number"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Condomínio mensal (R$)
+                  </label>
+                  <input
+                    name="condominio_mensal"
+                    type="number"
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    IPTU anual (R$)
+                  </label>
+                  <input
+                    name="iptu_anual"
+                    type="number"
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Código
+                  </label>
+                  <input
+                    name="codigo_ref_externo"
+                    type="text"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Data do anúncio
+                  </label>
+                  <input
+                    name="data_anuncio"
+                    type="date"
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Endereço
+                  </label>
+                  <input
+                    name="endereco"
+                    type="text"
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    <input
+                      name="reformado"
+                      type="checkbox"
+                      className="mr-2 rounded border-gray-300"
+                    />
                     Reformado
                   </label>
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700">Comentários</label>
-                  <textarea name="comentarios" rows={3} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></textarea>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Comentários
+                  </label>
+                  <textarea
+                    name="comentarios"
+                    rows={3}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  ></textarea>
                 </div>
               </div>
               <div className="mt-4 flex justify-end gap-2">
-                <button type="button" onClick={closeModals} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md">
+                <button
+                  type="button"
+                  onClick={closeModals}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md"
+                >
                   Cancelar
                 </button>
-                <button type="submit" className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md">
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md"
+                >
                   Salvar
                 </button>
               </div>
@@ -282,28 +392,38 @@ const PropertiesPage: React.FC = () => {
       {isImportModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Import HTML</h2>
-            <p className="text-gray-600 mb-4">Upload an HTML file from a real estate listing to automatically import property details.</p>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">
+              Import HTML
+            </h2>
+            <p className="text-gray-600 mb-4">
+              Upload an HTML file from a real estate listing to automatically
+              import property details.
+            </p>
 
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-4">
               <Upload size={32} className="mx-auto text-gray-400 mb-2" />
-              <p className="text-sm text-gray-600 mb-2">Drag and drop an HTML file, or click to browse</p>
-              <input type="file" className="hidden" id="html-upload" accept=".html,.htm" />
+              <p className="text-sm text-gray-600 mb-2">
+                Drag and drop an HTML file, or click to browse
+              </p>
+              <input
+                type="file"
+                className="hidden"
+                id="html-upload"
+                accept=".html,.htm"
+              />
               <button className="mt-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
                 Select File
               </button>
             </div>
 
             <div className="flex justify-end gap-3">
-              <button 
+              <button
                 onClick={closeModals}
                 className="px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50"
               >
                 Cancel
               </button>
-              <button 
-                className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
-              >
+              <button className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
                 Process HTML
               </button>
             </div>
