@@ -47,10 +47,67 @@ const PropertiesPage: React.FC = () => {
     setIsImportModalOpen(true);
   };
 
+  const handleAddProperty = async (formData: any) => {
+    if (!analysisId) {
+      toast.error('Nenhuma análise selecionada');
+      return;
+    }
+
+    try {
+      const response = await fetch('https://flippings.com.br/imoveis', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          id_analise: analysisId
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao adicionar imóvel');
+      }
+
+      await fetchProperties();
+      closeModals();
+      toast.success('Imóvel adicionado com sucesso');
+    } catch (error) {
+      console.error('Error adding property:', error);
+      toast.error('Erro ao adicionar imóvel');
+    }
+  };
+
   const closeModals = () => {
     setIsImportModalOpen(false);
     setIsNewPropertyModalOpen(false);
   };
+
+  useEffect(() => {
+    if (!analysisId) {
+      toast.error('Nenhuma análise selecionada');
+      return;
+    }
+
+    const fetchProperties = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`https://flippings.com.br/imoveis?id_analise=${analysisId}`);
+        if (!response.ok) {
+          throw new Error('Erro ao carregar imóveis');
+        }
+        const data = await response.json();
+        setProperties(data);
+      } catch (error) {
+        console.error('Error fetching properties:', error);
+        toast.error('Erro ao carregar imóveis');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProperties();
+  }, [analysisId]);
 
   if (isLoading) {
     return (
@@ -306,6 +363,20 @@ const PropertiesPage: React.FC = () => {
                 Cancel
               </button>
               <button 
+                onClick={() => handleAddProperty({
+                  url: document.getElementById('url')?.value,
+                  agency: document.getElementById('agency')?.value,
+                  price: Number(document.getElementById('price')?.value),
+                  area: Number(document.getElementById('area')?.value),
+                  bedrooms: Number(document.getElementById('bedrooms')?.value),
+                  bathrooms: Number(document.getElementById('bathrooms')?.value),
+                  parkingSpaces: Number(document.getElementById('parking')?.value),
+                  condoFee: Number(document.getElementById('condo')?.value),
+                  yearlyTax: Number(document.getElementById('tax')?.value),
+                  code: document.getElementById('code')?.value,
+                  address: document.getElementById('address')?.value,
+                  renovated: (document.getElementById('renovated') as HTMLInputElement)?.checked
+                })}
                 className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
               >
                 Add Property

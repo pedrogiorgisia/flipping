@@ -10,14 +10,14 @@ const AnalysisContext = createContext<AnalysisContextType | undefined>(undefined
 
 export const AnalysisProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [analysisId, setAnalysisId] = useState<string | null>(() => {
-    return sessionStorage.getItem('analysisId');
+    const storedId = sessionStorage.getItem('analysisId');
+    const urlParams = new URLSearchParams(window.location.search);
+    return storedId || urlParams.get('id_analise');
   });
 
   useEffect(() => {
     if (analysisId) {
       sessionStorage.setItem('analysisId', analysisId);
-    } else {
-      sessionStorage.removeItem('analysisId');
     }
   }, [analysisId]);
 

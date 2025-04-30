@@ -21,6 +21,7 @@ interface PropertyListProps {
 }
 
 const PropertyList: React.FC<PropertyListProps> = ({ properties }) => {
+  const sortedProperties = [...properties].sort((a, b) => b.roi_liquido - a.roi_liquido);
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
@@ -60,7 +61,7 @@ const PropertyList: React.FC<PropertyListProps> = ({ properties }) => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {properties.map((property, index) => (
+            {sortedProperties.map((property, index) => (
               <tr key={property.id_simulacao || index} className="hover:bg-gray-50">
                 <td className="px-4 py-3 text-sm text-gray-900">{property.imovel.endereco}</td>
                 <td className="px-4 py-3 text-sm text-gray-900">{property.imovel.area}</td>
