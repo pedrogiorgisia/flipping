@@ -103,8 +103,8 @@ const PropertiesPage: React.FC = () => {
     setIsDeleteModalOpen(false);
   };
 
-  const handleExport = () => {
-    const XLSX = require('xlsx');
+  const handleExport = async () => {
+    const XLSX = await import('xlsx');
     
     // Prepare the data in the same format
     const data = [
@@ -140,7 +140,14 @@ const PropertiesPage: React.FC = () => {
     XLSX.utils.book_append_sheet(wb, ws, 'Imóveis');
 
     // Generate and download the file
-    XLSX.writeFile(wb, 'imoveis.xlsx');
+    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([wbout], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'imoveis.xlsx';
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const handleAddProperty = async (formData: any) => {
