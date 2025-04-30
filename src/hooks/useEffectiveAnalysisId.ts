@@ -13,12 +13,11 @@ export function useEffectiveAnalysisId() {
       navigate('/analyses');
       return;
     }
-    
+
     if (!analysisId && id) {
       setAnalysisId(id);
     }
-  }, [analysisId, id, navigate]);
+  }, [analysisId, id, setAnalysisId, navigate]);
 
-  const effectiveId = analysisId || id;
-  return effectiveId || null;
+  return id || analysisId || null;
 }

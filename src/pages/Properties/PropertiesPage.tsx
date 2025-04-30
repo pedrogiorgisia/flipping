@@ -42,8 +42,10 @@ const PropertiesPage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchProperties();
-  }, [analysisId]);
+    if (effectiveAnalysisId) {
+      fetchProperties();
+    }
+  }, [effectiveAnalysisId]);
 
   const handleAddProperty = async (formData: any) => {
     if (!analysisId) {
