@@ -301,13 +301,33 @@ const PropertiesPage: React.FC = () => {
               </div>
             </div>
 
-            <button 
-              onClick={handleExport}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50"
-            >
-              <Download size={16} className="mr-2" />
-              Exportar
-            </button>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => setFilters({
+                  valor_min: '',
+                  valor_max: '',
+                  area_min: '',
+                  area_max: '',
+                  quartos: '',
+                  banheiros: '',
+                  reformado: '',
+                  condominio_min: '',
+                  condominio_max: '',
+                  m2_min: '',
+                  m2_max: '',
+                })}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50"
+              >
+                Limpar Filtros
+              </button>
+              <button 
+                onClick={handleExport}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50"
+              >
+                <Download size={16} className="mr-2" />
+                Exportar
+              </button>
+            </div>
           </div>
         </div>
 
@@ -365,6 +385,23 @@ const PropertiesPage: React.FC = () => {
                 const formElement = e.target as HTMLFormElement;
                 const formData = new FormData(formElement);
                 const data = Object.fromEntries(formData);
+                const payload: any = { id_analise: effectiveAnalysisId };
+
+                // Only include non-empty fields
+                if (data.url) payload.url = data.url;
+                if (data.imobiliaria) payload.imobiliaria = data.imobiliaria;
+                if (data.preco_anunciado) payload.preco_anunciado = Number(data.preco_anunciado);
+                if (data.area) payload.area = Number(data.area);
+                if (data.quartos) payload.quartos = Number(data.quartos);
+                if (data.banheiros) payload.banheiros = Number(data.banheiros);
+                if (data.vagas) payload.vagas = Number(data.vagas);
+                if (data.condominio_mensal) payload.condominio_mensal = Number(data.condominio_mensal);
+                if (data.iptu_anual) payload.iptu_anual = Number(data.iptu_anual);
+                if (data.codigo_ref_externo) payload.codigo_ref_externo = data.codigo_ref_externo;
+                if (data.data_anuncio) payload.data_anuncio = data.data_anuncio;
+                if (data.endereco) payload.endereco = data.endereco;
+                if (data.reformado) payload.reformado = true;
+                if (data.comentarios) payload.comentarios = data.comentarios;
 
                 try {
                   const response = await fetch(
@@ -374,23 +411,7 @@ const PropertiesPage: React.FC = () => {
                       headers: {
                         "Content-Type": "application/json",
                       },
-                      body: JSON.stringify({
-                        id_analise: effectiveAnalysisId,
-                        url: data.url,
-                        imobiliaria: data.imobiliaria,
-                        preco_anunciado: Number(data.preco_anunciado),
-                        area: Number(data.area),
-                        quartos: Number(data.quartos),
-                        banheiros: Number(data.banheiros),
-                        vagas: Number(data.vagas) || 0,
-                        condominio_mensal: Number(data.condominio_mensal),
-                        iptu_anual: Number(data.iptu_anual),
-                        codigo_ref_externo: data.codigo_ref_externo,
-                        data_anuncio: data.data_anuncio,
-                        endereco: data.endereco,
-                        reformado: Boolean(data.reformado),
-                        comentarios: data.comentarios,
-                      }),
+                      body: JSON.stringify(payload),
                     },
                   );
 
@@ -610,8 +631,19 @@ const PropertiesPage: React.FC = () => {
                 className="hidden"
                 id="html-upload"
                 accept=".html,.htm"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    // Handle file upload logic here
+                  }
+                }}
               />
-              <button className="mt-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
+              <button 
+                onClick={() => document.getElementById('html-upload')?.click()}
+                className="mt-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
+              >
                 Select File
               </button>
             </div>
