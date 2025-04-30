@@ -53,12 +53,21 @@ const PropertiesPage: React.FC = () => {
         },
         body: JSON.stringify({
           ...formData,
-          id_analise: analysisId
+          id_analise: analysisId,
+          preco_anunciado: Number(formData.preco_anunciado),
+          area: Number(formData.area),
+          quartos: Number(formData.quartos),
+          banheiros: Number(formData.banheiros),
+          vagas: Number(formData.vagas) || 0,
+          condominio_mensal: Number(formData.condominio_mensal),
+          iptu_anual: Number(formData.iptu_anual),
+          reformado: Boolean(formData.reformado),
         })
       });
 
       if (!response.ok) {
-        throw new Error('Erro ao adicionar imóvel');
+        const errorData = await response.json();
+        throw new Error(`Erro ao adicionar imóvel: ${JSON.stringify(errorData)}`);
       }
 
       await fetchProperties();
@@ -170,7 +179,7 @@ const PropertiesPage: React.FC = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Imobiliária</label>
-                  <input name="imobiliaria" type="text" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                  <input name="imobiliaria" type="text" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Preço (R$)</label>
@@ -190,19 +199,19 @@ const PropertiesPage: React.FC = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Vagas</label>
-                  <input name="vagas" type="number" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                  <input name="vagas" type="number" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Condomínio (R$)</label>
+                  <label className="block text-sm font-medium text-gray-700">Condomínio mensal (R$)</label>
                   <input name="condominio_mensal" type="number" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">IPTU (R$)</label>
+                  <label className="block text-sm font-medium text-gray-700">IPTU anual (R$)</label>
                   <input name="iptu_anual" type="number" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Código</label>
-                  <input name="codigo_ref_externo" type="text" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                  <input name="codigo_ref_externo" type="text" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Data do anúncio</label>
