@@ -1,0 +1,86 @@
+✅ RESUMO DOS PROBLEMAS E CORREÇÕES
+🧩 Problema 1: Não chama a API GET de imóveis
+Diagnóstico: ao navegar para /analysis/:id/properties, a página PropertiesPage usa analysisId do contexto. Se ele não estiver setado (ex: acesso direto via URL ou refresh), a API GET /imoveis?id_analise= não é chamada.
+
+✅ Solução:
+No PropertiesPage.tsx, altere o uso de analysisId para incorporar o valor da URL (useParams) e garantir fallback:
+
+tsx
+Copiar
+Editar
+const { analysisId, setAnalysisId } = useAnalysis();
+const { id } = useParams(); // pega da rota
+
+const effectiveId = analysisId || id;
+
+useEffect(() => {
+  if (!analysisId && id) setAnalysisId(id);
+}, [analysisId, id]);
+Substitua onde houver analysisId por effectiveId nas chamadas da API:
+
+tsx
+Copiar
+Editar
+const response = await fetch(`https://flippings.com.br/imoveis?id_analise=${effectiveId}`);
+🧩 Problema 2: POST de imóvel falha por id_analise nulo
+Diagnóstico: id_analise não é setado no contexto ao navegar por outras rotas ou acessar diretamente o formulário. Isso quebra o POST /imoveis.
+
+✅ Solução:
+Garanta o uso de effectiveId como no problema 1.
+
+No envio do formulário, altere a payload para garantir:
+
+tsx
+Copiar
+Editar
+body: JSON.stringify({
+  ...formData,
+  id_analise: effectiveId,
+  ...
+})
+Isso garante que a API POST /imoveis receba o id_analise obrigatório, conforme o schema ImovelCreate do Swagger​swagger.
+
+🧩 Problema 3: Ao voltar para o Dashboard, perde o id_analise
+Diagnóstico: mesma causa: analysisId não está setado no contexto quando a rota /analysis/:id/dashboard é acessada diretamente.
+
+✅ Solução:
+No DashboardPage.tsx:
+
+tsx
+Copiar
+Editar
+const { id } = useParams();
+const { analysisId, setAnalysisId } = useAnalysis();
+
+useEffect(() => {
+  if (!analysisId && id) setAnalysisId(id);
+}, [analysisId, id]);
+
+const effectiveId = analysisId || id;
+Substitua os fetch() para usar effectiveId:
+
+tsx
+Copiar
+Editar
+const summaryResponse = await fetch(`https://flippings.com.br/imoveis/resumo?id_analise=${effectiveId}`);
+const propertiesResponse = await fetch(`https://flippings.com.br/simulacoes?id_analise=${effectiveId}&simulacao_principal=true`);
+🛠 SUGESTÃO DE REFORÇO: Criar useEffectiveAnalysisId()
+Para centralizar esse comportamento, crie um hook:
+
+tsx
+Copiar
+Editar
+import { useParams } from 'react-router-dom';
+import { useAnalysis } from '../context/AnalysisContext';
+
+export function useEffectiveAnalysisId() {
+  const { id } = useParams();
+  const { analysisId, setAnalysisId } = useAnalysis();
+
+  useEffect(() => {
+    if (!analysisId && id) setAnalysisId(id);
+  }, [analysisId, id]);
+
+  return analysisId || id || null;
+}
+Use esse hook em todas as páginas que dependem do analysisId.
