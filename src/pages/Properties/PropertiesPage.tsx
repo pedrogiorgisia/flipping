@@ -13,39 +13,31 @@ const PropertiesPage: React.FC = () => {
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const { analysisId } = useAnalysis();
 
+  const fetchProperties = async () => {
+    if (!analysisId) {
+      toast.error('Nenhuma análise selecionada');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://flippings.com.br/imoveis?id_analise=${analysisId}`);
+      if (!response.ok) {
+        throw new Error('Erro ao carregar imóveis');
+      }
+      const data = await response.json();
+      setProperties(data);
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+      toast.error('Erro ao carregar imóveis');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchProperties = async () => {
-      if (!analysisId) {
-        toast.error('Nenhuma análise selecionada');
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const response = await fetch(`https://flippings.com.br/imoveis?id_analise=${analysisId}`);
-        if (!response.ok) {
-          throw new Error('Erro ao carregar imóveis');
-        }
-        const data = await response.json();
-        setProperties(data);
-      } catch (error) {
-        console.error('Error fetching properties:', error);
-        toast.error('Erro ao carregar imóveis');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchProperties();
   }, [analysisId]);
-
-  const handleAddNewProperty = () => {
-    setIsNewPropertyModalOpen(true);
-  };
-
-  const handleImportHTML = () => {
-    setIsImportModalOpen(true);
-  };
 
   const handleAddProperty = async (formData: any) => {
     if (!analysisId) {
@@ -70,7 +62,7 @@ const PropertiesPage: React.FC = () => {
       }
 
       await fetchProperties();
-      closeModals();
+      setIsNewPropertyModalOpen(false);
       toast.success('Imóvel adicionado com sucesso');
     } catch (error) {
       console.error('Error adding property:', error);
@@ -78,36 +70,18 @@ const PropertiesPage: React.FC = () => {
     }
   };
 
+  const handleAddNewProperty = () => {
+    setIsNewPropertyModalOpen(true);
+  };
+
+  const handleImportHTML = () => {
+    setIsImportModalOpen(true);
+  };
+
   const closeModals = () => {
     setIsImportModalOpen(false);
     setIsNewPropertyModalOpen(false);
   };
-
-  useEffect(() => {
-    if (!analysisId) {
-      toast.error('Nenhuma análise selecionada');
-      return;
-    }
-
-    const fetchProperties = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`https://flippings.com.br/imoveis?id_analise=${analysisId}`);
-        if (!response.ok) {
-          throw new Error('Erro ao carregar imóveis');
-        }
-        const data = await response.json();
-        setProperties(data);
-      } catch (error) {
-        console.error('Error fetching properties:', error);
-        toast.error('Erro ao carregar imóveis');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProperties();
-  }, [analysisId]);
 
   if (isLoading) {
     return (
@@ -144,7 +118,6 @@ const PropertiesPage: React.FC = () => {
               Importar HTML
             </button>
           </div>
-
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
               <label className="text-sm text-gray-700">Status:</label>
@@ -163,12 +136,52 @@ const PropertiesPage: React.FC = () => {
         </div>
 
         <PropertyTable 
-          properties={properties} 
+          properties={properties}
           onEdit={(property) => console.log('Edit:', property)}
           onDelete={(id) => console.log('Delete:', id)}
         />
       </div>
 
+      {isNewPropertyModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Adicionar Novo Imóvel</h2>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const formElement = e.target as HTMLFormElement;
+              const formData = new FormData(formElement);
+              handleAddProperty(Object.fromEntries(formData));
+            }}>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">URL</label>
+                  <input name="url" type="text" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Preço</label>
+                  <input name="preco" type="number" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Área</label>
+                  <input name="area" type="number" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Endereço</label>
+                  <input name="endereco" type="text" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                </div>
+              </div>
+              <div className="mt-4 flex justify-end gap-2">
+                <button type="button" onClick={closeModals} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md">
+                  Cancelar
+                </button>
+                <button type="submit" className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md">
+                  Salvar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       {/* Import HTML Modal */}
       {isImportModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -196,190 +209,6 @@ const PropertiesPage: React.FC = () => {
                 className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
               >
                 Process HTML
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* New Property Modal */}
-      {isNewPropertyModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Add New Property</h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div>
-                <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-1">
-                  URL
-                </label>
-                <input
-                  type="text"
-                  id="url"
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="https://example.com/property"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="agency" className="block text-sm font-medium text-gray-700 mb-1">
-                  Agency
-                </label>
-                <input
-                  type="text"
-                  id="agency"
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Agency name"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
-                  Price (R$)
-                </label>
-                <input
-                  type="number"
-                  id="price"
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="500000"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="area" className="block text-sm font-medium text-gray-700 mb-1">
-                  Area (m²)
-                </label>
-                <input
-                  type="number"
-                  id="area"
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="100"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="bedrooms" className="block text-sm font-medium text-gray-700 mb-1">
-                  Bedrooms
-                </label>
-                <input
-                  type="number"
-                  id="bedrooms"
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="3"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="bathrooms" className="block text-sm font-medium text-gray-700 mb-1">
-                  Bathrooms
-                </label>
-                <input
-                  type="number"
-                  id="bathrooms"
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="2"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="parking" className="block text-sm font-medium text-gray-700 mb-1">
-                  Parking Spaces
-                </label>
-                <input
-                  type="number"
-                  id="parking"
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="1"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="condo" className="block text-sm font-medium text-gray-700 mb-1">
-                  Condo Fee (R$/month)
-                </label>
-                <input
-                  type="number"
-                  id="condo"
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="500"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="tax" className="block text-sm font-medium text-gray-700 mb-1">
-                  Yearly Tax (R$)
-                </label>
-                <input
-                  type="number"
-                  id="tax"
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="2000"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="code" className="block text-sm font-medium text-gray-700 mb-1">
-                  Code
-                </label>
-                <input
-                  type="text"
-                  id="code"
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="PRO-001"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                  Address
-                </label>
-                <input
-                  type="text"
-                  id="address"
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="123 Main St, Cityville"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <div className="flex items-center">
-                  <input
-                    id="renovated"
-                    type="checkbox"
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="renovated" className="ml-2 block text-sm text-gray-700">
-                    Renovated property
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-3">
-              <button 
-                onClick={closeModals}
-                className="px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button 
-                onClick={() => handleAddProperty({
-                  url: document.getElementById('url')?.value,
-                  agency: document.getElementById('agency')?.value,
-                  price: Number(document.getElementById('price')?.value),
-                  area: Number(document.getElementById('area')?.value),
-                  bedrooms: Number(document.getElementById('bedrooms')?.value),
-                  bathrooms: Number(document.getElementById('bathrooms')?.value),
-                  parkingSpaces: Number(document.getElementById('parking')?.value),
-                  condoFee: Number(document.getElementById('condo')?.value),
-                  yearlyTax: Number(document.getElementById('tax')?.value),
-                  code: document.getElementById('code')?.value,
-                  address: document.getElementById('address')?.value,
-                  renovated: (document.getElementById('renovated') as HTMLInputElement)?.checked
-                })}
-                className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
-              >
-                Add Property
               </button>
             </div>
           </div>

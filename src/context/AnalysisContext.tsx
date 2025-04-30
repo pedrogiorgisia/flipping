@@ -10,9 +10,7 @@ const AnalysisContext = createContext<AnalysisContextType | undefined>(undefined
 
 export const AnalysisProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [analysisId, setAnalysisId] = useState<string | null>(() => {
-    const storedId = sessionStorage.getItem('analysisId');
-    const urlParams = new URLSearchParams(window.location.search);
-    return storedId || urlParams.get('id_analise');
+    return sessionStorage.getItem('analysisId');
   });
 
   useEffect(() => {
