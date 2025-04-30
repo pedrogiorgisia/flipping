@@ -382,6 +382,7 @@ const PropertiesPage: React.FC = () => {
               onSubmit={async (e) => {
                 e.preventDefault();
                 setIsSaving(true);
+                const [formError, setFormError] = useState<string>('');
                 const formElement = e.target as HTMLFormElement;
                 const formData = new FormData(formElement);
                 const data = Object.fromEntries(formData);
@@ -389,6 +390,7 @@ const PropertiesPage: React.FC = () => {
                   id_analise: effectiveAnalysisId,
                   reformado: Boolean(data.reformado) // Always include reformado as boolean
                 };
+                setFormError(''); // Clear any previous errors
 
                 // Only include non-empty fields
                 if (data.url) payload.url = data.url;
@@ -423,15 +425,21 @@ const PropertiesPage: React.FC = () => {
                   }
 
                   await fetchProperties();
-                  setIsNewPropertyModalOpen(false);
                   toast.success("Imóvel adicionado com sucesso");
+                  setIsNewPropertyModalOpen(false); // Only close on success
                 } catch (error) {
                   console.error("Erro ao adicionar imóvel:", error);
-                  toast.error(error instanceof Error ? error.message : "Erro ao adicionar imóvel");
-                  setIsSaving(false); // Only reset if there's an error
+                  const errorMessage = error instanceof Error ? error.message : "Erro ao adicionar imóvel";
+                  setFormError(errorMessage);
+                  setIsSaving(false);
                 }
               }}
             >
+              {formError && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md">
+                  {formError}
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-6">
                 <div className="form-group">
                   <label className="block text-sm font-semibold text-gray-800 mb-2">
