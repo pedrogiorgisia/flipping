@@ -27,6 +27,7 @@ const PropertiesPage: React.FC = () => {
     m2_min: '',
     m2_max: '',
   });
+  const [isSaving, setIsSaving] = useState(false); // Added isSaving state
   const effectiveAnalysisId = useEffectiveAnalysisId();
   console.log(effectiveAnalysisId);
 
@@ -138,8 +139,10 @@ const PropertiesPage: React.FC = () => {
   };
 
   const handleAddProperty = async (formData: any) => {
-    if (!analysisId) {
+    setIsSaving(true); // Set isSaving to true before API call
+    if (!effectiveAnalysisId) {
       toast.error("Nenhuma análise selecionada");
+      setIsSaving(false); // Reset isSaving if no analysis is selected
       return;
     }
 
@@ -151,7 +154,7 @@ const PropertiesPage: React.FC = () => {
         },
         body: JSON.stringify({
           ...formData,
-          id_analise: analysisId,
+          id_analise: effectiveAnalysisId,
           preco_anunciado: Number(formData.preco_anunciado),
           area: Number(formData.area),
           quartos: Number(formData.quartos),
@@ -176,6 +179,9 @@ const PropertiesPage: React.FC = () => {
     } catch (error) {
       console.error("Error adding property:", error);
       toast.error("Erro ao adicionar imóvel");
+    } finally {
+      setIsSaving(false); // Reset isSaving in finally block
+      setIsNewPropertyModalOpen(false);
     }
   };
 
@@ -385,6 +391,9 @@ const PropertiesPage: React.FC = () => {
                 } catch (error) {
                   console.error("Erro ao adicionar imóvel:", error);
                   toast.error("Erro ao adicionar imóvel");
+                } finally {
+                  setIsSaving(false); // Reset isSaving in finally block
+                  setIsNewPropertyModalOpen(false);
                 }
               }}
             >
