@@ -361,6 +361,7 @@ const PropertiesPage: React.FC = () => {
             <form
               onSubmit={async (e) => {
                 e.preventDefault();
+                setIsSaving(true);
                 const formElement = e.target as HTMLFormElement;
                 const formData = new FormData(formElement);
                 const data = Object.fromEntries(formData);
@@ -394,7 +395,8 @@ const PropertiesPage: React.FC = () => {
                   );
 
                   if (!response.ok) {
-                    throw new Error("Erro ao adicionar imóvel");
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || "Erro ao adicionar imóvel");
                   }
 
                   await fetchProperties();
@@ -402,10 +404,8 @@ const PropertiesPage: React.FC = () => {
                   toast.success("Imóvel adicionado com sucesso");
                 } catch (error) {
                   console.error("Erro ao adicionar imóvel:", error);
-                  toast.error("Erro ao adicionar imóvel");
-                } finally {
-                  setIsSaving(false); // Reset isSaving in finally block
-                  setIsNewPropertyModalOpen(false);
+                  toast.error(error instanceof Error ? error.message : "Erro ao adicionar imóvel");
+                  setIsSaving(false); // Only reset if there's an error
                 }
               }}
             >
