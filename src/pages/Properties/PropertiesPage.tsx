@@ -27,7 +27,8 @@ const PropertiesPage: React.FC = () => {
     m2_min: '',
     m2_max: '',
   });
-  const [isSaving, setIsSaving] = useState(false); // Added isSaving state
+  const [isSaving, setIsSaving] = useState(false);
+  const [formError, setFormError] = useState<string>('');
   const effectiveAnalysisId = useEffectiveAnalysisId();
   console.log(effectiveAnalysisId);
 
@@ -382,7 +383,7 @@ const PropertiesPage: React.FC = () => {
               onSubmit={async (e) => {
                 e.preventDefault();
                 setIsSaving(true);
-                const [formError, setFormError] = useState<string>('');
+                setFormError('');
                 const formElement = e.target as HTMLFormElement;
                 const formData = new FormData(formElement);
                 const data = Object.fromEntries(formData);
