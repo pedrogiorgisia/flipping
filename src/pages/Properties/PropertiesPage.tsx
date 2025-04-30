@@ -104,8 +104,10 @@ const PropertiesPage: React.FC = () => {
   };
 
   const handleExport = () => {
-    //This part needs to be updated to export XLSX instead of CSV.  This is beyond the scope of the provided changes.
-    const csv = [
+    const XLSX = require('xlsx');
+    
+    // Prepare the data in the same format
+    const data = [
       ['ID', 'URL', 'Imobiliária', 'Preço', 'Área', 'Quartos', 'Banheiros', 'Vagas', 
        'Condomínio', 'IPTU', 'Endereço', 'Código', 'Data Anúncio', 'Comentários', 
        'Criado Em', 'Reformado', 'Preço/m²'],
@@ -128,14 +130,17 @@ const PropertiesPage: React.FC = () => {
         p.reformado ? 'Sim' : 'Não',
         p.preco_m2
       ])
-    ].map(row => row.join(','));
+    ];
 
-    const blob = new Blob([csv.join('\n')], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'imoveis.csv';
-    a.click();
+    // Create a new workbook and worksheet
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(data);
+
+    // Add the worksheet to the workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Imóveis');
+
+    // Generate and download the file
+    XLSX.writeFile(wb, 'imoveis.xlsx');
   };
 
   const handleAddProperty = async (formData: any) => {
