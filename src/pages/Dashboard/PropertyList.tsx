@@ -20,6 +20,8 @@ interface PropertyListProps {
   properties: Property[];
 }
 
+import { useNavigate } from 'react-router-dom';
+
 const PropertyList: React.FC<PropertyListProps> = ({ properties }) => {
   const sortedProperties = [...properties].sort((a, b) => b.roi_liquido - a.roi_liquido);
   const formatCurrency = (value: number) => {
@@ -30,13 +32,13 @@ const PropertyList: React.FC<PropertyListProps> = ({ properties }) => {
     return new Intl.NumberFormat('pt-BR', { style: 'percent', minimumFractionDigits: 1 }).format(value);
   };
 
+  const navigate = useNavigate();
+  
   const handleAnalyze = async (id_simulacao: string) => {
     try {
-      const response = await fetch(`https://flippings.com.br/simulacoes/${id_simulacao}`);
-      const data = await response.json();
-      // Handle the response data as needed
+      navigate(`/analysis/${id_simulacao}/property`);
     } catch (error) {
-      console.error('Error analyzing property:', error);
+      console.error('Error navigating to analysis:', error);
     }
   };
 
