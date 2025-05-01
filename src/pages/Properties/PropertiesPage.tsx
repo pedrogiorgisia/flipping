@@ -15,21 +15,26 @@ const PropertiesPage: React.FC = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
   const [filters, setFilters] = useState({
-    valor_min: '',
-    valor_max: '',
-    area_min: '',
-    area_max: '',
-    quartos: '',
-    banheiros: '',
-    reformado: '',
-    condominio_min: '',
-    condominio_max: '',
-    m2_min: '',
-    m2_max: '',
+    valor_min: "",
+    valor_max: "",
+    area_min: "",
+    area_max: "",
+    quartos: "",
+    banheiros: "",
+    reformado: "",
+    condominio_min: "",
+    condominio_max: "",
+    m2_min: "",
+    m2_max: "",
   });
   const [isSaving, setIsSaving] = useState(false);
-  const [formError, setFormError] = useState<string>('');
+  const [formError, setFormError] = useState<string>("");
   const effectiveAnalysisId = useEffectiveAnalysisId();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [importError, setImportError] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [importedData, setImportedData] = useState<any>(null);
+
   console.log(effectiveAnalysisId);
 
   const fetchProperties = async () => {
@@ -71,17 +76,40 @@ const PropertiesPage: React.FC = () => {
   useEffect(() => {
     let filtered = [...properties];
 
-    if (filters.valor_min) filtered = filtered.filter(p => p.preco_anunciado >= Number(filters.valor_min));
-    if (filters.valor_max) filtered = filtered.filter(p => p.preco_anunciado <= Number(filters.valor_max));
-    if (filters.area_min) filtered = filtered.filter(p => p.area >= Number(filters.area_min));
-    if (filters.area_max) filtered = filtered.filter(p => p.area <= Number(filters.area_max));
-    if (filters.quartos) filtered = filtered.filter(p => p.quartos === Number(filters.quartos));
-    if (filters.banheiros) filtered = filtered.filter(p => p.banheiros === Number(filters.banheiros));
-    if (filters.reformado) filtered = filtered.filter(p => p.reformado === (filters.reformado === 'true'));
-    if (filters.condominio_min) filtered = filtered.filter(p => p.condominio_mensal >= Number(filters.condominio_min));
-    if (filters.condominio_max) filtered = filtered.filter(p => p.condominio_mensal <= Number(filters.condominio_max));
-    if (filters.m2_min) filtered = filtered.filter(p => p.preco_m2 >= Number(filters.m2_min));
-    if (filters.m2_max) filtered = filtered.filter(p => p.preco_m2 <= Number(filters.m2_max));
+    if (filters.valor_min)
+      filtered = filtered.filter(
+        (p) => p.preco_anunciado >= Number(filters.valor_min),
+      );
+    if (filters.valor_max)
+      filtered = filtered.filter(
+        (p) => p.preco_anunciado <= Number(filters.valor_max),
+      );
+    if (filters.area_min)
+      filtered = filtered.filter((p) => p.area >= Number(filters.area_min));
+    if (filters.area_max)
+      filtered = filtered.filter((p) => p.area <= Number(filters.area_max));
+    if (filters.quartos)
+      filtered = filtered.filter((p) => p.quartos === Number(filters.quartos));
+    if (filters.banheiros)
+      filtered = filtered.filter(
+        (p) => p.banheiros === Number(filters.banheiros),
+      );
+    if (filters.reformado)
+      filtered = filtered.filter(
+        (p) => p.reformado === (filters.reformado === "true"),
+      );
+    if (filters.condominio_min)
+      filtered = filtered.filter(
+        (p) => p.condominio_mensal >= Number(filters.condominio_min),
+      );
+    if (filters.condominio_max)
+      filtered = filtered.filter(
+        (p) => p.condominio_mensal <= Number(filters.condominio_max),
+      );
+    if (filters.m2_min)
+      filtered = filtered.filter((p) => p.preco_m2 >= Number(filters.m2_min));
+    if (filters.m2_max)
+      filtered = filtered.filter((p) => p.preco_m2 <= Number(filters.m2_max));
 
     setFilteredProperties(filtered);
   }, [filters, properties]);
@@ -89,30 +117,45 @@ const PropertiesPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       const response = await fetch(`https://flippings.com.br/imoveis/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
-      if (!response.ok) throw new Error('Erro ao excluir imóvel');
+      if (!response.ok) throw new Error("Erro ao excluir imóvel");
 
       await fetchProperties();
-      toast.success('Imóvel excluído com sucesso');
+      toast.success("Imóvel excluído com sucesso");
     } catch (error) {
-      console.error('Error deleting property:', error);
-      toast.error('Erro ao excluir imóvel');
+      console.error("Error deleting property:", error);
+      toast.error("Erro ao excluir imóvel");
     }
     setPropertyToDelete(null);
     setIsDeleteModalOpen(false);
   };
 
   const handleExport = async () => {
-    const XLSX = await import('xlsx');
-    
-    // Prepare the data in the same format
+    const XLSX = await import("xlsx");
+
     const data = [
-      ['ID', 'URL', 'Imobiliária', 'Preço', 'Área', 'Quartos', 'Banheiros', 'Vagas', 
-       'Condomínio', 'IPTU', 'Endereço', 'Código', 'Data Anúncio', 'Comentários', 
-       'Criado Em', 'Reformado', 'Preço/m²'],
-      ...filteredProperties.map(p => [
+      [
+        "ID",
+        "URL",
+        "Imobiliária",
+        "Preço",
+        "Área",
+        "Quartos",
+        "Banheiros",
+        "Vagas",
+        "Condomínio",
+        "IPTU",
+        "Endereço",
+        "Código",
+        "Data Anúncio",
+        "Comentários",
+        "Criado Em",
+        "Reformado",
+        "Preço/m²",
+      ],
+      ...filteredProperties.map((p) => [
         p.id,
         p.url,
         p.imobiliaria,
@@ -128,36 +171,62 @@ const PropertiesPage: React.FC = () => {
         new Date(p.data_anuncio).toLocaleDateString(),
         p.comentarios,
         new Date(p.criado_em).toLocaleString(),
-        p.reformado ? 'Sim' : 'Não',
-        p.preco_m2
-      ])
+        p.reformado ? "Sim" : "Não",
+        p.preco_m2,
+      ]),
     ];
 
-    // Create a new workbook and worksheet
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet(data);
 
-    // Add the worksheet to the workbook
-    XLSX.utils.book_append_sheet(wb, ws, 'Imóveis');
+    XLSX.utils.book_append_sheet(wb, ws, "Imóveis");
 
-    // Generate and download the file
-    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([wbout], { type: 'application/octet-stream' });
+    const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([wbout], { type: "application/octet-stream" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'imoveis.xlsx';
+    a.download = "imoveis.xlsx";
     a.click();
     URL.revokeObjectURL(url);
   };
 
   const handleAddProperty = async (formData: any) => {
-    setIsSaving(true); // Set isSaving to true before API call
+    setIsSaving(true);
+    setFormError("");
+
     if (!effectiveAnalysisId) {
       toast.error("Nenhuma análise selecionada");
-      setIsSaving(false); // Reset isSaving if no analysis is selected
+      setIsSaving(false);
       return;
     }
+
+    const payload: any = {
+      id_analise: effectiveAnalysisId,
+      reformado: formData.reformado === 'on',
+    };
+
+    const fieldsToInclude = [
+      'url', 'imobiliaria', 'preco_anunciado', 'area', 'quartos', 'banheiros',
+      'vagas', 'condominio_mensal', 'iptu_anual', 'codigo_ref_externo',
+      'data_anuncio', 'endereco', 'comentarios'
+    ];
+
+    fieldsToInclude.forEach(field => {
+      if (formData[field] && formData[field].trim() !== '') {
+        payload[field] = field === 'data_anuncio' ? formData[field] : 
+                         ['preco_anunciado', 'area', 'quartos', 'banheiros', 'vagas', 'condominio_mensal', 'iptu_anual'].includes(field) 
+                         ? Number(formData[field]) 
+                         : formData[field];
+      }
+    });
+
+    // Remover campos vazios ou undefined
+    Object.keys(payload).forEach(key => {
+      if (payload[key] === undefined || payload[key] === '') {
+        delete payload[key];
+      }
+    });
 
     try {
       const response = await fetch("https://flippings.com.br/imoveis", {
@@ -165,50 +234,81 @@ const PropertiesPage: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...formData,
-          id_analise: effectiveAnalysisId,
-          preco_anunciado: Number(formData.preco_anunciado),
-          area: Number(formData.area),
-          quartos: Number(formData.quartos),
-          banheiros: Number(formData.banheiros),
-          vagas: Number(formData.vagas) || 0,
-          condominio_mensal: Number(formData.condominio_mensal),
-          iptu_anual: Number(formData.iptu_anual),
-          reformado: Boolean(formData.reformado),
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(
-          `Erro ao adicionar imóvel: ${JSON.stringify(errorData)}`,
-        );
+        throw new Error(`Erro ao adicionar imóvel: ${JSON.stringify(errorData)}`);
       }
 
       await fetchProperties();
-      setIsNewPropertyModalOpen(false);
       toast.success("Imóvel adicionado com sucesso");
+      setIsNewPropertyModalOpen(false);
+      setImportedData(null);
     } catch (error) {
       console.error("Error adding property:", error);
       toast.error("Erro ao adicionar imóvel");
+      setFormError(error instanceof Error ? error.message : "Erro desconhecido");
     } finally {
-      setIsSaving(false); // Reset isSaving in finally block
-      setIsNewPropertyModalOpen(false);
+      setIsSaving(false);
     }
   };
 
   const handleAddNewProperty = () => {
     setIsNewPropertyModalOpen(true);
+    setImportedData(null);
   };
 
   const handleImportHTML = () => {
     setIsImportModalOpen(true);
+    setSelectedFile(null);
+    setImportError(null);
   };
 
   const closeModals = () => {
     setIsImportModalOpen(false);
     setIsNewPropertyModalOpen(false);
+    setImportedData(null);
+  };
+
+  const handleProcessHTML = async () => {
+    if (!selectedFile) return;
+
+    setIsProcessing(true);
+    setImportError(null);
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    try {
+      const response = await fetch(
+        "https://flippings.com.br/api/v1/parse-html",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          "Falha ao processar o arquivo HTML. Por favor, tente novamente.",
+        );
+      }
+
+      const data = await response.json();
+      setImportedData(data);
+      setIsImportModalOpen(false);
+      setIsNewPropertyModalOpen(true);
+    } catch (error) {
+      setImportError(
+        error instanceof Error
+          ? error.message
+          : "Ocorreu um erro ao processar o arquivo.",
+      );
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   if (isLoading) {
@@ -254,14 +354,18 @@ const PropertiesPage: React.FC = () => {
                   <input
                     type="number"
                     value={filters.valor_min}
-                    onChange={(e) => setFilters({...filters, valor_min: e.target.value})}
+                    onChange={(e) =>
+                      setFilters({ ...filters, valor_min: e.target.value })
+                    }
                     className="w-24 rounded-md border border-gray-300 px-2 py-1 text-sm"
                     placeholder="Min"
                   />
                   <input
                     type="number"
                     value={filters.valor_max}
-                    onChange={(e) => setFilters({...filters, valor_max: e.target.value})}
+                    onChange={(e) =>
+                      setFilters({ ...filters, valor_max: e.target.value })
+                    }
                     className="w-24 rounded-md border border-gray-300 px-2 py-1 text-sm"
                     placeholder="Max"
                   />
@@ -274,14 +378,18 @@ const PropertiesPage: React.FC = () => {
                   <input
                     type="number"
                     value={filters.area_min}
-                    onChange={(e) => setFilters({...filters, area_min: e.target.value})}
+                    onChange={(e) =>
+                      setFilters({ ...filters, area_min: e.target.value })
+                    }
                     className="w-24 rounded-md border border-gray-300 px-2 py-1 text-sm"
                     placeholder="Min"
                   />
                   <input
                     type="number"
                     value={filters.area_max}
-                    onChange={(e) => setFilters({...filters, area_max: e.target.value})}
+                    onChange={(e) =>
+                      setFilters({ ...filters, area_max: e.target.value })
+                    }
                     className="w-24 rounded-md border border-gray-300 px-2 py-1 text-sm"
                     placeholder="Max"
                   />
@@ -290,9 +398,11 @@ const PropertiesPage: React.FC = () => {
 
               <div>
                 <label className="text-sm text-gray-700">Status:</label>
-                <select 
+                <select
                   value={filters.reformado}
-                  onChange={(e) => setFilters({...filters, reformado: e.target.value})}
+                  onChange={(e) =>
+                    setFilters({ ...filters, reformado: e.target.value })
+                  }
                   className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm"
                 >
                   <option value="">Todos</option>
@@ -301,27 +411,28 @@ const PropertiesPage: React.FC = () => {
                 </select>
               </div>
             </div>
-
             <div className="flex items-center gap-2">
-              <button 
-                onClick={() => setFilters({
-                  valor_min: '',
-                  valor_max: '',
-                  area_min: '',
-                  area_max: '',
-                  quartos: '',
-                  banheiros: '',
-                  reformado: '',
-                  condominio_min: '',
-                  condominio_max: '',
-                  m2_min: '',
-                  m2_max: '',
-                })}
+              <button
+                onClick={() =>
+                  setFilters({
+                    valor_min: "",
+                    valor_max: "",
+                    area_min: "",
+                    area_max: "",
+                    quartos: "",
+                    banheiros: "",
+                    reformado: "",
+                    condominio_min: "",
+                    condominio_max: "",
+                    m2_min: "",
+                    m2_max: "",
+                  })
+                }
                 className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50"
               >
                 Limpar Filtros
               </button>
-              <button 
+              <button
                 onClick={handleExport}
                 className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50"
               >
@@ -341,7 +452,6 @@ const PropertiesPage: React.FC = () => {
           }}
         />
 
-        {/* Delete Confirmation Modal */}
         {isDeleteModalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 max-w-sm w-full">
@@ -362,7 +472,9 @@ const PropertiesPage: React.FC = () => {
                   Cancelar
                 </button>
                 <button
-                  onClick={() => propertyToDelete && handleDelete(propertyToDelete)}
+                  onClick={() =>
+                    propertyToDelete && handleDelete(propertyToDelete)
+                  }
                   className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
                 >
                   Excluir
@@ -375,267 +487,317 @@ const PropertiesPage: React.FC = () => {
 
       {isNewPropertyModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
-              Adicionar Novo Imóvel
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl p-6 overflow-y-auto max-h-[90vh]">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              {importedData
+                ? "Editar Imóvel Importado"
+                : "Adicionar Novo Imóvel"}
             </h2>
             <form
               onSubmit={async (e) => {
                 e.preventDefault();
-                setIsSaving(true);
-                setFormError('');
                 const formElement = e.target as HTMLFormElement;
                 const formData = new FormData(formElement);
                 const data = Object.fromEntries(formData);
-                const payload: any = { 
-                  id_analise: effectiveAnalysisId,
-                  reformado: Boolean(data.reformado) // Always include reformado as boolean
-                };
-                setFormError(''); // Clear any previous errors
-
-                // Only include non-empty fields
-                if (data.url) payload.url = data.url;
-                if (data.imobiliaria) payload.imobiliaria = data.imobiliaria;
-                if (data.preco_anunciado) payload.preco_anunciado = Number(data.preco_anunciado);
-                if (data.area) payload.area = Number(data.area);
-                if (data.quartos) payload.quartos = Number(data.quartos);
-                if (data.banheiros) payload.banheiros = Number(data.banheiros);
-                if (data.vagas) payload.vagas = Number(data.vagas);
-                if (data.condominio_mensal) payload.condominio_mensal = Number(data.condominio_mensal);
-                if (data.iptu_anual) payload.iptu_anual = Number(data.iptu_anual);
-                if (data.codigo_ref_externo) payload.codigo_ref_externo = data.codigo_ref_externo;
-                if (data.data_anuncio) payload.data_anuncio = data.data_anuncio;
-                if (data.endereco) payload.endereco = data.endereco;
-                if (data.comentarios) payload.comentarios = data.comentarios;
-
-                try {
-                  const response = await fetch(
-                    "https://flippings.com.br/imoveis",
-                    {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                      body: JSON.stringify(payload),
-                    },
-                  );
-
-                  if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || "Erro ao adicionar imóvel");
-                  }
-
-                  await fetchProperties();
-                  toast.success("Imóvel adicionado com sucesso");
-                  setIsNewPropertyModalOpen(false); // Only close on success
-                } catch (error) {
-                  console.error("Erro ao adicionar imóvel:", error);
-                  const errorMessage = error instanceof Error ? error.message : "Erro ao adicionar imóvel";
-                  setFormError(errorMessage);
-                  setIsSaving(false);
-                }
+                await handleAddProperty(data);
               }}
             >
               {formError && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md">
-                  {formError}
+                <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-400 text-red-700 rounded">
+                  <p className="font-medium">Erro ao adicionar imóvel:</p>
+                  <p>{formError}</p>
                 </div>
               )}
-              <div className="grid grid-cols-2 gap-6">
-                <div className="form-group">
-                  <label className="block text-sm font-semibold text-gray-800 mb-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                    htmlFor="url"
+                  >
                     URL do anúncio
                   </label>
                   <input
+                    id="url"
                     name="url"
-                    type="text"
+                    type="url"
                     required
-                    className="mt-1 block w-full px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                     placeholder="https://..."
+                    defaultValue={importedData?.url || ""}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                    htmlFor="imobiliaria"
+                  >
                     Imobiliária
                   </label>
                   <input
+                    id="imobiliaria"
                     name="imobiliaria"
                     type="text"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    defaultValue={importedData?.imobiliaria || ""}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                    htmlFor="preco_anunciado"
+                  >
                     Preço (R$)
                   </label>
                   <input
+                    id="preco_anunciado"
                     name="preco_anunciado"
                     type="number"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="0,00"
+                    defaultValue={importedData?.preco_anunciado || ""}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                    htmlFor="area"
+                  >
                     Área (m²)
                   </label>
                   <input
+                    id="area"
                     name="area"
                     type="number"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="0"
+                    defaultValue={importedData?.area || ""}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                    htmlFor="quartos"
+                  >
                     Quartos
                   </label>
                   <input
+                    id="quartos"
                     name="quartos"
                     type="number"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="0"
+                    defaultValue={importedData?.quartos || ""}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                    htmlFor="banheiros"
+                  >
                     Banheiros
                   </label>
                   <input
+                    id="banheiros"
                     name="banheiros"
                     type="number"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="0"
+                    defaultValue={importedData?.banheiros || ""}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                    htmlFor="vagas"
+                  >
                     Vagas
                   </label>
                   <input
+                    id="vagas"
                     name="vagas"
                     type="number"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="0"
+                    defaultValue={importedData?.vagas || ""}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                    htmlFor="condominio_mensal"
+                  >
                     Condomínio mensal (R$)
                   </label>
                   <input
+                    id="condominio_mensal"
                     name="condominio_mensal"
                     type="number"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="0,00"
+                    defaultValue={importedData?.condominio_mensal || ""}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                    htmlFor="iptu_anual"
+                  >
                     IPTU anual (R$)
                   </label>
                   <input
+                    id="iptu_anual"
                     name="iptu_anual"
                     type="number"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="0,00"
+                    defaultValue={importedData?.iptu_anual || ""}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                    htmlFor="codigo_ref_externo"
+                  >
                     Código
                   </label>
                   <input
+                    id="codigo_ref_externo"
                     name="codigo_ref_externo"
                     type="text"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    defaultValue={importedData?.codigo_ref_externo || ""}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-800 mb-2">
-                    Data do anúncio (opcional)
+                  <label
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                    htmlFor="data_anuncio"
+                  >
+                    Data do anúncio
                   </label>
                   <input
+                    id="data_anuncio"
                     name="data_anuncio"
                     type="date"
-                    className="mt-1 block w-full px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    defaultValue={importedData?.data_anuncio || ""}
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                <div className="md:col-span-2">
+                  <label
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                    htmlFor="endereco"
+                  >
                     Endereço
                   </label>
                   <input
+                    id="endereco"
                     name="endereco"
                     type="text"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    defaultValue={importedData?.endereco || ""}
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                <div className="md:col-span-2">
+                  <label className="flex items-center">
                     <input
                       name="reformado"
                       type="checkbox"
-                      className="mr-2 rounded border-gray-300"
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      defaultChecked={importedData?.reformado || false}
                     />
-                    Reformado
+                    <span className="ml-2 text-sm text-gray-700">
+                      Reformado
+                    </span>
                   </label>
                 </div>
-                <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                <div className="md:col-span-2">
+                  <label
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                    htmlFor="comentarios"
+                  >
                     Comentários
                   </label>
                   <textarea
+                    id="comentarios"
                     name="comentarios"
                     rows={3}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    defaultValue={importedData?.comentarios || ""}
                   ></textarea>
                 </div>
               </div>
-              <div className="mt-4 flex justify-end gap-2">
+              <div className="mt-8 flex justify-end gap-4">
                 <button
                   type="button"
                   onClick={closeModals}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                  disabled={isSaving}
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className={`px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all ${isSaving ? 'opacity-75 cursor-not-allowed' : ''}`}
+                  className={`px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                    isSaving ? "opacity-75 cursor-not-allowed" : ""
+                  }`}
                 >
                   {isSaving ? (
                     <span className="flex items-center">
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      <svg
+                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
                       </svg>
                       Salvando...
                     </span>
-                  ) : 'Salvar'}
+                  ) : (
+                    "Salvar"
+                  )}
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
-      {/* Import HTML Modal */}
       {isImportModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">
-              Import HTML
+              Importar HTML
             </h2>
             <p className="text-gray-600 mb-4">
-              Upload an HTML file from a real estate listing to automatically
-              import property details.
+              Faça upload de um arquivo HTML de um anúncio imobiliário para
+              importar automaticamente os detalhes da propriedade.
             </p>
 
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-4">
               <Upload size={32} className="mx-auto text-gray-400 mb-2" />
               <p className="text-sm text-gray-600 mb-2">
-                Drag and drop an HTML file, or click to browse
+                Arraste e solte um arquivo HTML, ou clique para selecionar
               </p>
               <input
                 type="file"
@@ -645,29 +807,43 @@ const PropertiesPage: React.FC = () => {
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) {
-                    const formData = new FormData();
-                    formData.append('file', file);
-                    // Handle file upload logic here
+                    setSelectedFile(file);
                   }
                 }}
               />
-              <button 
-                onClick={() => document.getElementById('html-upload')?.click()}
+              <button
+                onClick={() => document.getElementById("html-upload")?.click()}
                 className="mt-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
               >
-                Select File
+                Selecionar Arquivo
               </button>
             </div>
+
+            {selectedFile && (
+              <p className="text-sm text-gray-600 mb-4">
+                Arquivo selecionado: {selectedFile.name}
+              </p>
+            )}
+
+            {importError && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md">
+                {importError}
+              </div>
+            )}
 
             <div className="flex justify-end gap-3">
               <button
                 onClick={closeModals}
                 className="px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50"
               >
-                Cancel
+                Cancelar
               </button>
-              <button className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
-                Process HTML
+              <button
+                onClick={handleProcessHTML}
+                disabled={!selectedFile || isProcessing}
+                className={`px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 ${!selectedFile || isProcessing ? "opacity-50 cursor-not-allowed" : ""}`}
+              >
+                {isProcessing ? "Processando..." : "Processar HTML"}
               </button>
             </div>
           </div>
