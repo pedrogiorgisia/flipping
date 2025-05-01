@@ -94,16 +94,16 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ property }) => {
             </dd>
           </div>
           <div>
+            <dt className="text-xs font-medium text-gray-500">URL do Imóvel</dt>
+            <dd className="text-sm text-blue-600 hover:text-blue-800">
+              <a href={property.url} target="_blank" rel="noopener noreferrer">Ver anúncio original</a>
+            </dd>
+          </div>
+          <div>
             <dt className="text-xs font-medium text-gray-500">Status</dt>
             <dd className="mt-0.5">
-              <span
-                className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                  property.renovated
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-yellow-100 text-yellow-800'
-                }`}
-              >
-                {property.renovated ? 'Reformado' : 'Não Reformado'}
+              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                Reformado
               </span>
             </dd>
           </div>

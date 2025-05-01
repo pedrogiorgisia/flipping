@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Property } from '../../types/property';
 import { ChevronLeft, ChevronRight, Trash } from 'lucide-react';
@@ -24,6 +23,18 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = 
       style: 'currency',
       currency: 'BRL'
     }).format(value);
+  };
+
+  const handleRemove = (id: string) => {
+    if (window.confirm('Deseja excluir esse imóvel como referência desta simulação?')) {
+      onRemove?.(id);
+    }
+  };
+
+  const calculateAveragePrice = () => {
+    if (!references.length) return 0;
+    const total = references.reduce((sum, prop) => sum + prop.price, 0);
+    return total / references.length;
   };
 
   return (
@@ -105,7 +116,7 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = 
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-900 text-center">
                   <button
-                    onClick={() => onRemove?.(property.id)}
+                    onClick={() => handleRemove(property.id)}
                     className="text-gray-400 hover:text-red-600"
                   >
                     <Trash size={16} />
@@ -115,6 +126,7 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = 
             ))}
           </tbody>
         </table>
+        <p>Preço de venda calculado com base nos imóveis de referência: {formatCurrency(calculateAveragePrice())}</p>
       </div>
 
       {totalPages > 1 && (

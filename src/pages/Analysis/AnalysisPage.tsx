@@ -92,8 +92,7 @@ const AnalysisPage: React.FC = () => {
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Análise de Investimento</h1>
-            <p className="text-gray-600 mt-1">Análise detalhada para {property.code}</p>
+            <h1 className="text-2xl font-bold text-gray-900">Simulação - Análise de Investimento</h1>
           </div>
 
           <div className="flex flex-wrap gap-3">
