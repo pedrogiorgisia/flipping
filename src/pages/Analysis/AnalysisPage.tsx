@@ -459,8 +459,9 @@ const AnalysisPage: React.FC = () => {
             expanded={expandedSections.analysisAndParameters}
             onToggle={() => toggleSection("analysisAndParameters")}
           >
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-3 gap-8">
+              <div className="col-span-2 bg-white p-6 rounded-lg shadow-sm">
+                <div className="grid grid-cols-2 gap-8">
                 {/* Coluna 1: Parâmetros de Compra */}
                 <div>
                   <h3 className="text-md font-medium mb-4 text-gray-700">Parâmetros de Compra</h3>
@@ -576,12 +577,38 @@ const AnalysisPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <button
-                onClick={recalculateValues}
-                className="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              >
-                Recalcular
-              </button>
+                <button
+                  onClick={recalculateValues}
+                  className="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Recalcular
+                </button>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-md font-medium mb-4 text-gray-700">Resultados</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm text-gray-500">Custos de Aquisição</label>
+                    <p className="text-lg font-semibold">{formatCurrency(analysisResults.acquisitionCosts.total)}</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-500">Custos até Venda</label>
+                    <p className="text-lg font-semibold">{formatCurrency(analysisResults.holdingCosts.total)}</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-500">Preço de Venda</label>
+                    <p className="text-lg font-semibold">{formatCurrency(analysisResults.salePrice)}</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-500">Lucro Líquido</label>
+                    <p className="text-lg font-semibold text-green-600">{formatCurrency(analysisResults.netProfit)}</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-500">ROI</label>
+                    <p className="text-lg font-semibold text-blue-600">{analysisResults.roi.toFixed(2)}%</p>
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
               <h2 className="text-lg font-semibold text-blue-800 mb-4">
