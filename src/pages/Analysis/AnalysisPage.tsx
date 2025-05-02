@@ -35,16 +35,22 @@ const AnalysisPage: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        // ----------------------------
-        // 👉 Chama /simulacoes/<simulationId>
-        const simulacaoData = await getSimulacoes(simulationId);
-        console.log("Dados da simulação:", simulacaoData);
-        setSimulacao(simulacaoData);
+        // Executar as chamadas em paralelo para melhor performance
+        const [simulacaoData, referenciasData] = await Promise.all([
+          getSimulacoes(simulationId).catch(error => {
+            console.error("Erro ao buscar simulação:", error);
+            throw new Error("Falha ao carregar dados da simulação");
+          }),
+          getReferenciaSimulacao(simulationId).catch(error => {
+            console.error("Erro ao buscar referências:", error);
+            throw new Error("Falha ao carregar referências");
+          })
+        ]);
 
-        // ----------------------------
-        // 👉 Chama /referencia-simulacao?id_simulacao=<simulationId>
-        const referenciasData = await getReferenciaSimulacao(simulationId);
+        console.log("Dados da simulação:", simulacaoData);
         console.log("Dados das referências:", referenciasData);
+        
+        setSimulacao(simulacaoData);
         setReferenciasSimulacao(referenciasData);
       } catch (err) {
         console.error("Erro ao buscar dados:", err);
