@@ -1,0 +1,44 @@
+<div>
+          <h3 className="text-md font-medium mb-2">Análise de Viabilidade</h3>
+          <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+            <div>
+              <h4 className="text-sm font-medium">Custos de Aquisição</h4>
+              <p className="text-sm">Entrada: {formatCurrency(parseFloat(parameters.valor_compra) * (parseFloat(parameters.entrada_pct) / 100))}</p>
+              <p className="text-sm">ITBI: {formatCurrency(parseFloat(parameters.valor_compra) * (parseFloat(parameters.itbi_pct) / 100))}</p>
+              <p className="text-sm">Avaliação do Banco: {formatCurrency(parseFloat(parameters.avaliacao_banco_rs))}</p>
+              <p className="text-sm">Registro: {formatCurrency(parseFloat(parameters.cartorio_rs))}</p>
+              <p className="text-sm font-medium text-blue-600">Total: {formatCurrency(
+                parseFloat(parameters.valor_compra) * (parseFloat(parameters.entrada_pct) / 100) +
+                parseFloat(parameters.valor_compra) * (parseFloat(parameters.itbi_pct) / 100) +
+                parseFloat(parameters.avaliacao_banco_rs) +
+                parseFloat(parameters.cartorio_rs)
+              )}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium">Custos até a venda</h4>
+              <p className="text-sm">Parcelas Financiamento: {formatCurrency(parameters.calc_parcelas_rs)}</p>
+              <p className="text-sm">Condomínio: {formatCurrency(parameters.calc_condominio_rs)}</p>
+              <p className="text-sm">Contas (IPTU, luz, água e etc): {formatCurrency(parseFloat(parameters.contas_gerais_rs))}</p>
+              <p className="text-sm">Reforma: {formatCurrency(parseFloat(parameters.reforma_rs))}</p>
+              <p className="text-sm font-medium text-blue-600">Total: {formatCurrency(
+                parameters.calc_parcelas_rs +
+                parameters.calc_condominio_rs +
+                parseFloat(parameters.contas_gerais_rs) +
+                parseFloat(parameters.reforma_rs)
+              )}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium">Custos de Venda</h4>
+              <p className="text-sm">Quitação do Financiamento: {formatCurrency(parameters.calc_quitacao_rs)}</p>
+              <p className="text-sm">Corretagem: {formatCurrency(parseFloat(parameters.valor_compra) * (parseFloat(parameters.corretagem_venda_pct) / 100))}</p>
+              <p className="text-sm">Imposto de Renda: {formatCurrency(parameters.ir_pago ? (parseFloat(parameters.valor_compra) * parseFloat(parameters.valor_m2_venda) - parseFloat(parameters.valor_compra)) * 0.15 : 0)}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium">Resultados</h4>
+              <p className="text-sm">Investimento Total: {formatCurrency(parseFloat(parameters.valor_compra))}</p>
+              <p className="text-sm">Preço de Venda: {formatCurrency(parseFloat(parameters.valor_compra) * parseFloat(parameters.valor_m2_venda))}</p>
+              <p className="text-sm">Lucro Líquido: {formatCurrency(parameters.roi_liquido * parseFloat(parameters.valor_compra))}</p>
+              <p className="text-sm font-medium text-blue-600">ROI: {(parameters.roi_liquido * 100).toFixed(2)}%</p>
+            </div>
+          </div>
+        </div>
