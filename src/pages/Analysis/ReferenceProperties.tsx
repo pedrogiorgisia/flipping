@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Trash, PlusCircle, ExternalLink } from "lucide-react";
 
-interface ReferenceProperty {
+export interface ReferenceProperty {
   id: string;
   imovel: {
     id: string;
