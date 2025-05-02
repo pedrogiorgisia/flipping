@@ -585,27 +585,46 @@ const AnalysisPage: React.FC = () => {
                 </button>
               </div>
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h3 className="text-md font-medium mb-4 text-gray-700">Resultados</h3>
-                <div className="space-y-4">
+                <h3 className="text-md font-medium mb-2">Análise de Viabilidade</h3>
+                <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
                   <div>
-                    <label className="block text-sm text-gray-500">Custos de Aquisição</label>
-                    <p className="text-lg font-semibold">{formatCurrency(analysisResults.acquisitionCosts.total)}</p>
+                    <h4 className="text-sm font-medium">Custos de Aquisição</h4>
+                    <p className="text-sm">Entrada: {formatCurrency(parseFloat(simulacao.valor_compra) * (parseFloat(simulacao.entrada_pct) / 100))}</p>
+                    <p className="text-sm">ITBI: {formatCurrency(parseFloat(simulacao.valor_compra) * (parseFloat(simulacao.itbi_pct) / 100))}</p>
+                    <p className="text-sm">Avaliação do Banco: {formatCurrency(parseFloat(simulacao.avaliacao_banco_rs))}</p>
+                    <p className="text-sm">Registro: {formatCurrency(parseFloat(simulacao.cartorio_rs))}</p>
+                    <p className="text-sm font-medium text-blue-600">Total: {formatCurrency(
+                      parseFloat(simulacao.valor_compra) * (parseFloat(simulacao.entrada_pct) / 100) +
+                      parseFloat(simulacao.valor_compra) * (parseFloat(simulacao.itbi_pct) / 100) +
+                      parseFloat(simulacao.avaliacao_banco_rs) +
+                      parseFloat(simulacao.cartorio_rs)
+                    )}</p>
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-500">Custos até Venda</label>
-                    <p className="text-lg font-semibold">{formatCurrency(analysisResults.holdingCosts.total)}</p>
+                    <h4 className="text-sm font-medium">Custos até a venda</h4>
+                    <p className="text-sm">Parcelas Financiamento: {formatCurrency(simulacao.calc_parcelas_rs)}</p>
+                    <p className="text-sm">Condomínio: {formatCurrency(simulacao.calc_condominio_rs)}</p>
+                    <p className="text-sm">Contas (IPTU, luz, água e etc): {formatCurrency(parseFloat(simulacao.contas_gerais_rs))}</p>
+                    <p className="text-sm">Reforma: {formatCurrency(parseFloat(simulacao.reforma_rs))}</p>
+                    <p className="text-sm font-medium text-blue-600">Total: {formatCurrency(
+                      simulacao.calc_parcelas_rs +
+                      simulacao.calc_condominio_rs +
+                      parseFloat(simulacao.contas_gerais_rs) +
+                      parseFloat(simulacao.reforma_rs)
+                    )}</p>
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-500">Preço de Venda</label>
-                    <p className="text-lg font-semibold">{formatCurrency(analysisResults.salePrice)}</p>
+                    <h4 className="text-sm font-medium">Custos de Venda</h4>
+                    <p className="text-sm">Quitação do Financiamento: {formatCurrency(simulacao.calc_quitacao_rs)}</p>
+                    <p className="text-sm">Corretagem: {formatCurrency(parseFloat(simulacao.valor_compra) * (parseFloat(simulacao.corretagem_venda_pct) / 100))}</p>
+                    <p className="text-sm">Imposto de Renda: {formatCurrency(simulacao.ir_pago ? (parseFloat(simulacao.valor_compra) * parseFloat(simulacao.valor_m2_venda) - parseFloat(simulacao.valor_compra)) * 0.15 : 0)}</p>
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-500">Lucro Líquido</label>
-                    <p className="text-lg font-semibold text-green-600">{formatCurrency(analysisResults.netProfit)}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm text-gray-500">ROI</label>
-                    <p className="text-lg font-semibold text-blue-600">{analysisResults.roi.toFixed(2)}%</p>
+                    <h4 className="text-sm font-medium">Resultados</h4>
+                    <p className="text-sm">Investimento Total: {formatCurrency(parseFloat(simulacao.valor_compra))}</p>
+                    <p className="text-sm">Preço de Venda: {formatCurrency(parseFloat(simulacao.valor_compra) * parseFloat(simulacao.valor_m2_venda))}</p>
+                    <p className="text-sm">Lucro Líquido: {formatCurrency(simulacao.roi_liquido * parseFloat(simulacao.valor_compra))}</p>
+                    <p className="text-sm font-medium text-blue-600">ROI: {(simulacao.roi_liquido * 100).toFixed(2)}%</p>
                   </div>
                 </div>
               </div>
