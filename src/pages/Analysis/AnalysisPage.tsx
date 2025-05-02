@@ -459,11 +459,130 @@ const AnalysisPage: React.FC = () => {
             expanded={expandedSections.analysisAndParameters}
             onToggle={() => toggleSection("analysisAndParameters")}
           >
-            <CalculationParameters
-              parameters={simulacao}
-              onParameterChange={handleParameterChange}
-              onRecalculate={recalculateValues}
-            />
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="grid grid-cols-2 gap-8">
+                {/* Coluna 1: Parâmetros de Compra */}
+                <div>
+                  <h3 className="text-md font-medium mb-4 text-gray-700">Parâmetros de Compra</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm text-gray-500">Valor de venda (R$)</label>
+                      <input
+                        type="number"
+                        value={simulacao?.valor_compra || ''}
+                        onChange={(e) => handleParameterChange("valor_compra", e.target.value)}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-500">Entrada (%)</label>
+                      <input
+                        type="number"
+                        value={simulacao?.entrada_pct || ''}
+                        onChange={(e) => handleParameterChange("entrada_pct", e.target.value)}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-500">ITBI (%)</label>
+                      <input
+                        type="number"
+                        value={simulacao?.itbi_pct || ''}
+                        onChange={(e) => handleParameterChange("itbi_pct", e.target.value)}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-500">Avaliação bancária (R$)</label>
+                      <input
+                        type="number"
+                        value={simulacao?.avaliacao_banco_rs || ''}
+                        onChange={(e) => handleParameterChange("avaliacao_banco_rs", e.target.value)}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-500">Registro em cartório (%)</label>
+                      <input
+                        type="number"
+                        value={simulacao?.cartorio_rs || ''}
+                        onChange={(e) => handleParameterChange("cartorio_rs", e.target.value)}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Coluna 2: Parâmetros de Financiamento e Venda */}
+                <div>
+                  <h3 className="text-md font-medium mb-4 text-gray-700">Financiamento e Venda</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm text-gray-500">Tempo de venda (meses)</label>
+                      <input
+                        type="number"
+                        value={simulacao?.prazo_venda_meses || ''}
+                        onChange={(e) => handleParameterChange("prazo_venda_meses", e.target.value)}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-500">Custo estimado reforma (R$)</label>
+                      <input
+                        type="number"
+                        value={simulacao?.reforma_rs || ''}
+                        onChange={(e) => handleParameterChange("reforma_rs", e.target.value)}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-500">Taxa CET (%)</label>
+                      <input
+                        type="number"
+                        value={simulacao?.taxa_juros_financiamento || ''}
+                        onChange={(e) => handleParameterChange("taxa_juros_financiamento", e.target.value)}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-500">Prazo financiamento (meses)</label>
+                      <input
+                        type="number"
+                        value={simulacao?.prazo_financiamento_meses || ''}
+                        onChange={(e) => handleParameterChange("prazo_financiamento_meses", e.target.value)}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-500">Corretagem venda (%)</label>
+                      <input
+                        type="number"
+                        value={simulacao?.corretagem_venda_pct || ''}
+                        onChange={(e) => handleParameterChange("corretagem_venda_pct", e.target.value)}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={simulacao?.ir_pago || false}
+                          onChange={(e) => handleParameterChange("ir_pago", e.target.checked)}
+                          className="form-checkbox h-4 w-4 text-blue-600"
+                        />
+                        <span className="ml-2 text-sm text-gray-700">Incide Imposto de Renda?</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={recalculateValues}
+                className="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                Recalcular
+              </button>
+            </div>
             <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
               <h2 className="text-lg font-semibold text-blue-800 mb-4">
                 Resumo do Investimento
