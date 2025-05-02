@@ -1,205 +1,200 @@
-import React, { useState } from 'react';
-import { Property } from '../../types/property';
-import { ChevronLeft, ChevronRight, Trash } from 'lucide-react';
+import React, { useState } from "react";
+import { Trash, PlusCircle, ExternalLink } from "lucide-react";
+
+interface ReferenceProperty {
+  id: string;
+  imovel: {
+    id: string;
+    url: string;
+    imobiliaria: string;
+    preco_anunciado: number;
+    area: number;
+    quartos: number;
+    banheiros: number;
+    vagas: number;
+    condominio_mensal: number;
+    iptu_anual: number;
+    endereco: string;
+    codigo_ref_externo: string;
+    comentarios: string | null;
+    reformado: boolean;
+    preco_m2: number;
+  };
+}
 
 interface ReferencePropertiesProps {
-  references?: Property[];
+  references: ReferenceProperty[];
   onRemove?: (id: string) => void;
 }
 
-const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({ references = mockReferences, onRemove }) => {
-  const [currentPage, setCurrentPage] = useState(1);
+const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
+  references,
+  onRemove,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(mockReferences.length / itemsPerPage);
-
-  const currentItems = mockReferences.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
   const handleRemove = (id: string) => {
-    if (window.confirm('Deseja excluir esse imóvel como referência desta simulação?')) {
+    if (
+      window.confirm(
+        "Deseja excluir esse imóvel como referência desta simulação?",
+      )
+    ) {
       onRemove?.(id);
     }
   };
 
   const calculateAveragePrice = () => {
     if (!references.length) return 0;
-    const total = references.reduce((sum, prop) => sum + prop.price, 0);
+    const total = references.reduce(
+      (sum, ref) => sum + ref.imovel.preco_anunciado,
+      0,
+    );
     return total / references.length;
   };
 
   return (
-    <div className="bg-white rounded-lg shadow mt-6">
-      <div className="px-4 py-3 flex justify-between items-center border-b border-gray-200">
-        <div>
-          <h3 className="text-lg font-medium text-gray-900">Imóveis de Referência</h3>
-          <p className="text-sm text-gray-500">Comparativo com imóveis similares na região</p>
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 inline-block">
+          <p className="text-xs font-medium text-gray-500 mb-1">
+            Preço de Venda Calculado
+          </p>
+          <p className="text-sm font-bold text-gray-900">
+            {formatCurrency(calculateAveragePrice())}
+          </p>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+          className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 whitespace-nowrap"
         >
+          <PlusCircle size={14} className="inline-block mr-1" />
           Adicionar Referência
         </button>
       </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">Adicionar Imóvel de Referência</h3>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="text-gray-400 hover:text-gray-500"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Selecione o Imóvel</label>
-                <select className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
-                  <option value="">Selecione...</option>
-                </select>
-              </div>
-              <div className="flex justify-end space-x-2">
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700"
-                >
-                  Adicionar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div>
+      <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
-            <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Código</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">Endereço</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">Área</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">Quartos</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">Preço</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500">R$/m²</th>
-              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500">Ações</th>
+            <tr className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-2 py-2 text-left">Endereço</th>
+              <th className="px-2 py-2 text-right">Valor</th>
+              <th className="px-2 py-2 text-right">Área</th>
+              <th className="px-2 py-2 text-center">Qts</th>
+              <th className="px-2 py-2 text-center">Ban</th>
+              <th className="px-2 py-2 text-center">Vgs</th>
+              <th className="px-2 py-2 text-right">Cond.</th>
+              <th className="px-2 py-2 text-right">IPTU</th>
+              <th className="px-2 py-2 text-right">R$/m²</th>
+              <th className="px-2 py-2 text-left">Coment.</th>
+              <th className="px-2 py-2 text-center">Ações</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {currentItems.map((property) => (
-              <tr key={property.id} className="hover:bg-gray-50">
-                <td className="px-4 py-3 text-sm text-gray-900">{property.code}</td>
-                <td className="px-4 py-3 text-sm text-gray-900">{property.address}</td>
-                <td className="px-4 py-3 text-sm text-gray-900 text-right">{property.area}m²</td>
-                <td className="px-4 py-3 text-sm text-gray-900 text-right">{property.bedrooms}</td>
-                <td className="px-4 py-3 text-sm text-gray-900 text-right">{formatCurrency(property.price)}</td>
-                <td className="px-4 py-3 text-sm text-gray-900 text-right">
-                  {formatCurrency(property.price / property.area)}
+            {references.map((reference) => (
+              <tr key={reference.id} className="hover:bg-gray-50 text-sm">
+                <td className="px-2 py-2 text-gray-900 truncate max-w-xs">
+                  {reference.imovel.endereco}
                 </td>
-                <td className="px-4 py-3 text-sm text-gray-900 text-center">
-                  <button
-                    onClick={() => handleRemove(property.id)}
-                    className="text-gray-400 hover:text-red-600"
-                  >
-                    <Trash size={16} />
-                  </button>
+                <td className="px-2 py-2 text-gray-900 text-right">
+                  {formatCurrency(reference.imovel.preco_anunciado)}
+                </td>
+                <td className="px-2 py-2 text-gray-900 text-right">
+                  {reference.imovel.area}m²
+                </td>
+                <td className="px-2 py-2 text-gray-900 text-center">
+                  {reference.imovel.quartos}
+                </td>
+                <td className="px-2 py-2 text-gray-900 text-center">
+                  {reference.imovel.banheiros}
+                </td>
+                <td className="px-2 py-2 text-gray-900 text-center">
+                  {reference.imovel.vagas}
+                </td>
+                <td className="px-2 py-2 text-gray-900 text-right">
+                  {formatCurrency(reference.imovel.condominio_mensal)}
+                </td>
+                <td className="px-2 py-2 text-gray-900 text-right">
+                  {formatCurrency(reference.imovel.iptu_anual)}
+                </td>
+                <td className="px-2 py-2 text-gray-900 text-right">
+                  {formatCurrency(reference.imovel.preco_m2)}
+                </td>
+                <td className="px-2 py-2 text-gray-900 truncate max-w-xs">
+                  {reference.imovel.comentarios}
+                </td>
+                <td className="px-2 py-2 text-gray-900 text-center">
+                  <div className="flex justify-center space-x-2">
+                    <a
+                      href={reference.imovel.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      <ExternalLink size={16} />
+                    </a>
+                    <button
+                      onClick={() => handleRemove(reference.id)}
+                      className="text-gray-400 hover:text-red-600"
+                    >
+                      <Trash size={16} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <p>Preço de venda calculado com base nos imóveis de referência: {formatCurrency(calculateAveragePrice())}</p>
       </div>
 
-      {totalPages > 1 && (
-        <div className="px-4 py-3 border-t border-gray-200 flex items-center justify-between bg-gray-50">
-          <button
-            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-            className="px-3 py-1 border rounded text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-50"
-          >
-            <ChevronLeft size={16} />
-          </button>
-          <span className="text-sm text-gray-700">
-            Página {currentPage} de {totalPages}
-          </span>
-          <button
-            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 border rounded text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-50"
-          >
-            <ChevronRight size={16} />
-          </button>
-        </div>
+      {isModalOpen && (
+        <AddReferenceModal onClose={() => setIsModalOpen(false)} />
       )}
     </div>
   );
 };
 
-const mockReferences = [
-  {
-    id: '1',
-    code: 'REF001',
-    address: 'Rua Augusta, 1000',
-    area: 95,
-    bedrooms: 3,
-    price: 850000,
-    url: '#'
-  },
-  {
-    id: '2',
-    code: 'REF002',
-    address: 'Av. Paulista, 1500',
-    area: 92,
-    bedrooms: 3,
-    price: 920000,
-    url: '#'
-  },
-  {
-    id: '3',
-    code: 'REF003',
-    address: 'Rua Oscar Freire, 500',
-    area: 88,
-    bedrooms: 2,
-    price: 780000,
-    url: '#'
-  },
-  {
-    id: '4',
-    code: 'REF004',
-    address: 'Al. Santos, 800',
-    area: 98,
-    bedrooms: 3,
-    price: 890000,
-    url: '#'
-  },
-  {
-    id: '5',
-    code: 'REF005',
-    address: 'Rua Bela Cintra, 300',
-    area: 85,
-    bedrooms: 2,
-    price: 750000,
-    url: '#'
-  }
-] as Property[];
+const AddReferenceModal: React.FC<{ onClose: () => void }> = ({ onClose }) => (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl font-semibold text-gray-900">
+          Adicionar Imóvel de Referência
+        </h3>
+        <button
+          onClick={onClose}
+          className="text-gray-400 hover:text-gray-500 transition-colors duration-200"
+        >
+          ✕
+        </button>
+      </div>
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Selecione o Imóvel
+          </label>
+          <select className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+            <option value="">Selecione...</option>
+            {/* Adicione opções de imóveis aqui */}
+          </select>
+        </div>
+        <div className="flex justify-end space-x-2">
+          <button onClick={onClose} className="btn btn-outline btn-sm">
+            Cancelar
+          </button>
+          <button onClick={onClose} className="btn btn-primary btn-sm">
+            Adicionar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
 export default ReferenceProperties;

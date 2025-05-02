@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
-import MainLayout from '../../components/Layout/MainLayout';
-import { Home, DollarSign } from 'lucide-react';
-import DashboardStats from './DashboardStats';
-import PropertyList from './PropertyList';
-import toast from 'react-hot-toast';
+import React, { useState, useEffect, useCallback } from "react";
+import { useParams, useLocation } from "react-router-dom";
+import MainLayout from "../../components/Layout/MainLayout";
+import { Home, DollarSign } from "lucide-react";
+import DashboardStats from "./DashboardStats";
+import PropertyList from "./PropertyList";
+import toast from "react-hot-toast";
 
 interface DashboardSummary {
   reformados: number;
@@ -38,12 +38,19 @@ const useEffectiveAnalysisId = () => {
   return analysisIdFromParams || analysisIdFromState || null;
 };
 
-
 const DashboardPage: React.FC = () => {
   const effectiveAnalysisId = useEffectiveAnalysisId();
+
+  useEffect(() => {
+    if (effectiveAnalysisId) {
+      sessionStorage.setItem("idAnalise", effectiveAnalysisId);
+    }
+  }, [effectiveAnalysisId]);
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [properties, setProperties] = useState<Property[]>([]);
-  const [roiDistribution, setRoiDistribution] = useState<{range: string, count: number}[]>([]);
+  const [roiDistribution, setRoiDistribution] = useState<
+    { range: string; count: number }[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedRoiRange, setSelectedRoiRange] = useState<string | null>(null);
 
@@ -53,28 +60,51 @@ const DashboardPage: React.FC = () => {
         setIsLoading(true);
 
         // Fetch summary data
-        const summaryResponse = await fetch(`https://flippings.com.br/imoveis/resumo?id_analise=${effectiveAnalysisId}`);
-        if (!summaryResponse.ok) throw new Error('Erro ao carregar resumo');
+        const summaryResponse = await fetch(
+          `https://flippings.com.br/imoveis/resumo?id_analise=${effectiveAnalysisId}`,
+        );
+        if (!summaryResponse.ok) throw new Error("Erro ao carregar resumo");
         const summaryData = await summaryResponse.json();
         setSummary(summaryData);
 
         // Fetch properties data
-        const propertiesResponse = await fetch(`https://flippings.com.br/simulacoes?id_analise=${effectiveAnalysisId}&simulacao_principal=true`);
-        if (!propertiesResponse.ok) throw new Error('Erro ao carregar simulações');
+        const propertiesResponse = await fetch(
+          `https://flippings.com.br/simulacoes?id_analise=${effectiveAnalysisId}&simulacao_principal=true`,
+        );
+        if (!propertiesResponse.ok)
+          throw new Error("Erro ao carregar simulações");
         const propertiesData = await propertiesResponse.json();
         setProperties(propertiesData);
 
         // Calculate ROI distribution
         const distribution = [
-          { range: '>30%', count: propertiesData.filter((p: Property) => p.roi_liquido > 0.30).length },
-          { range: '20-30%', count: propertiesData.filter((p: Property) => p.roi_liquido > 0.20 && p.roi_liquido <= 0.30).length },
-          { range: '15-20%', count: propertiesData.filter((p: Property) => p.roi_liquido > 0.15 && p.roi_liquido <= 0.20).length },
-          { range: '<15%', count: propertiesData.filter((p: Property) => p.roi_liquido <= 0.15).length }
+          {
+            range: ">30%",
+            count: propertiesData.filter((p: Property) => p.roi_liquido > 0.3)
+              .length,
+          },
+          {
+            range: "20-30%",
+            count: propertiesData.filter(
+              (p: Property) => p.roi_liquido > 0.2 && p.roi_liquido <= 0.3,
+            ).length,
+          },
+          {
+            range: "15-20%",
+            count: propertiesData.filter(
+              (p: Property) => p.roi_liquido > 0.15 && p.roi_liquido <= 0.2,
+            ).length,
+          },
+          {
+            range: "<15%",
+            count: propertiesData.filter((p: Property) => p.roi_liquido <= 0.15)
+              .length,
+          },
         ];
         setRoiDistribution(distribution);
       } catch (error) {
-        console.error('Error fetching data:', error);
-        toast.error('Erro ao carregar dados do dashboard');
+        console.error("Error fetching data:", error);
+        toast.error("Erro ao carregar dados do dashboard");
       } finally {
         setIsLoading(false);
       }
@@ -86,22 +116,25 @@ const DashboardPage: React.FC = () => {
   }, [effectiveAnalysisId]);
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(value);
   };
 
   const getFilteredProperties = () => {
     if (!selectedRoiRange) return properties;
 
-    return properties.filter(property => {
+    return properties.filter((property) => {
       const roi = property.roi_liquido;
       switch (selectedRoiRange) {
-        case '>30%':
-          return roi > 0.30;
-        case '20-30%':
-          return roi > 0.20 && roi <= 0.30;
-        case '15-20%':
-          return roi > 0.15 && roi <= 0.20;
-        case '<15%':
+        case ">30%":
+          return roi > 0.3;
+        case "20-30%":
+          return roi > 0.2 && roi <= 0.3;
+        case "15-20%":
+          return roi > 0.15 && roi <= 0.2;
+        case "<15%":
           return roi <= 0.15;
         default:
           return true;
@@ -119,32 +152,34 @@ const DashboardPage: React.FC = () => {
     );
   }
 
-  const stats = summary ? [
-    {
-      label: 'Quantidade de Reformados',
-      value: summary.reformados,
-      icon: <Home size={20} className="text-blue-600" />,
-      color: 'bg-blue-100'
-    },
-    {
-      label: 'Preço Médio Reformados',
-      value: formatCurrency(summary.preco_medio_reformado),
-      icon: <DollarSign size={20} className="text-green-600" />,
-      color: 'bg-green-100'
-    },
-    {
-      label: 'Quantidade Não Reformados',
-      value: summary.nao_reformados,
-      icon: <Home size={20} className="text-purple-600" />,
-      color: 'bg-purple-100'
-    },
-    {
-      label: 'Preço Médio Não Reformados',
-      value: formatCurrency(summary.preco_medio_nao_reformado),
-      icon: <DollarSign size={20} className="text-orange-600" />,
-      color: 'bg-orange-100'
-    }
-  ] : [];
+  const stats = summary
+    ? [
+        {
+          label: "Quantidade de Reformados",
+          value: summary.reformados,
+          icon: <Home size={20} className="text-blue-600" />,
+          color: "bg-blue-100",
+        },
+        {
+          label: "Preço Médio Reformados",
+          value: formatCurrency(summary.preco_medio_reformado),
+          icon: <DollarSign size={20} className="text-green-600" />,
+          color: "bg-green-100",
+        },
+        {
+          label: "Quantidade Não Reformados",
+          value: summary.nao_reformados,
+          icon: <Home size={20} className="text-purple-600" />,
+          color: "bg-purple-100",
+        },
+        {
+          label: "Preço Médio Não Reformados",
+          value: formatCurrency(summary.preco_medio_nao_reformado),
+          icon: <DollarSign size={20} className="text-orange-600" />,
+          color: "bg-orange-100",
+        },
+      ]
+    : [];
 
   return (
     <MainLayout>
@@ -158,20 +193,30 @@ const DashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
         <div className="lg:col-span-3 bg-white rounded-lg shadow">
           <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">Distribuição de ROI</h3>
+            <h3 className="text-lg font-medium text-gray-900">
+              Distribuição de ROI
+            </h3>
           </div>
           <div className="p-6">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {roiDistribution.map((item) => (
-                <div 
-                  key={item.range} 
+                <div
+                  key={item.range}
                   className={`bg-gray-50 rounded-lg p-4 cursor-pointer transition-colors duration-200 ${
-                    selectedRoiRange === item.range ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-100'
+                    selectedRoiRange === item.range
+                      ? "ring-2 ring-blue-500 bg-blue-50"
+                      : "hover:bg-gray-100"
                   }`}
-                  onClick={() => setSelectedRoiRange(selectedRoiRange === item.range ? null : item.range)}
+                  onClick={() =>
+                    setSelectedRoiRange(
+                      selectedRoiRange === item.range ? null : item.range,
+                    )
+                  }
                 >
                   <div className="text-sm text-gray-500">{item.range} ROI</div>
-                  <div className="text-lg font-medium text-gray-900">{item.count} imóveis</div>
+                  <div className="text-lg font-medium text-gray-900">
+                    {item.count} imóveis
+                  </div>
                 </div>
               ))}
             </div>

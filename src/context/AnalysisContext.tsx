@@ -1,38 +1,47 @@
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface AnalysisContextType {
-  analysisId: string | null;
-  setAnalysisId: (id: string | null) => void;
+  currentAnalysisId: string | null;
+  setCurrentAnalysisId: (id: string | null) => void;
 }
 
-const AnalysisContext = createContext<AnalysisContextType | undefined>(undefined);
+const AnalysisContext = createContext<AnalysisContextType | undefined>(
+  undefined,
+);
 
-export const AnalysisProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [analysisId, setAnalysisId] = useState<string | null>(() => {
-    const savedId = sessionStorage.getItem('analysisId');
-    return savedId;
-  });
+export const AnalysisProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [currentAnalysisId, setCurrentAnalysisId] = useState<string | null>(
+    () => {
+      const savedId = sessionStorage.getItem("idAnalise");
+      return savedId;
+    },
+  );
 
   useEffect(() => {
-    if (analysisId) {
-      sessionStorage.setItem('analysisId', analysisId);
+    if (currentAnalysisId) {
+      sessionStorage.setItem("idAnalise", currentAnalysisId);
     } else {
-      sessionStorage.removeItem('analysisId');
+      sessionStorage.removeItem("idAnalise");
     }
-  }, [analysisId]);
+  }, [currentAnalysisId]);
 
   return (
-    <AnalysisContext.Provider value={{ analysisId, setAnalysisId }}>
+    <AnalysisContext.Provider
+      value={{ currentAnalysisId, setCurrentAnalysisId }}
+    >
       {children}
     </AnalysisContext.Provider>
   );
 };
 
-export const useAnalysis = () => {
+export const useAnalysisContext = () => {
   const context = useContext(AnalysisContext);
   if (context === undefined) {
-    throw new Error('useAnalysis must be used within an AnalysisProvider');
+    throw new Error(
+      "useAnalysisContext must be used within an AnalysisProvider",
+    );
   }
   return context;
 };

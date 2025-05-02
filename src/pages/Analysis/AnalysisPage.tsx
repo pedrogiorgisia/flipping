@@ -1,163 +1,218 @@
-
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import MainLayout from '../../components/Layout/MainLayout';
-import { Property } from '../../types/property';
-import PropertyDetails from './PropertyDetails';
-import ReferenceProperties from './ReferenceProperties';
-import CalculationParameters from './CalculationParameters';
-import AnalysisResults from './AnalysisResults';
-import { Download, Calculator, Share2 } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import MainLayout from "../../components/Layout/MainLayout";
+import PropertyDetails from "./PropertyDetails";
+import ReferenceProperties from "./ReferenceProperties";
+import CalculationParameters from "./CalculationParameters";
+import AnalysisResults from "./AnalysisResults";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { getSimulacoes, getReferenciaSimulacao } from "../../api";
 
 const AnalysisPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const [calculationResults, setCalculationResults] = useState({
-    propertyPrice: 720000,
-    propertyArea: 97,
-    pricePerSqm: 7422.68,
-    acquisitionCosts: {
-      downPayment: 216000,
-      itbi: 21600,
-      bankAppraisal: 5000,
-      registry: 10800,
-      total: 253400
-    },
-    holdingCosts: {
-      financing: 49849.80,
-      condo: 15300,
-      utilities: 2300,
-      renovation: 151200,
-      total: 218649.80
-    },
-    totalInvestment: 472049.80,
-    salePrice: 1212500,
-    sellingCosts: {
-      financingPayoff: 493200,
-      brokerage: 72750,
-      incomeTax: 30684.40
-    },
-    netProfit: 143815.80,
-    roi: 30.47
+  // useParams().propertyId é o ID da simulação que você quer buscar
+  const { propertyId: simulationId } = useParams<{ propertyId: string }>();
+
+  const [simulacao, setSimulacao] = useState<any>(null);
+  const [referenciasSimulacao, setReferenciasSimulacao] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [expandedSections, setExpandedSections] = useState({
+    propertyDetails: true,
+    analysisAndParameters: true,
+    referenceProperties: true,
   });
 
-  const [parameters, setParameters] = useState({
-    downPaymentPercent: 20,
-    saleTimeMonths: 3,
-    cetRate: 14.25,
-    financingMonths: 360,
-    brokeragePercent: 5,
-    hasIncomeTax: false,
-    itbiPercent: 3,
-    marketDiscountPercent: 8
-  });
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!simulationId) {
+        setError("ID da simulação não encontrado");
+        setLoading(false);
+        return;
+      }
 
-  const [property, setProperty] = useState<Property>({
-    id: '1',
-    url: 'https://example.com/property1',
-    agency: 'Imobiliária Moderna',
-    price: 720000,
-    area: 97,
-    bedrooms: 3,
-    bathrooms: 2,
-    parkingSpaces: 1,
-    condoFee: 500,
-    yearlyTax: 2000,
-    address: 'Rua Example, 123',
-    code: 'PRO-001',
-    createdAt: new Date('2023-01-15'),
-    renovated: false,
-  });
+      try {
+        setLoading(true);
+        setError(null);
+
+        // ----------------------------
+        // 👉 Chama /simulacoes/<simulationId>
+        const simulacaoData = await getSimulacoes(simulationId);
+        console.log("Dados da simulação:", simulacaoData);
+        setSimulacao(simulacaoData);
+
+        // ----------------------------
+        // 👉 Chama /referencia-simulacao?id_simulacao=<simulationId>
+        const referenciasData = await getReferenciaSimulacao(simulationId);
+        console.log("Dados das referências:", referenciasData);
+        setReferenciasSimulacao(referenciasData);
+      } catch (err) {
+        console.error("Erro ao buscar dados:", err);
+        setError(
+          `Erro ao carregar os dados da simulação: ${(err as Error).message}`,
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [simulationId]);
 
   const handleParameterChange = (field: string, value: any) => {
-    setParameters(prev => ({
+    setSimulacao((prev: any) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
-    recalculateValues();
   };
 
   const recalculateValues = () => {
-    console.log("Recalculating values with parameters:", parameters);
+    console.log("Recalculating values with parameters:", simulacao);
+    // Implemente a lógica de recálculo aqui
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+  const formatCurrency = (value: number) =>
+    new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
+
+  const toggleSection = (section: keyof typeof expandedSections) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
+
+  if (loading) return <div>Carregando...</div>;
+  if (error) return <div>{error}</div>;
+  if (!simulacao) return <div>Nenhuma simulação encontrada</div>;
+
+  const analysisResults = {
+    acquisitionCosts: {
+      downPayment: simulacao.valor_compra * (simulacao.entrada_pct / 100),
+      itbi: simulacao.valor_compra * (simulacao.itbi_pct / 100),
+      bankAppraisal: simulacao.avaliacao_banco_rs,
+      registry: simulacao.cartorio_rs,
+      total:
+        simulacao.valor_compra * (simulacao.entrada_pct / 100) +
+        simulacao.valor_compra * (simulacao.itbi_pct / 100) +
+        simulacao.avaliacao_banco_rs +
+        simulacao.cartorio_rs,
+    },
+    holdingCosts: {
+      financing: simulacao.calc_parcelas_rs,
+      condo: simulacao.calc_condominio_rs,
+      utilities: simulacao.contas_gerais_rs,
+      renovation: simulacao.reforma_rs,
+      total:
+        simulacao.calc_parcelas_rs +
+        simulacao.calc_condominio_rs +
+        simulacao.contas_gerais_rs +
+        simulacao.reforma_rs,
+    },
+    sellingCosts: {
+      financingPayoff: simulacao.calc_quitacao_rs,
+      brokerage:
+        simulacao.valor_compra * (simulacao.corretagem_venda_pct / 100),
+      incomeTax: simulacao.ir_pago
+        ? (simulacao.valor_compra * simulacao.valor_m2_venda -
+            simulacao.valor_compra) *
+          0.15
+        : 0,
+    },
+    totalInvestment: simulacao.valor_compra,
+    salePrice: simulacao.valor_compra * simulacao.valor_m2_venda,
+    netProfit: simulacao.roi_liquido * simulacao.valor_compra,
+    roi: simulacao.roi_liquido * 100,
   };
 
   return (
     <MainLayout>
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Simulação - Análise de Investimento</h1>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">
+          Simulação e Investimento
+        </h1>
 
-          <div className="flex flex-wrap gap-3">
-            <button className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50">
-              <Download size={16} className="mr-2" />
-              Exportar PDF
-            </button>
-            <button className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50">
-              <Share2 size={16} className="mr-2" />
-              Compartilhar
-            </button>
-            <button 
-              onClick={recalculateValues}
-              className="inline-flex items-center px-4 py-2 border border-transparent bg-blue-600 text-sm font-medium rounded-md text-white hover:bg-blue-700"
-            >
-              <Calculator size={16} className="mr-2" />
-              Recalcular
-            </button>
-          </div>
-        </div>
+        <div className="space-y-8">
+          <Section
+            title="Detalhes do Imóvel"
+            expanded={expandedSections.propertyDetails}
+            onToggle={() => toggleSection("propertyDetails")}
+          >
+            <PropertyDetails property={simulacao.imovel} />
+          </Section>
 
-        {/* Property Details - Full width */}
-        <div className="mb-6">
-          <PropertyDetails property={property} />
-        </div>
+          <Section
+            title="Análise e Parâmetros"
+            expanded={expandedSections.analysisAndParameters}
+            onToggle={() => toggleSection("analysisAndParameters")}
+          >
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <CalculationParameters
+                  parameters={simulacao}
+                  onParameterChange={handleParameterChange}
+                  onRecalculate={recalculateValues}
+                />
+                <AnalysisResults results={analysisResults} />
+              </div>
+              {/* ... resumo do investimento ... */}
+            </div>
+          </Section>
 
-        {/* KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm text-gray-500">Valor de Compra</p>
-            <p className="text-2xl font-semibold text-gray-900">{formatCurrency(calculationResults.propertyPrice)}</p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm text-gray-500">Valor de Venda</p>
-            <p className="text-2xl font-semibold text-gray-900">{formatCurrency(calculationResults.salePrice)}</p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm text-gray-500">Investimento Total</p>
-            <p className="text-2xl font-semibold text-gray-900">{formatCurrency(calculationResults.totalInvestment)}</p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm text-gray-500">ROI da Operação</p>
-            <p className="text-2xl font-semibold text-blue-600">{calculationResults.roi.toFixed(2)}%</p>
-          </div>
-        </div>
-
-        {/* Analysis Results and Parameters - Two columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <AnalysisResults results={calculationResults} />
-          <CalculationParameters 
-            parameters={parameters}
-            onParameterChange={handleParameterChange}
-          />
-        </div>
-
-        {/* Reference Properties - Full width */}
-        <div className="mb-6">
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            
-            <ReferenceProperties />
-          </div>
+          <Section
+            title="Imóveis de Referência"
+            expanded={expandedSections.referenceProperties}
+            onToggle={() => toggleSection("referenceProperties")}
+          >
+            <ReferenceProperties references={referenciasSimulacao} />
+          </Section>
         </div>
       </div>
     </MainLayout>
   );
 };
+
+const Section: React.FC<{
+  title: string;
+  children: React.ReactNode;
+  expanded: boolean;
+  onToggle: () => void;
+}> = ({ title, children, expanded, onToggle }) => (
+  <div className="bg-white rounded-lg shadow overflow-hidden">
+    <div
+      className="px-6 py-4 border-b border-gray-200 flex justify-between items-center cursor-pointer"
+      onClick={onToggle}
+    >
+      <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
+      {expanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+    </div>
+    {expanded && <div className="px-6 py-4">{children}</div>}
+  </div>
+);
+
+const KPICard: React.FC<{
+  title: string;
+  value: string;
+  highlight?: boolean;
+}> = ({ title, value, highlight }) => (
+  <div
+    className={`p-3 rounded-lg ${
+      highlight
+        ? "bg-blue-100 border border-blue-300"
+        : "bg-white border border-gray-200"
+    }`}
+  >
+    <p className="text-xs font-medium text-gray-500 mb-1">{title}</p>
+    <p
+      className={`text-sm font-bold ${
+        highlight ? "text-blue-800" : "text-gray-900"
+      }`}
+    >
+      {value}
+    </p>
+  </div>
+);
 
 export default AnalysisPage;

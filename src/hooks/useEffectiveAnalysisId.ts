@@ -1,23 +1,20 @@
+import { useParams, useLocation } from "react-router-dom";
+import { useAnalysisContext } from "../context/AnalysisContext";
 
-import { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useAnalysis } from '../context/AnalysisContext';
+export const useEffectiveAnalysisId = () => {
+  const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const { currentAnalysisId } = useAnalysisContext();
 
-export function useEffectiveAnalysisId() {
-  const { id } = useParams();
-  const { analysisId, setAnalysisId } = useAnalysis();
-  const navigate = useNavigate();
+  const analysisIdFromParams = id;
+  const analysisIdFromState = (location.state as any)?.id_analise;
+  const analysisIdFromStorage = sessionStorage.getItem("idAnalise");
 
-  useEffect(() => {
-    if (!analysisId && !id) {
-      navigate('/analyses');
-      return;
-    }
-
-    if (!analysisId && id) {
-      setAnalysisId(id);
-    }
-  }, [analysisId, id, setAnalysisId, navigate]);
-
-  return id || analysisId || null;
-}
+  return (
+    analysisIdFromParams ||
+    analysisIdFromState ||
+    currentAnalysisId ||
+    analysisIdFromStorage ||
+    null
+  );
+};

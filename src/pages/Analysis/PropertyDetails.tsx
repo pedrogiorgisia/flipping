@@ -1,6 +1,6 @@
-import React from 'react';
-import { Property } from '../../types/property';
-import { Home, DollarSign, MapPin, Calendar, ExternalLink } from 'lucide-react';
+import React from "react";
+import { Property } from "../../types/property";
+import { Home, DollarSign, MapPin, Calendar, ExternalLink } from "lucide-react";
 
 interface PropertyDetailsProps {
   property: Property;
@@ -8,11 +8,14 @@ interface PropertyDetailsProps {
 
 const PropertyDetails: React.FC<PropertyDetailsProps> = ({ property }) => {
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(value);
   };
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('pt-BR').format(date);
+    return new Intl.DateTimeFormat("pt-BR").format(date);
   };
 
   return (
@@ -62,7 +65,9 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ property }) => {
             <dd className="text-sm text-gray-900">{property.area} m²</dd>
           </div>
           <div>
-            <dt className="text-xs font-medium text-gray-500">Quartos/Banheiros</dt>
+            <dt className="text-xs font-medium text-gray-500">
+              Quartos/Banheiros
+            </dt>
             <dd className="text-sm text-gray-900">
               {property.bedrooms} / {property.bathrooms}
             </dd>
@@ -73,11 +78,15 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ property }) => {
           </div>
           <div>
             <dt className="text-xs font-medium text-gray-500">Condomínio</dt>
-            <dd className="text-sm text-gray-900">{formatCurrency(property.condoFee)}/mês</dd>
+            <dd className="text-sm text-gray-900">
+              {formatCurrency(property.condoFee)}/mês
+            </dd>
           </div>
           <div>
             <dt className="text-xs font-medium text-gray-500">IPTU</dt>
-            <dd className="text-sm text-gray-900">{formatCurrency(property.yearlyTax)}/ano</dd>
+            <dd className="text-sm text-gray-900">
+              {formatCurrency(property.yearlyTax)}/ano
+            </dd>
           </div>
           <div>
             <dt className="text-xs font-medium text-gray-500">Anunciado em</dt>
@@ -89,16 +98,14 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ property }) => {
           <div className="col-span-2">
             <dt className="text-xs font-medium text-gray-500">Endereço</dt>
             <dd className="text-sm text-gray-900 flex items-start">
-              <MapPin size={14} className="mr-1 mt-0.5 flex-shrink-0 text-gray-400" />
+              <MapPin
+                size={14}
+                className="mr-1 mt-0.5 flex-shrink-0 text-gray-400"
+              />
               <span>{property.address}</span>
             </dd>
           </div>
-          <div>
-            <dt className="text-xs font-medium text-gray-500">URL do Imóvel</dt>
-            <dd className="text-sm text-blue-600 hover:text-blue-800">
-              <a href={property.url} target="_blank" rel="noopener noreferrer">Ver anúncio original</a>
-            </dd>
-          </div>
+
           <div>
             <dt className="text-xs font-medium text-gray-500">Status</dt>
             <dd className="mt-0.5">
