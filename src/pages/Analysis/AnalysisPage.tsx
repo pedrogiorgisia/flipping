@@ -525,8 +525,8 @@ const AnalysisPage: React.FC = () => {
                       <label className="block text-sm text-gray-500">Valor de venda (R$)</label>
                       <input
                         type="number"
-                        value={simulacao?.valor_compra || ''}
-                        onChange={(e) => handleParameterChange("valor_compra", e.target.value)}
+                        value={simulacao?.valor_compra * parseFloat(simulacao?.valor_m2_venda || '0') || ''}
+                        onChange={(e) => handleParameterChange("valor_m2_venda", String(parseFloat(e.target.value) / simulacao?.valor_compra))}
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                       />
                       <p className="text-xs text-gray-500 mt-1">
