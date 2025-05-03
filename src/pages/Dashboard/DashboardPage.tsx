@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 
 interface DashboardSummary {
   reformados: number;
+  calc_roi;
   preco_m2_medio_reformado: number;
   nao_reformados: number;
   preco_m2_medio_nao_reformado: number;
@@ -23,9 +24,9 @@ interface Property {
   id_simulacao: string;
   valor_compra: number;
   valor_m2_compra: number;
-  reforma_rs: number;
+  param_custo_reforma: number;
   valor_m2_venda: number;
-  roi_liquido: number;
+  calc_roi: number;
 }
 
 const useEffectiveAnalysisId = () => {
@@ -80,24 +81,24 @@ const DashboardPage: React.FC = () => {
         const distribution = [
           {
             range: ">30%",
-            count: propertiesData.filter((p: Property) => p.roi_liquido > 0.3)
+            count: propertiesData.filter((p: Property) => p.calc_roi > 0.3)
               .length,
           },
           {
             range: "20-30%",
             count: propertiesData.filter(
-              (p: Property) => p.roi_liquido > 0.2 && p.roi_liquido <= 0.3,
+              (p: Property) => p.calc_roi > 0.2 && p.calc_roi <= 0.3,
             ).length,
           },
           {
             range: "15-20%",
             count: propertiesData.filter(
-              (p: Property) => p.roi_liquido > 0.15 && p.roi_liquido <= 0.2,
+              (p: Property) => p.calc_roi > 0.15 && p.calc_roi <= 0.2,
             ).length,
           },
           {
             range: "<15%",
-            count: propertiesData.filter((p: Property) => p.roi_liquido <= 0.15)
+            count: propertiesData.filter((p: Property) => p.calc_roi <= 0.15)
               .length,
           },
         ];
@@ -126,7 +127,7 @@ const DashboardPage: React.FC = () => {
     if (!selectedRoiRange) return properties;
 
     return properties.filter((property) => {
-      const roi = property.roi_liquido;
+      const roi = property.calc_roi;
       switch (selectedRoiRange) {
         case ">30%":
           return roi > 0.3;

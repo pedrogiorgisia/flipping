@@ -12,11 +12,11 @@ interface Property {
     preco_anunciado: number;
     url: string;
   };
-  valor_compra: number;
+  param_valor_compra: number;
   valor_m2_compra: number;
-  reforma_rs: number;
+  param_custo_reforma: number;
   valor_m2_venda: number;
-  roi_liquido: number;
+  calc_roi: number;
 }
 
 interface PropertyListProps {
@@ -29,7 +29,7 @@ const PropertyList: React.FC<PropertyListProps> = ({ properties }) => {
   const { currentAnalysisId } = useAnalysisContext();
 
   const sortedProperties = [...properties].sort(
-    (a, b) => b.roi_liquido - a.roi_liquido,
+    (a, b) => b.calc_roi - a.calc_roi,
   );
 
   const formatCurrency = (value: number) => {
@@ -146,19 +146,19 @@ const PropertyList: React.FC<PropertyListProps> = ({ properties }) => {
                   {formatCurrency(property.imovel.preco_anunciado)}
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-900">
-                  {formatCurrency(property.valor_compra)}
+                  {formatCurrency(property.param_valor_compra)}
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-900">
                   {formatCurrency(property.valor_m2_compra)}
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-900">
-                  {formatCurrency(property.reforma_rs)}
+                  {formatCurrency(property.param_custo_reforma)}
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-900">
                   {formatCurrency(property.valor_m2_venda)}
                 </td>
                 <td className="px-4 py-3 text-sm font-medium">
-                  {formatPercentage(property.roi_liquido)}
+                  {formatPercentage(property.calc_roi)}
                 </td>
                 <td className="px-4 py-3 text-right space-x-2">
                   <button
