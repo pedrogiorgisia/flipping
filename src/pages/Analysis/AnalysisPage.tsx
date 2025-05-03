@@ -467,13 +467,16 @@ const AnalysisPage: React.FC = () => {
                   <h3 className="text-md font-medium mb-4 text-gray-700">Parâmetros de Compra</h3>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm text-gray-500">Valor de venda (R$)</label>
+                      <label className="block text-sm text-gray-500">Valor de compra (R$)</label>
                       <input
                         type="number"
                         value={simulacao?.valor_compra || ''}
                         onChange={(e) => handleParameterChange("valor_compra", e.target.value)}
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                       />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Valor do m²: {formatCurrency(parseFloat(simulacao?.valor_compra || '0') / (simulacao?.imovel?.area || 1))}
+                      </p>
                     </div>
                     <div>
                       <label className="block text-sm text-gray-500">Entrada (%)</label>
@@ -518,6 +521,18 @@ const AnalysisPage: React.FC = () => {
                 <div>
                   <h3 className="text-md font-medium mb-4 text-gray-700">Financiamento e Venda</h3>
                   <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm text-gray-500">Valor de venda (R$)</label>
+                      <input
+                        type="number"
+                        value={simulacao?.valor_compra || ''}
+                        onChange={(e) => handleParameterChange("valor_compra", e.target.value)}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Valor do m²: {formatCurrency((parseFloat(simulacao?.valor_compra || '0') * parseFloat(simulacao?.valor_m2_venda || '0')) / (simulacao?.imovel?.area || 1))}
+                      </p>
+                    </div>
                     <div>
                       <label className="block text-sm text-gray-500">Tempo de venda (meses)</label>
                       <input
@@ -708,8 +723,7 @@ const KPICard: React.FC<{
     <p className="text-xs font-medium text-gray-500 mb-1">{title}</p>
     <p
       className={`text-sm font-bold ${
-        highlight ? "text-blue-800" : "text-gray-900"
-      }`}
+        highlight ? "text-blue-800" : "text-gray-900"      }`}
     >
       {value}
     </p>
