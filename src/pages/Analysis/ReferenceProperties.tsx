@@ -64,7 +64,7 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
       <div className="flex justify-between items-center">
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 inline-block">
           <p className="text-xs font-medium text-gray-500 mb-1">
-            Preço de Venda Calculado
+            Preço de Venda Sugerido
           </p>
           <p className="text-sm font-bold text-gray-900">
             {formatCurrency(calculateAveragePrice())}
