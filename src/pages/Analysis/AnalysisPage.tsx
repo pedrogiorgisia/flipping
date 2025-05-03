@@ -140,7 +140,7 @@ const PropertyDetails: React.FC<{ property: Simulacao["imovel"] }> = ({
 
 const AnalysisPage: React.FC = () => {
   const { propertyId: simulationId } = useParams<{ propertyId: string }>();
-  const [simulacao, setSimulacao] = useState<Simulacao | null>(null);
+  const [simulacao, setSimulacao] = useState<any>(null);
   const [referenciasSimulacao, setReferenciasSimulacao] = useState<
     ReferenceProperty[]
   >([]);
@@ -344,10 +344,10 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.valor_compra || ""}
+                          value={simulacao?.param_valor_compra || ""}
                           onChange={(e) =>
                             handleParameterChange(
-                              "valor_compra",
+                              "param_valor_compra",
                               e.target.value,
                             )
                           }
@@ -367,9 +367,9 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.entrada_pct || ""}
+                          value={simulacao?.param_entrada_pct || ""}
                           onChange={(e) =>
-                            handleParameterChange("entrada_pct", e.target.value)
+                            handleParameterChange("param_entrada_pct", e.target.value)
                           }
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
@@ -380,9 +380,9 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.itbi_pct || ""}
+                          value={simulacao?.param_itbi_pct || ""}
                           onChange={(e) =>
-                            handleParameterChange("itbi_pct", e.target.value)
+                            handleParameterChange("param_itbi_pct", e.target.value)
                           }
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
@@ -393,10 +393,10 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.avaliacao_banco_rs || ""}
+                          value={simulacao?.param_avaliacao_bancaria || ""}
                           onChange={(e) =>
                             handleParameterChange(
-                              "avaliacao_banco_rs",
+                              "param_avaliacao_bancaria",
                               e.target.value,
                             )
                           }
@@ -409,9 +409,9 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.cartorio_rs || ""}
+                          value={simulacao?.param_registro_cartorio_pct || ""}
                           onChange={(e) =>
-                            handleParameterChange("cartorio_rs", e.target.value)
+                            handleParameterChange("param_registro_cartorio_pct", e.target.value)
                           }
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
@@ -422,10 +422,10 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.contas_gerais_mensais || ""}
+                          value={simulacao?.param_contas_gerais || ""}
                           onChange={(e) =>
                             handleParameterChange(
-                              "contas_gerais_mensais",
+                              "param_contas_gerais",
                               e.target.value,
                             )
                           }
@@ -447,11 +447,10 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.valor_venda || ""}
+                          value={simulacao?.param_valor_venda || ""}
                           onChange={(e) => {
                             const newValue = e.target.value;
-                            handleParameterChange("valor_venda", newValue);
-                            // Recalcular valor_m2_venda
+                            handleParameterChange("param_valor_venda", newValue);
                             if (simulacao && simulacao.imovel.area > 0) {
                               const newValorM2 =
                                 parseFloat(newValue) / simulacao.imovel.area;
@@ -476,10 +475,10 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.prazo_venda_meses || ""}
+                          value={simulacao?.param_tempo_venda || ""}
                           onChange={(e) =>
                             handleParameterChange(
-                              "prazo_venda_meses",
+                              "param_tempo_venda",
                               e.target.value,
                             )
                           }
@@ -492,9 +491,9 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.reforma_rs || ""}
+                          value={simulacao?.param_custo_reforma || ""}
                           onChange={(e) =>
-                            handleParameterChange("reforma_rs", e.target.value)
+                            handleParameterChange("param_custo_reforma", e.target.value)
                           }
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
@@ -505,10 +504,10 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.taxa_juros_financiamento || ""}
+                          value={simulacao?.param_taxa_cet || ""}
                           onChange={(e) =>
                             handleParameterChange(
-                              "taxa_juros_financiamento",
+                              "param_taxa_cet",
                               e.target.value,
                             )
                           }
@@ -521,10 +520,10 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.prazo_financiamento_meses || ""}
+                          value={simulacao?.param_prazo_financiamento || ""}
                           onChange={(e) =>
                             handleParameterChange(
-                              "prazo_financiamento_meses",
+                              "param_prazo_financiamento",
                               e.target.value,
                             )
                           }
@@ -537,10 +536,10 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.corretagem_venda_pct || ""}
+                          value={simulacao?.param_corretagem_venda_pct || ""}
                           onChange={(e) =>
                             handleParameterChange(
-                              "corretagem_venda_pct",
+                              "param_corretagem_venda_pct",
                               e.target.value,
                             )
                           }
@@ -551,9 +550,9 @@ const AnalysisPage: React.FC = () => {
                         <label className="flex items-center">
                           <input
                             type="checkbox"
-                            checked={simulacao?.ir_pago || false}
+                            checked={simulacao?.param_incide_ir || false}
                             onChange={(e) =>
-                              handleParameterChange("ir_pago", e.target.checked)
+                              handleParameterChange("param_incide_ir", e.target.checked)
                             }
                             className="form-checkbox h-4 w-4 text-blue-600"
                           />
