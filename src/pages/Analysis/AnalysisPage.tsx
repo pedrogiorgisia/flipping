@@ -269,7 +269,22 @@ const AnalysisPage: React.FC = () => {
         ]);
 
         // Trigger handleParameterChange to calculate initial values
-        const initialSimulacao = simulacaoData;
+        const initialSimulacao = {
+          ...simulacaoData,
+          param_valor_compra: simulacaoData.valor_compra,
+          param_valor_venda: simulacaoData.valor_venda,
+          param_entrada_pct: simulacaoData.entrada_pct,
+          param_itbi_pct: simulacaoData.itbi_pct,
+          param_avaliacao_bancaria: simulacaoData.avaliacao_banco_rs,
+          param_registro_cartorio_pct: simulacaoData.cartorio_rs,
+          param_contas_gerais: simulacaoData.contas_gerais_rs,
+          param_custo_reforma: simulacaoData.reforma_rs,
+          param_taxa_cet: simulacaoData.taxa_juros_financiamento,
+          param_prazo_financiamento: simulacaoData.prazo_financiamento_meses,
+          param_tempo_venda: simulacaoData.prazo_venda_meses,
+          param_corretagem_venda_pct: simulacaoData.corretagem_venda_pct,
+          param_incide_ir: simulacaoData.ir_pago
+        };
         setSimulacao(initialSimulacao);
         handleParameterChange('param_valor_compra', initialSimulacao.param_valor_compra);
         setReferenciasSimulacao(referenciasData);
