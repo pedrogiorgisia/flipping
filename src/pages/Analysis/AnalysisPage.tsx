@@ -751,16 +751,36 @@ const AnalysisPage: React.FC = () => {
                 Resumo do Investimento
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-500">Valor de Compra</label>
+                  <input
+                    type="number"
+                    value={simulacao.valor_compra}
+                    onChange={(e) => handleParameterChange("valor_compra", e.target.value)}
+                    className="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Valor do m²: {formatCurrency(parseFloat(simulacao.valor_compra) / simulacao.imovel.area)}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-500">Valor de Venda</label>
+                  <input
+                    type="number"
+                    value={parseFloat(simulacao.valor_compra) * parseFloat(simulacao.valor_m2_venda)}
+                    onChange={(e) => {
+                      const newValue = parseFloat(e.target.value);
+                      handleParameterChange("valor_m2_venda", newValue / parseFloat(simulacao.valor_compra));
+                    }}
+                    className="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Valor do m²: {formatCurrency((parseFloat(simulacao.valor_compra) * parseFloat(simulacao.valor_m2_venda)) / simulacao.imovel.area)}
+                  </p>
+                </div>
                 <KPICard
-                  title="Valor de Compra"
-                  value={formatCurrency(parseFloat(simulacao.valor_compra))}
-                />
-                <KPICard
-                  title="Valor de Venda"
-                  value={formatCurrency(
-                    parseFloat(simulacao.valor_compra) *
-                      parseFloat(simulacao.valor_m2_venda),
-                  )}
+                  title="Investimento Total"
+                  value={formatCurrency(analysisResults.totalInvestment)}
                 />
                 <KPICard
                   title="Investimento Total"
