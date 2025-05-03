@@ -8,9 +8,9 @@ import toast from "react-hot-toast";
 
 interface DashboardSummary {
   reformados: number;
-  preco_medio_reformado: number;
+  preco_m2_medio_reformado: number;
   nao_reformados: number;
-  preco_medio_nao_reformado: number;
+  preco_m2_medio_nao_reformado: number;
 }
 
 interface Property {
@@ -161,8 +161,8 @@ const DashboardPage: React.FC = () => {
           color: "bg-blue-100",
         },
         {
-          label: "Preço Médio Reformados",
-          value: formatCurrency(summary.preco_medio_reformado),
+          label: "Valor médio m² Reformados",
+          value: formatCurrency(summary.preco_m2_medio_reformado),
           icon: <DollarSign size={20} className="text-green-600" />,
           color: "bg-green-100",
         },
@@ -173,8 +173,8 @@ const DashboardPage: React.FC = () => {
           color: "bg-purple-100",
         },
         {
-          label: "Preço Médio Não Reformados",
-          value: formatCurrency(summary.preco_medio_nao_reformado),
+          label: "Valor médio m² Não Reformados",
+          value: formatCurrency(summary.preco_m2_medio_nao_reformado),
           icon: <DollarSign size={20} className="text-orange-600" />,
           color: "bg-orange-100",
         },
