@@ -268,8 +268,10 @@ const AnalysisPage: React.FC = () => {
           getReferenciaSimulacao(simulationId),
         ]);
 
-        const simulacaoCalculada = calcularValoresSimulacao(simulacaoData);
-        setSimulacao(simulacaoCalculada);
+        // Trigger handleParameterChange to calculate initial values
+        const initialSimulacao = simulacaoData;
+        setSimulacao(initialSimulacao);
+        handleParameterChange('param_valor_compra', initialSimulacao.param_valor_compra);
         setReferenciasSimulacao(referenciasData);
       } catch (err) {
         console.error("Erro ao buscar dados:", err);
@@ -288,7 +290,71 @@ const AnalysisPage: React.FC = () => {
     setSimulacao((prev) => {
       if (!prev) return null;
       const updatedSimulacao = { ...prev, [field]: value };
-      return calcularValoresSimulacao(updatedSimulacao);
+      
+      // Convert string values to numbers for calculation
+      const valorCompra = parseFloat(updatedSimulacao.param_valor_compra || '0');
+      const valorVenda = parseFloat(updatedSimulacao.param_valor_venda || '0');
+      const entradaPct = parseFloat(updatedSimulacao.param_entrada_pct || '0');
+      const itbiPct = parseFloat(updatedSimulacao.param_itbi_pct || '0');
+      const registroCartorioPct = parseFloat(updatedSimulacao.param_registro_cartorio_pct || '0');
+      const taxaCET = parseFloat(updatedSimulacao.param_taxa_cet || '0') / 100 / 12;
+      const prazoFinanciamento = parseInt(updatedSimulacao.param_prazo_financiamento || '0');
+      const tempoVenda = parseInt(updatedSimulacao.param_tempo_venda || '0');
+      const reformaRS = parseFloat(updatedSimulacao.param_custo_reforma || '0');
+      const avaliacaoBancaria = parseFloat(updatedSimulacao.param_avaliacao_bancaria || '0');
+      const contasGerais = parseFloat(updatedSimulacao.param_contas_gerais || '0');
+      const corretagemVendaPct = parseFloat(updatedSimulacao.param_corretagem_venda_pct || '0');
+
+      // Calculate acquisition costs
+      const valorEntrada = valorCompra * (entradaPct / 100);
+      const valorItbi = valorCompra * (itbiPct / 100);
+      const valorRegistroCartorio = valorCompra * (registroCartorioPct / 100);
+      const custoAquisicao = valorEntrada + valorItbi + avaliacaoBancaria + valorRegistroCartorio;
+
+      // Calculate financing
+      const valorFinanciado = valorCompra - valorEntrada;
+      const amortizacaoMensal = valorFinanciado / prazoFinanciamento;
+
+      // Calculate monthly payments (SAC)
+      let totalParcelas = 0;
+      let saldoDevedor = valorFinanciado;
+      for (let i = 0; i < tempoVenda; i++) {
+        const jurosMensal = saldoDevedor * taxaCET;
+        const parcela = amortizacaoMensal + jurosMensal;
+        totalParcelas += parcela;
+        saldoDevedor -= amortizacaoMensal;
+      }
+
+      // Calculate total costs
+      const quitacao = saldoDevedor;
+      const totalCondominio = (updatedSimulacao.imovel?.condominio_mensal || 0) * tempoVenda;
+      const iptuTotal = ((updatedSimulacao.imovel?.iptu_anual || 0) / 12) * tempoVenda;
+      const contasGeraisTotal = contasGerais * tempoVenda;
+      const custosAteVenda = totalParcelas + totalCondominio + iptuTotal + contasGeraisTotal + reformaRS;
+
+      // Calculate sale costs
+      const corretagem = valorVenda * (corretagemVendaPct / 100);
+      const baseCalculoIR = valorVenda - custoAquisicao - quitacao - corretagem - (totalParcelas * 3) / 4 - reformaRS;
+      const impostoRenda = updatedSimulacao.param_incide_ir ? Math.max(0, baseCalculoIR * 0.15) : 0;
+
+      // Calculate final results
+      const investimentoTotal = custoAquisicao + custosAteVenda;
+      const lucroLiquido = valorVenda - investimentoTotal - quitacao - corretagem - impostoRenda;
+      const roi = investimentoTotal > 0 ? (lucroLiquido / investimentoTotal) : 0;
+
+      return {
+        ...updatedSimulacao,
+        calc_parcelas_rs: totalParcelas,
+        calc_quitacao_rs: quitacao,
+        calc_condominio_rs: totalCondominio,
+        roi_liquido: roi,
+        investimento_total: investimentoTotal,
+        lucro_liquido: lucroLiquido,
+        valor_registro_cartorio: valorRegistroCartorio,
+        imposto_renda: impostoRenda,
+        iptu_total: iptuTotal,
+        contas_gerais_total: contasGeraisTotal
+      };
     });
   };
 
