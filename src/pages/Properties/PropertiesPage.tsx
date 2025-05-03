@@ -233,14 +233,14 @@ const PropertiesPage: React.FC = () => {
           field === "data_anuncio"
             ? formData[field]
             : [
-                  "preco_anunciado",
-                  "area",
-                  "quartos",
-                  "banheiros",
-                  "vagas",
-                  "condominio_mensal",
-                  "iptu_anual",
-                ].includes(field)
+                "preco_anunciado",
+                "area",
+                "quartos",
+                "banheiros",
+                "vagas",
+                "condominio_mensal",
+                "iptu_anual",
+              ].includes(field)
               ? Number(formData[field])
               : formData[field];
       }
@@ -783,10 +783,10 @@ const PropertiesPage: React.FC = () => {
                       name="reformado"
                       type="checkbox"
                       className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                      defaultValue={
+                      defaultChecked={
                         editingProperty?.reformado ||
                         importedData?.reformado ||
-                        ""
+                        false
                       }
                     />
                     <span className="ml-2 text-gray-700">Reformado</span>
