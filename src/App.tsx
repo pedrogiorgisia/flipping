@@ -13,7 +13,7 @@ import PropertiesPage from "./pages/Properties/PropertiesPage";
 import SettingsPage from "./pages/Settings/SettingsPage";
 import AnalysisPage from "./pages/Analysis/AnalysisPage";
 import IndividualAnalysisPage from "./pages/Analysis/IndividualAnalysisPage";
-import { AnalysisProvider } from "./context/AnalysisContext"; // Assuming this context is created elsewhere
+import { AnalysisProvider } from "./context/AnalysisContext";
 
 function App() {
   return (

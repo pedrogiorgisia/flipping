@@ -7,6 +7,11 @@ import toast from "react-hot-toast";
 import { Plus, Upload, Download } from "lucide-react";
 
 const PropertiesPage: React.FC = () => {
+  const [editingProperty, setEditingProperty] = useState<Property | null>(null);
+  const handleEditProperty = (property: Property) => {
+    setEditingProperty(property);
+    setIsNewPropertyModalOpen(true);
+  };
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -203,53 +208,90 @@ const PropertiesPage: React.FC = () => {
 
     const payload: any = {
       id_analise: effectiveAnalysisId,
-      reformado: formData.reformado === 'on',
+      reformado: formData.reformado === "on",
     };
 
     const fieldsToInclude = [
-      'url', 'imobiliaria', 'preco_anunciado', 'area', 'quartos', 'banheiros',
-      'vagas', 'condominio_mensal', 'iptu_anual', 'codigo_ref_externo',
-      'data_anuncio', 'endereco', 'comentarios'
+      "url",
+      "imobiliaria",
+      "preco_anunciado",
+      "area",
+      "quartos",
+      "banheiros",
+      "vagas",
+      "condominio_mensal",
+      "iptu_anual",
+      "codigo_ref_externo",
+      "data_anuncio",
+      "endereco",
+      "comentarios",
     ];
 
-    fieldsToInclude.forEach(field => {
-      if (formData[field] && formData[field].trim() !== '') {
-        payload[field] = field === 'data_anuncio' ? formData[field] : 
-                         ['preco_anunciado', 'area', 'quartos', 'banheiros', 'vagas', 'condominio_mensal', 'iptu_anual'].includes(field) 
-                         ? Number(formData[field]) 
-                         : formData[field];
-      }
-    });
-
-    // Remover campos vazios ou undefined
-    Object.keys(payload).forEach(key => {
-      if (payload[key] === undefined || payload[key] === '') {
-        delete payload[key];
+    fieldsToInclude.forEach((field) => {
+      if (formData[field] && formData[field].trim() !== "") {
+        payload[field] =
+          field === "data_anuncio"
+            ? formData[field]
+            : [
+                  "preco_anunciado",
+                  "area",
+                  "quartos",
+                  "banheiros",
+                  "vagas",
+                  "condominio_mensal",
+                  "iptu_anual",
+                ].includes(field)
+              ? Number(formData[field])
+              : formData[field];
       }
     });
 
     try {
-      const response = await fetch("https://flippings.com.br/imoveis", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      let response;
+      if (editingProperty) {
+        response = await fetch(
+          `https://flippings.com.br/imoveis/${editingProperty.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          },
+        );
+      } else {
+        response = await fetch("https://flippings.com.br/imoveis", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+      }
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(`Erro ao adicionar imóvel: ${JSON.stringify(errorData)}`);
+        throw new Error(
+          `Erro ao ${editingProperty ? "editar" : "adicionar"} imóvel: ${JSON.stringify(errorData)}`,
+        );
       }
 
       await fetchProperties();
-      toast.success("Imóvel adicionado com sucesso");
+      toast.success(
+        `Imóvel ${editingProperty ? "editado" : "adicionado"} com sucesso`,
+      );
       setIsNewPropertyModalOpen(false);
+      setEditingProperty(null);
       setImportedData(null);
     } catch (error) {
-      console.error("Error adding property:", error);
-      toast.error("Erro ao adicionar imóvel");
-      setFormError(error instanceof Error ? error.message : "Erro desconhecido");
+      console.error(
+        `Error ${editingProperty ? "editing" : "adding"} property:`,
+        error,
+      );
+      toast.error(`Erro ao ${editingProperty ? "editar" : "adicionar"} imóvel`);
+      setFormError(
+        error instanceof Error ? error.message : "Erro desconhecido",
+      );
     } finally {
       setIsSaving(false);
     }
@@ -445,7 +487,7 @@ const PropertiesPage: React.FC = () => {
 
         <PropertyTable
           properties={filteredProperties}
-          onEdit={(property) => console.log("Edit:", property)}
+          onEdit={handleEditProperty}
           onDelete={(id) => {
             setPropertyToDelete(id);
             setIsDeleteModalOpen(true);
@@ -487,11 +529,13 @@ const PropertiesPage: React.FC = () => {
 
       {isNewPropertyModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl p-6 overflow-y-auto max-h-[90vh]">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              {importedData
-                ? "Editar Imóvel Importado"
-                : "Adicionar Novo Imóvel"}
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl p-4 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">
+              {editingProperty
+                ? "Editar Imóvel"
+                : importedData
+                  ? "Editar Imóvel Importado"
+                  : "Adicionar Novo Imóvel"}
             </h2>
             <form
               onSubmit={async (e) => {
@@ -503,17 +547,14 @@ const PropertiesPage: React.FC = () => {
               }}
             >
               {formError && (
-                <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-400 text-red-700 rounded">
+                <div className="mb-4 p-2 bg-red-50 border-l-4 border-red-400 text-red-700 text-sm rounded">
                   <p className="font-medium">Erro ao adicionar imóvel:</p>
                   <p>{formError}</p>
                 </div>
               )}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <label
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                    htmlFor="url"
-                  >
+                  <label className="block text-gray-700 mb-1" htmlFor="url">
                     URL do anúncio
                   </label>
                   <input
@@ -521,14 +562,16 @@ const PropertiesPage: React.FC = () => {
                     name="url"
                     type="url"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
                     placeholder="https://..."
-                    defaultValue={importedData?.url || ""}
+                    defaultValue={
+                      editingProperty?.url || importedData?.url || ""
+                    }
                   />
                 </div>
                 <div>
                   <label
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-gray-700 mb-1"
                     htmlFor="imobiliaria"
                   >
                     Imobiliária
@@ -537,13 +580,17 @@ const PropertiesPage: React.FC = () => {
                     id="imobiliaria"
                     name="imobiliaria"
                     type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    defaultValue={importedData?.imobiliaria || ""}
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                    defaultValue={
+                      editingProperty?.imobiliaria ||
+                      importedData?.imobiliaria ||
+                      ""
+                    }
                   />
                 </div>
                 <div>
                   <label
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-gray-700 mb-1"
                     htmlFor="preco_anunciado"
                   >
                     Preço (R$)
@@ -553,16 +600,17 @@ const PropertiesPage: React.FC = () => {
                     name="preco_anunciado"
                     type="number"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
                     placeholder="0,00"
-                    defaultValue={importedData?.preco_anunciado || ""}
+                    defaultValue={
+                      editingProperty?.preco_anunciado ||
+                      importedData?.preco_anunciado ||
+                      ""
+                    }
                   />
                 </div>
                 <div>
-                  <label
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                    htmlFor="area"
-                  >
+                  <label className="block text-gray-700 mb-1" htmlFor="area">
                     Área (m²)
                   </label>
                   <input
@@ -570,16 +618,15 @@ const PropertiesPage: React.FC = () => {
                     name="area"
                     type="number"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
                     placeholder="0"
-                    defaultValue={importedData?.area || ""}
+                    defaultValue={
+                      editingProperty?.area || importedData?.area || ""
+                    }
                   />
                 </div>
                 <div>
-                  <label
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                    htmlFor="quartos"
-                  >
+                  <label className="block text-gray-700 mb-1" htmlFor="quartos">
                     Quartos
                   </label>
                   <input
@@ -587,14 +634,16 @@ const PropertiesPage: React.FC = () => {
                     name="quartos"
                     type="number"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
                     placeholder="0"
-                    defaultValue={importedData?.quartos || ""}
+                    defaultValue={
+                      editingProperty?.quartos || importedData?.quartos || ""
+                    }
                   />
                 </div>
                 <div>
                   <label
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-gray-700 mb-1"
                     htmlFor="banheiros"
                   >
                     Banheiros
@@ -604,30 +653,33 @@ const PropertiesPage: React.FC = () => {
                     name="banheiros"
                     type="number"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
                     placeholder="0"
-                    defaultValue={importedData?.banheiros || ""}
+                    defaultValue={
+                      editingProperty?.banheiros ||
+                      importedData?.banheiros ||
+                      ""
+                    }
                   />
                 </div>
                 <div>
-                  <label
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                    htmlFor="vagas"
-                  >
+                  <label className="block text-gray-700 mb-1" htmlFor="vagas">
                     Vagas
                   </label>
                   <input
                     id="vagas"
                     name="vagas"
                     type="number"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
                     placeholder="0"
-                    defaultValue={importedData?.vagas || ""}
+                    defaultValue={
+                      editingProperty?.vagas || importedData?.vagas || ""
+                    }
                   />
                 </div>
                 <div>
                   <label
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-gray-700 mb-1"
                     htmlFor="condominio_mensal"
                   >
                     Condomínio mensal (R$)
@@ -637,14 +689,18 @@ const PropertiesPage: React.FC = () => {
                     name="condominio_mensal"
                     type="number"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
                     placeholder="0,00"
-                    defaultValue={importedData?.condominio_mensal || ""}
+                    defaultValue={
+                      editingProperty?.condominio_mensal ||
+                      importedData?.condominio_mensal ||
+                      ""
+                    }
                   />
                 </div>
                 <div>
                   <label
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-gray-700 mb-1"
                     htmlFor="iptu_anual"
                   >
                     IPTU anual (R$)
@@ -654,14 +710,18 @@ const PropertiesPage: React.FC = () => {
                     name="iptu_anual"
                     type="number"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
                     placeholder="0,00"
-                    defaultValue={importedData?.iptu_anual || ""}
+                    defaultValue={
+                      editingProperty?.iptu_anual ||
+                      importedData?.iptu_anual ||
+                      ""
+                    }
                   />
                 </div>
                 <div>
                   <label
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-gray-700 mb-1"
                     htmlFor="codigo_ref_externo"
                   >
                     Código
@@ -670,13 +730,17 @@ const PropertiesPage: React.FC = () => {
                     id="codigo_ref_externo"
                     name="codigo_ref_externo"
                     type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    defaultValue={importedData?.codigo_ref_externo || ""}
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                    defaultValue={
+                      editingProperty?.codigo_ref_externo ||
+                      importedData?.codigo_ref_externo ||
+                      ""
+                    }
                   />
                 </div>
                 <div>
                   <label
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-gray-700 mb-1"
                     htmlFor="data_anuncio"
                   >
                     Data do anúncio
@@ -685,13 +749,19 @@ const PropertiesPage: React.FC = () => {
                     id="data_anuncio"
                     name="data_anuncio"
                     type="date"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    defaultValue={importedData?.data_anuncio || ""}
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                    defaultValue={
+                      editingProperty?.data_anuncio
+                        ? new Date(editingProperty.data_anuncio)
+                            .toISOString()
+                            .split("T")[0]
+                        : importedData?.data_anuncio || ""
+                    }
                   />
                 </div>
-                <div className="md:col-span-2">
+                <div className="col-span-2">
                   <label
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-gray-700 mb-1"
                     htmlFor="endereco"
                   >
                     Endereço
@@ -701,26 +771,30 @@ const PropertiesPage: React.FC = () => {
                     name="endereco"
                     type="text"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    defaultValue={importedData?.endereco || ""}
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                    defaultValue={
+                      editingProperty?.endereco || importedData?.endereco || ""
+                    }
                   />
                 </div>
-                <div className="md:col-span-2">
+                <div className="col-span-2">
                   <label className="flex items-center">
                     <input
                       name="reformado"
                       type="checkbox"
                       className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                      defaultChecked={importedData?.reformado || false}
+                      defaultValue={
+                        editingProperty?.reformado ||
+                        importedData?.reformado ||
+                        ""
+                      }
                     />
-                    <span className="ml-2 text-sm text-gray-700">
-                      Reformado
-                    </span>
+                    <span className="ml-2 text-gray-700">Reformado</span>
                   </label>
                 </div>
-                <div className="md:col-span-2">
+                <div className="col-span-2">
                   <label
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-gray-700 mb-1"
                     htmlFor="comentarios"
                   >
                     Comentários
@@ -728,17 +802,24 @@ const PropertiesPage: React.FC = () => {
                   <textarea
                     id="comentarios"
                     name="comentarios"
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    defaultValue={importedData?.comentarios || ""}
+                    rows={2}
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                    defaultValue={
+                      editingProperty?.comentarios ||
+                      importedData?.comentarios ||
+                      ""
+                    }
                   ></textarea>
                 </div>
               </div>
-              <div className="mt-8 flex justify-end gap-4">
+              <div className="mt-4 flex justify-end gap-2">
                 <button
                   type="button"
-                  onClick={closeModals}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                  onClick={() => {
+                    closeModals();
+                    setEditingProperty(null);
+                  }}
+                  className="px-3 py-1 text-sm text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
                   disabled={isSaving}
                 >
                   Cancelar
@@ -746,37 +827,9 @@ const PropertiesPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className={`px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-                    isSaving ? "opacity-75 cursor-not-allowed" : ""
-                  }`}
+                  className={`px-3 py-1 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700 ${isSaving ? "opacity-75 cursor-not-allowed" : ""}`}
                 >
-                  {isSaving ? (
-                    <span className="flex items-center">
-                      <svg
-                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      Salvando...
-                    </span>
-                  ) : (
-                    "Salvar"
-                  )}
+                  {isSaving ? "Salvando..." : "Salvar"}
                 </button>
               </div>
             </form>
