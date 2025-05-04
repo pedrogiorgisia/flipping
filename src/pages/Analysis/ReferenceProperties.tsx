@@ -7,6 +7,7 @@ export interface ReferenceProperty {
   id: string;
   imovel: {
     id: string;
+    id_analise: string;
     url: string;
     imobiliaria: string;
     preco_anunciado: number;
