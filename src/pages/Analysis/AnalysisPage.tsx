@@ -560,12 +560,13 @@ const AnalysisPage: React.FC = () => {
                             currency: 'BRL',
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
-                          }).format(parseFloat(simulacao.param_valor_venda) / 100) : "R$ 0,00"}
+                          }).format(parseFloat(simulacao.param_valor_venda)) : "R$ 0,00"}
                           onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, '');
+                            let value = e.target.value.replace(/[^\d,]/g, '');
+                            value = value.replace(',', '.');
                             handleParameterChange(
                               "param_valor_venda",
-                              value.length > 0 ? value : "0"
+                              value || "0"
                             );
                             if (simulacao && simulacao.imovel.area > 0) {
                               const newValorM2 = parseFloat(value) / simulacao.imovel.area;
@@ -574,13 +575,6 @@ const AnalysisPage: React.FC = () => {
                                 newValorM2.toString()
                               );
                             }
-                          }}
-                          onFocus={(e) => {
-                            e.target.value = simulacao?.param_valor_venda || "0";
-                          }}
-                          onBlur={(e) => {
-                            const value = e.target.value.replace(/\D/g, '') || "0";
-                            handleParameterChange("param_valor_venda", value);
                           }}
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
