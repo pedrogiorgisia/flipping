@@ -528,12 +528,7 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="text"
-                          value={simulacao?.param_valor_venda ? new Intl.NumberFormat('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL',
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }).format(parseFloat(simulacao.param_valor_venda) / 100) : "R$ 0,00"}
+                          value={simulacao?.param_valor_venda ? formatCurrency(parseFloat(simulacao.param_valor_venda)) : "R$ 0,00"}
                           onChange={(e) => {
                             const value = e.target.value.replace(/\D/g, '');
                             handleParameterChange(
@@ -554,7 +549,6 @@ const AnalysisPage: React.FC = () => {
                           onBlur={(e) => {
                             const value = e.target.value.replace(/\D/g, '') || "0";
                             handleParameterChange("param_valor_venda", value);
-                          }}
                           }}
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
