@@ -296,6 +296,11 @@ const AddReferenceModal: React.FC<{ onClose: () => void; simulationId: string; o
       // Update references list with new items
       setProperties(properties.filter(p => !selectedProperties.has(p.id)));
       onClose();
+      
+      // Fetch updated references
+      const updatedRefs = await fetch(`https://flippings.com.br/referencia-simulacao/${simulationId}`).then(res => res.json());
+      setReferences(updatedRefs);
+      
       toast.success('Referências adicionadas com sucesso');
       onUpdate?.();
     } catch (error) {
