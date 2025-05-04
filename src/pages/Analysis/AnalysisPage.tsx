@@ -540,6 +540,13 @@ const AnalysisPage: React.FC = () => {
                               "param_valor_venda",
                               value.length > 0 ? value : "0"
                             );
+                            if (simulacao && simulacao.imovel.area > 0) {
+                              const newValorM2 = parseFloat(value) / simulacao.imovel.area;
+                              handleParameterChange(
+                                "valor_m2_venda",
+                                newValorM2.toString()
+                              );
+                            }
                           }}
                           onFocus={(e) => {
                             e.target.value = simulacao?.param_valor_venda || "0";
@@ -548,14 +555,6 @@ const AnalysisPage: React.FC = () => {
                             const value = e.target.value.replace(/\D/g, '') || "0";
                             handleParameterChange("param_valor_venda", value);
                           }}
-                            if (simulacao && simulacao.imovel.area > 0) {
-                              const newValorM2 =
-                                parseFloat(numericValue) / simulacao.imovel.area;
-                              handleParameterChange(
-                                "valor_m2_venda",
-                                newValorM2.toString(),
-                              );
-                            }
                           }}
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
