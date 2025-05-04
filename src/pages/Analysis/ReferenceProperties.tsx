@@ -32,10 +32,11 @@ interface ReferencePropertiesProps {
 }
 
 const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
-  references,
+  references: initialReferences,
   onRemove,
   simulationId
 }) => {
+  const [references, setReferences] = useState(initialReferences);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [referenceToDelete, setReferenceToDelete] = useState<string | null>(null);
@@ -65,7 +66,9 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
       onRemove?.(id);
       setIsDeleteModalOpen(false);
       setReferenceToDelete(null);
-      window.location.reload();
+      // Refresh references list
+      const updatedRefs = references.filter(ref => ref.id !== id);
+      setReferences(updatedRefs);
     } catch (error) {
       toast.error('Erro ao excluir referência');
     }
@@ -279,9 +282,18 @@ const AddReferenceModal: React.FC<{ onClose: () => void; simulationId: string }>
         })
       );
 
-      await Promise.all(addPromises);
+      const responses = await Promise.all(addPromises);
+      const newReferences = await Promise.all(
+        responses.map(async (response) => {
+          const data = await response.json();
+          return data;
+        })
+      );
+      
+      // Update references list with new items
+      setProperties(properties.filter(p => !selectedProperties.has(p.id)));
+      onClose();
       toast.success('Referências adicionadas com sucesso');
-      window.location.reload();
     } catch (error) {
       toast.error('Erro ao adicionar referências');
       console.error(error);
