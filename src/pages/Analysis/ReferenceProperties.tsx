@@ -273,7 +273,7 @@ const AddReferenceModal: React.FC<{ onClose: () => void; simulationId: string }>
           },
           body: JSON.stringify({
             id_simulacao: simulationId,
-            id_imovel: propertyId,
+            id_imovel_referencia: propertyId,
           }),
         })
       );
