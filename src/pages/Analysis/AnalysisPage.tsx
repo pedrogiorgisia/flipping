@@ -867,14 +867,15 @@ const AnalysisPage: React.FC = () => {
             onToggle={() => toggleSection("referenceProperties")}
           >
             <ReferenceProperties 
-            references={referenciasSimulacao} 
-            simulationId={simulationId}
-            onUpdate={() => {
-              getReferenciaSimulacao(simulationId).then(data => {
-                setReferenciasSimulacao(data);
-              });
-            }}
-          />
+              references={referenciasSimulacao} 
+              simulationId={simulationId}
+              simulacao={simulacao}
+              onUpdate={() => {
+                getReferenciaSimulacao(simulationId).then(data => {
+                  setReferenciasSimulacao(data);
+                });
+              }}
+            />
           </Section>
         </div>
       </div>

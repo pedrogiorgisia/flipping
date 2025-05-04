@@ -29,6 +29,7 @@ interface ReferencePropertiesProps {
   references: ReferenceProperty[];
   onRemove?: (id: string) => void;
   simulationId: string;
+  simulacao: any;
 }
 
 const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
