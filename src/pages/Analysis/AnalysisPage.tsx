@@ -105,7 +105,7 @@ const PropertyDetails: React.FC<{ property: Simulacao["imovel"] }> = ({
         <div>
           <p className="text-sm text-gray-500">Data do Anúncio</p>
           <p className="font-medium">
-            {new Date(property.data_anuncio).toLocaleDateString("pt-BR")}
+            {property.data_anuncio ? new Date(property.data_anuncio).toLocaleDateString("pt-BR") : "Não disponível"}
           </p>
         </div>
         <div>
@@ -400,14 +400,15 @@ const AnalysisPage: React.FC = () => {
                           Valor de compra (R$)
                         </label>
                         <input
-                          type="number"
-                          value={simulacao?.param_valor_compra || ""}
-                          onChange={(e) =>
+                          type="text"
+                          value={simulacao?.param_valor_compra ? formatCurrency(parseFloat(simulacao.param_valor_compra)) : ""}
+                          onChange={(e) => {
+                            const numericValue = e.target.value.replace(/[^\d]/g, '');
                             handleParameterChange(
                               "param_valor_compra",
-                              e.target.value,
-                            )
-                          }
+                              numericValue,
+                            );
+                          }}
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
                         <p className="text-xs text-gray-500 mt-1">
@@ -455,14 +456,15 @@ const AnalysisPage: React.FC = () => {
                           Avaliação bancária (R$)
                         </label>
                         <input
-                          type="number"
-                          value={simulacao?.param_avaliacao_bancaria || ""}
-                          onChange={(e) =>
+                          type="text"
+                          value={simulacao?.param_avaliacao_bancaria ? formatCurrency(parseFloat(simulacao.param_avaliacao_bancaria)) : ""}
+                          onChange={(e) => {
+                            const numericValue = e.target.value.replace(/[^\d]/g, '');
                             handleParameterChange(
                               "param_avaliacao_bancaria",
-                              e.target.value,
-                            )
-                          }
+                              numericValue,
+                            );
+                          }}
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
                       </div>
@@ -487,14 +489,15 @@ const AnalysisPage: React.FC = () => {
                           Contas gerais (agua, luz etc.) (R$)
                         </label>
                         <input
-                          type="number"
-                          value={simulacao?.param_contas_gerais || ""}
-                          onChange={(e) =>
+                          type="text"
+                          value={simulacao?.param_contas_gerais ? formatCurrency(parseFloat(simulacao.param_contas_gerais)) : ""}
+                          onChange={(e) => {
+                            const numericValue = e.target.value.replace(/[^\d]/g, '');
                             handleParameterChange(
                               "param_contas_gerais",
-                              e.target.value,
-                            )
-                          }
+                              numericValue,
+                            );
+                          }}
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
                       </div>
@@ -512,17 +515,17 @@ const AnalysisPage: React.FC = () => {
                           Valor de venda (R$)
                         </label>
                         <input
-                          type="number"
-                          value={simulacao?.param_valor_venda || ""}
+                          type="text"
+                          value={simulacao?.param_valor_venda ? formatCurrency(parseFloat(simulacao.param_valor_venda)) : ""}
                           onChange={(e) => {
-                            const newValue = e.target.value;
+                            const numericValue = e.target.value.replace(/[^\d]/g, '');
                             handleParameterChange(
                               "param_valor_venda",
-                              newValue,
+                              numericValue,
                             );
                             if (simulacao && simulacao.imovel.area > 0) {
                               const newValorM2 =
-                                parseFloat(newValue) / simulacao.imovel.area;
+                                parseFloat(numericValue) / simulacao.imovel.area;
                               handleParameterChange(
                                 "valor_m2_venda",
                                 newValorM2.toString(),
@@ -559,14 +562,15 @@ const AnalysisPage: React.FC = () => {
                           Custo estimado reforma (R$)
                         </label>
                         <input
-                          type="number"
-                          value={simulacao?.param_custo_reforma || ""}
-                          onChange={(e) =>
+                          type="text"
+                          value={simulacao?.param_custo_reforma ? formatCurrency(parseFloat(simulacao.param_custo_reforma)) : ""}
+                          onChange={(e) => {
+                            const numericValue = e.target.value.replace(/[^\d]/g, '');
                             handleParameterChange(
                               "param_custo_reforma",
-                              e.target.value,
-                            )
-                          }
+                              numericValue,
+                            );
+                          }}
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
                       </div>
