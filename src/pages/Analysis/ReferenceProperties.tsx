@@ -169,7 +169,10 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
       </div>
 
       {isModalOpen && (
-        <AddReferenceModal onClose={() => setIsModalOpen(false)} />
+        <AddReferenceModal
+          onClose={() => setIsModalOpen(false)}
+          simulationId={simulationId}
+        />
       )}
 
       {isDeleteModalOpen && (
@@ -207,40 +210,195 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
   );
 };
 
-const AddReferenceModal: React.FC<{ onClose: () => void }> = ({ onClose }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-semibold text-gray-900">
-          Adicionar Imóvel de Referência
-        </h3>
-        <button
-          onClick={onClose}
-          className="text-gray-400 hover:text-gray-500 transition-colors duration-200"
-        >
-          ✕
-        </button>
-      </div>
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Selecione o Imóvel
-          </label>
-          <select className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-            <option value="">Selecione...</option>
-          </select>
+interface Property {
+  id: string;
+  url: string;
+  imobiliaria: string;
+  preco_anunciado: number;
+  area: number;
+  quartos: number;
+  banheiros: number;
+  vagas: number;
+  condominio_mensal: number;
+  iptu_anual: number;
+  endereco: string;
+  preco_m2: number;
+}
+
+const AddReferenceModal: React.FC<{ onClose: () => void; simulationId: string }> = ({ onClose, simulationId }) => {
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [selectedProperties, setSelectedProperties] = useState<Set<string>>(new Set());
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const response = await fetch(`https://flippings.com.br/imoveis?id_analise=${simulationId}`);
+        if (!response.ok) throw new Error('Erro ao carregar imóveis');
+        const data = await response.json();
+        setProperties(data);
+      } catch (error) {
+        toast.error('Erro ao carregar imóveis');
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProperties();
+  }, [simulationId]);
+
+  const handlePropertySelect = (propertyId: string) => {
+    const newSelected = new Set(selectedProperties);
+    if (selectedProperties.has(propertyId)) {
+      newSelected.delete(propertyId);
+    } else {
+      newSelected.add(propertyId);
+    }
+    setSelectedProperties(newSelected);
+  };
+
+  const handleAddReferences = async () => {
+    try {
+      const addPromises = Array.from(selectedProperties).map(propertyId =>
+        fetch('https://flippings.com.br/referencia-simulacao', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id_simulacao: simulationId,
+            id_imovel: propertyId,
+          }),
+        })
+      );
+
+      await Promise.all(addPromises);
+      toast.success('Referências adicionadas com sucesso');
+      window.location.reload();
+    } catch (error) {
+      toast.error('Erro ao adicionar referências');
+      console.error(error);
+    }
+  };
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(value);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-6xl max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-semibold text-gray-900">
+            Adicionar Imóveis de Referência
+          </h3>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-500 transition-colors duration-200"
+          >
+            ✕
+          </button>
         </div>
-        <div className="flex justify-end space-x-2">
-          <button onClick={onClose} className="btn btn-outline btn-sm">
+
+        {isLoading ? (
+          <div className="flex justify-center items-center h-32">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-2 py-2 text-center">Selecionar</th>
+                  <th className="px-2 py-2 text-left">Endereço</th>
+                  <th className="px-2 py-2 text-right">Valor</th>
+                  <th className="px-2 py-2 text-right">Área</th>
+                  <th className="px-2 py-2 text-center">Qts</th>
+                  <th className="px-2 py-2 text-center">Ban</th>
+                  <th className="px-2 py-2 text-center">Vgs</th>
+                  <th className="px-2 py-2 text-right">Cond.</th>
+                  <th className="px-2 py-2 text-right">IPTU</th>
+                  <th className="px-2 py-2 text-right">R$/m²</th>
+                  <th className="px-2 py-2 text-center">Link</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {properties.map((property) => (
+                  <tr key={property.id} className="hover:bg-gray-50 text-sm">
+                    <td className="px-2 py-2 text-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedProperties.has(property.id)}
+                        onChange={() => handlePropertySelect(property.id)}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="px-2 py-2 text-gray-900 truncate max-w-xs">
+                      {property.endereco}
+                    </td>
+                    <td className="px-2 py-2 text-gray-900 text-right">
+                      {formatCurrency(property.preco_anunciado)}
+                    </td>
+                    <td className="px-2 py-2 text-gray-900 text-right">
+                      {property.area}m²
+                    </td>
+                    <td className="px-2 py-2 text-gray-900 text-center">
+                      {property.quartos}
+                    </td>
+                    <td className="px-2 py-2 text-gray-900 text-center">
+                      {property.banheiros}
+                    </td>
+                    <td className="px-2 py-2 text-gray-900 text-center">
+                      {property.vagas}
+                    </td>
+                    <td className="px-2 py-2 text-gray-900 text-right">
+                      {formatCurrency(property.condominio_mensal)}
+                    </td>
+                    <td className="px-2 py-2 text-gray-900 text-right">
+                      {formatCurrency(property.iptu_anual)}
+                    </td>
+                    <td className="px-2 py-2 text-gray-900 text-right">
+                      {formatCurrency(property.preco_m2)}
+                    </td>
+                    <td className="px-2 py-2 text-center">
+                      <a
+                        href={property.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        <ExternalLink size={16} />
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        <div className="flex justify-end space-x-2 mt-4">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+          >
             Cancelar
           </button>
-          <button onClick={onClose} className="btn btn-primary btn-sm">
-            Adicionar
+          <button
+            onClick={handleAddReferences}
+            disabled={selectedProperties.size === 0}
+            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
+          >
+            Adicionar Selecionados
           </button>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default ReferenceProperties;
