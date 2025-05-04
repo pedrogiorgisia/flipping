@@ -59,6 +59,21 @@ interface Simulacao {
   contas_gerais_total: number;
 }
 
+// Função auxiliar para formatar moeda
+const formatCurrencyInput = (value) => {
+  if (!value) return "R$ 0,00";
+  const number = parseFloat(value.replace(/\D/g, "")) / 100;
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(number);
+};
+
+// Função auxiliar para parsear o valor formatado
+const parseCurrencyInput = (value) => {
+  return value.replace(/\D/g, "") || "0";
+};
+
 const PropertyDetails: React.FC<{ property: Simulacao["imovel"] }> = ({
   property,
 }) => {
@@ -105,7 +120,9 @@ const PropertyDetails: React.FC<{ property: Simulacao["imovel"] }> = ({
         <div>
           <p className="text-sm text-gray-500">Data do Anúncio</p>
           <p className="font-medium">
-            {property.data_anuncio ? new Date(property.data_anuncio).toLocaleDateString("pt-BR") : "Não disponível"}
+            {property.data_anuncio
+              ? new Date(property.data_anuncio).toLocaleDateString("pt-BR")
+              : "Não disponível"}
           </p>
         </div>
         <div>
@@ -329,19 +346,28 @@ const AnalysisPage: React.FC = () => {
   const salvarSimulacao = async () => {
     if (!simulacao || !simulationId) return;
 
+    const parseDecimal = (value) => {
+      if (typeof value === "string") {
+        return parseFloat(value.replace(/\D/g, "")) / 100;
+      }
+      return value;
+    };
+
     const dadosParaAtualizar = {
       id_imovel: simulacao.imovel.id,
-      param_valor_compra: parseFloat(simulacao.param_valor_compra),
-      param_valor_venda: parseFloat(simulacao.param_valor_venda),
+      param_valor_compra: parseDecimal(simulacao.param_valor_compra),
+      param_valor_venda: parseDecimal(simulacao.param_valor_venda),
       param_entrada_pct: parseFloat(simulacao.param_entrada_pct),
       param_itbi_pct: parseFloat(simulacao.param_itbi_pct),
-      param_avaliacao_bancaria: parseFloat(simulacao.param_avaliacao_bancaria),
+      param_avaliacao_bancaria: parseDecimal(
+        simulacao.param_avaliacao_bancaria,
+      ),
       param_registro_cartorio_pct: parseFloat(
         simulacao.param_registro_cartorio_pct,
       ),
-      param_contas_gerais: parseFloat(simulacao.param_contas_gerais),
+      param_contas_gerais: parseDecimal(simulacao.param_contas_gerais),
       param_tempo_venda: parseInt(simulacao.param_tempo_venda),
-      param_custo_reforma: parseFloat(simulacao.param_custo_reforma),
+      param_custo_reforma: parseDecimal(simulacao.param_custo_reforma),
       param_taxa_cet: parseFloat(simulacao.param_taxa_cet),
       param_prazo_financiamento: parseInt(simulacao.param_prazo_financiamento),
       param_corretagem_venda_pct: parseFloat(
@@ -401,28 +427,22 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="text"
-                          value={simulacao?.param_valor_compra ? new Intl.NumberFormat('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL',
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }).format(parseFloat(simulacao.param_valor_compra) / 100) : "R$ 0,00"}
+                          value={formatCurrencyInput(
+                            simulacao?.param_valor_compra,
+                          )}
                           onChange={(e) => {
-                            const numStr = e.target.value.replace(/[^\d,]/g, '').replace(',', '.');
-                            const numValue = parseFloat(numStr) || 0;
+                            const rawValue = parseCurrencyInput(e.target.value);
                             handleParameterChange(
                               "param_valor_compra",
-                              numValue.toString()
+                              rawValue,
                             );
                           }}
-                          onFocus={(e) => {
-                            const value = simulacao?.param_valor_compra || "0";
-                            e.target.value = value.replace('.', ',');
-                          }}
                           onBlur={(e) => {
-                            const numStr = e.target.value.replace(/[^\d,]/g, '').replace(',', '.') || "0";
-                            const numValue = parseFloat(numStr);
-                            handleParameterChange("param_valor_compra", numValue.toString());
+                            const rawValue = parseCurrencyInput(e.target.value);
+                            handleParameterChange(
+                              "param_valor_compra",
+                              rawValue,
+                            );
                           }}
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
@@ -472,25 +492,22 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="text"
-                          value={simulacao?.param_avaliacao_bancaria ? new Intl.NumberFormat('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL',
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }).format(parseFloat(simulacao.param_avaliacao_bancaria) / 100) : "R$ 0,00"}
+                          value={formatCurrencyInput(
+                            simulacao?.param_avaliacao_bancaria,
+                          )}
                           onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, '');
+                            const rawValue = parseCurrencyInput(e.target.value);
                             handleParameterChange(
                               "param_avaliacao_bancaria",
-                              value.length > 0 ? value : "0"
+                              rawValue,
                             );
                           }}
-                          onFocus={(e) => {
-                            e.target.value = simulacao?.param_avaliacao_bancaria || "0";
-                          }}
                           onBlur={(e) => {
-                            const value = e.target.value.replace(/\D/g, '') || "0";
-                            handleParameterChange("param_avaliacao_bancaria", value);
+                            const rawValue = parseCurrencyInput(e.target.value);
+                            handleParameterChange(
+                              "param_avaliacao_bancaria",
+                              rawValue,
+                            );
                           }}
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
@@ -517,25 +534,22 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="text"
-                          value={simulacao?.param_contas_gerais ? new Intl.NumberFormat('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL',
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }).format(parseFloat(simulacao.param_contas_gerais) / 100) : "R$ 0,00"}
+                          value={formatCurrencyInput(
+                            simulacao?.param_contas_gerais,
+                          )}
                           onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, '');
+                            const rawValue = parseCurrencyInput(e.target.value);
                             handleParameterChange(
                               "param_contas_gerais",
-                              value.length > 0 ? value : "0"
+                              rawValue,
                             );
                           }}
-                          onFocus={(e) => {
-                            e.target.value = simulacao?.param_contas_gerais || "0";
-                          }}
                           onBlur={(e) => {
-                            const value = e.target.value.replace(/\D/g, '') || "0";
-                            handleParameterChange("param_contas_gerais", value);
+                            const rawValue = parseCurrencyInput(e.target.value);
+                            handleParameterChange(
+                              "param_contas_gerais",
+                              rawValue,
+                            );
                           }}
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
@@ -555,26 +569,32 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="text"
-                          value={simulacao?.param_valor_venda ? new Intl.NumberFormat('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL',
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }).format(parseFloat(simulacao.param_valor_venda)) : "R$ 0,00"}
+                          value={formatCurrencyInput(
+                            simulacao?.param_valor_venda,
+                          )}
                           onChange={(e) => {
-                            let value = e.target.value.replace(/[^\d,]/g, '');
-                            value = value.replace(',', '.');
+                            const rawValue = parseCurrencyInput(e.target.value);
                             handleParameterChange(
                               "param_valor_venda",
-                              value || "0"
+                              rawValue,
                             );
                             if (simulacao && simulacao.imovel.area > 0) {
-                              const newValorM2 = parseFloat(value) / simulacao.imovel.area;
+                              const newValorM2 =
+                                parseFloat(rawValue) /
+                                100 /
+                                simulacao.imovel.area;
                               handleParameterChange(
                                 "valor_m2_venda",
-                                newValorM2.toString()
+                                newValorM2.toString(),
                               );
                             }
+                          }}
+                          onBlur={(e) => {
+                            const rawValue = parseCurrencyInput(e.target.value);
+                            handleParameterChange(
+                              "param_valor_venda",
+                              rawValue,
+                            );
                           }}
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
@@ -607,25 +627,22 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="text"
-                          value={simulacao?.param_custo_reforma ? new Intl.NumberFormat('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL',
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }).format(parseFloat(simulacao.param_custo_reforma) / 100) : "R$ 0,00"}
+                          value={formatCurrencyInput(
+                            simulacao?.param_custo_reforma,
+                          )}
                           onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, '');
+                            const rawValue = parseCurrencyInput(e.target.value);
                             handleParameterChange(
                               "param_custo_reforma",
-                              value.length > 0 ? value : "0"
+                              rawValue,
                             );
                           }}
-                          onFocus={(e) => {
-                            e.target.value = simulacao?.param_custo_reforma || "0";
-                          }}
                           onBlur={(e) => {
-                            const value = e.target.value.replace(/\D/g, '') || "0";
-                            handleParameterChange("param_custo_reforma", value);
+                            const rawValue = parseCurrencyInput(e.target.value);
+                            handleParameterChange(
+                              "param_custo_reforma",
+                              rawValue,
+                            );
                           }}
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
