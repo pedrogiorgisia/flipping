@@ -268,14 +268,33 @@ const AddReferenceModal: React.FC<{
   const analysisId = useEffectiveAnalysisId();
 
   useEffect(() => {
-    const fetchProperties = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(
+        // Fetch all properties
+        const propertiesResponse = await fetch(
           `https://flippings.com.br/imoveis?id_analise=${analysisId}&reformado=true`,
         );
-        if (!response.ok) throw new Error("Erro ao carregar imóveis");
-        const data = await response.json();
-        setProperties(data);
+        if (!propertiesResponse.ok) throw new Error("Erro ao carregar imóveis");
+        const propertiesData = await propertiesResponse.json();
+
+        // Fetch existing references
+        const referencesResponse = await fetch(
+          `https://flippings.com.br/referencia-simulacao?id_simulacao=${simulationId}`,
+        );
+        if (!referencesResponse.ok) throw new Error("Erro ao carregar referências");
+        const referencesData = await referencesResponse.json();
+
+        // Get IDs of existing references
+        const existingReferenceIds = new Set(
+          referencesData.map((ref: any) => ref.imovel.id)
+        );
+
+        // Filter out properties that are already references
+        const filteredProperties = propertiesData.filter(
+          (property: Property) => !existingReferenceIds.has(property.id)
+        );
+
+        setProperties(filteredProperties);
       } catch (error) {
         toast.error("Erro ao carregar imóveis");
         console.error(error);
@@ -284,7 +303,7 @@ const AddReferenceModal: React.FC<{
       }
     };
 
-    fetchProperties();
+    fetchData();
   }, [simulationId, analysisId]);
 
   const handlePropertySelect = (propertyId: string) => {
