@@ -376,115 +376,147 @@ const AddReferenceModal: React.FC<{
           </div>
         ) : (
           <div className="space-y-6">
-            {/* Recommended Properties */}
-            <div className="bg-green-50 border border-green-100 rounded-lg p-4">
-              <h4 className="text-lg font-medium text-green-800 mb-3">
-                Imóveis Recomendados para Referência
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {properties
-                  .filter((property) => {
-                    const areaVariation = Math.abs(property.area - (simulacao?.imovel?.area || 0)) / (simulacao?.imovel?.area || 1) * 100;
-                    return (
-                      property.quartos === simulacao?.imovel?.quartos &&
-                      property.banheiros === simulacao?.imovel?.banheiros &&
-                      property.vagas === simulacao?.imovel?.vagas &&
-                      areaVariation <= 10
-                    );
-                  })
-                  .map((property) => (
-                    <div key={property.id} className="bg-white rounded-lg shadow-sm p-4 border border-green-200 hover:border-green-300 transition-colors">
-                      <div className="flex justify-between items-start mb-2">
-                        <input
-                          type="checkbox"
-                          checked={selectedProperties.has(property.id)}
-                          onChange={() => handlePropertySelect(property.id)}
-                          className="rounded border-gray-300 text-green-600 focus:ring-green-500"
-                        />
-                        <a
-                          href={property.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800"
-                        >
-                          <ExternalLink size={16} />
-                        </a>
-                      </div>
-                      <div className="text-sm text-gray-900 truncate mb-2" title={property.endereco}>
-                        {property.endereco}
-                      </div>
-                      <div className="grid grid-cols-2 gap-2 text-sm">
-                        <div className="text-gray-600">Valor:</div>
-                        <div className="text-right font-medium">{formatCurrency(property.preco_anunciado)}</div>
-                        <div className="text-gray-600">Área:</div>
-                        <div className="text-right">{property.area}m²</div>
-                        <div className="text-gray-600">Quartos:</div>
-                        <div className="text-right">{property.quartos}</div>
-                        <div className="text-gray-600">Banheiros:</div>
-                        <div className="text-right">{property.banheiros}</div>
-                        <div className="text-gray-600">Vagas:</div>
-                        <div className="text-right">{property.vagas}</div>
-                        <div className="text-gray-600">R$/m²:</div>
-                        <div className="text-right">{formatCurrency(property.preco_m2)}</div>
-                      </div>
-                    </div>
-                  ))}
+            <div className="space-y-4">
+              {/* Recommended Properties */}
+              <div className="bg-green-50 border border-green-100 rounded-lg p-4">
+                <h4 className="text-lg font-medium text-green-800 mb-3">
+                  Imóveis Recomendados para Referência
+                </h4>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-green-100">
+                      <tr>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Selecionar</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Link</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Endereço</th>
+                        <th className="px-3 py-2 text-right text-xs font-medium text-gray-500">Valor</th>
+                        <th className="px-3 py-2 text-right text-xs font-medium text-gray-500">Área</th>
+                        <th className="px-3 py-2 text-center text-xs font-medium text-gray-500">Qts/Ban/Vgs</th>
+                        <th className="px-3 py-2 text-right text-xs font-medium text-gray-500">R$/m²</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {properties
+                        .filter((property) => {
+                          const areaVariation = Math.abs(property.area - (simulacao?.imovel?.area || 0)) / (simulacao?.imovel?.area || 1) * 100;
+                          return (
+                            property.quartos === simulacao?.imovel?.quartos &&
+                            property.banheiros === simulacao?.imovel?.banheiros &&
+                            property.vagas === simulacao?.imovel?.vagas &&
+                            areaVariation <= 10
+                          );
+                        })
+                        .map((property) => (
+                          <tr key={property.id} className="hover:bg-green-50">
+                            <td className="px-3 py-2">
+                              <input
+                                type="checkbox"
+                                checked={selectedProperties.has(property.id)}
+                                onChange={() => handlePropertySelect(property.id)}
+                                className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                              />
+                            </td>
+                            <td className="px-3 py-2">
+                              <a
+                                href={property.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800"
+                              >
+                                <ExternalLink size={16} />
+                              </a>
+                            </td>
+                            <td className="px-3 py-2 text-sm text-gray-900" title={property.endereco}>
+                              {property.endereco}
+                            </td>
+                            <td className="px-3 py-2 text-sm text-right font-medium">
+                              {formatCurrency(property.preco_anunciado)}
+                            </td>
+                            <td className="px-3 py-2 text-sm text-right">
+                              {property.area}m²
+                            </td>
+                            <td className="px-3 py-2 text-sm text-center">
+                              {property.quartos}/{property.banheiros}/{property.vagas}
+                            </td>
+                            <td className="px-3 py-2 text-sm text-right">
+                              {formatCurrency(property.preco_m2)}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
 
-            {/* Not Recommended Properties */}
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <h4 className="text-lg font-medium text-gray-700 mb-3">
-                Outros Imóveis Disponíveis
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {properties
-                  .filter((property) => {
-                    const areaVariation = Math.abs(property.area - (simulacao?.imovel?.area || 0)) / (simulacao?.imovel?.area || 1) * 100;
-                    return !(
-                      property.quartos === simulacao?.imovel?.quartos &&
-                      property.banheiros === simulacao?.imovel?.banheiros &&
-                      property.vagas === simulacao?.imovel?.vagas &&
-                      areaVariation <= 10
-                    );
-                  })
-                  .map((property) => (
-                    <div key={property.id} className="bg-white rounded-lg shadow-sm p-4 border border-gray-200 hover:border-gray-300 transition-colors">
-                      <div className="flex justify-between items-start mb-2">
-                        <input
-                          type="checkbox"
-                          checked={selectedProperties.has(property.id)}
-                          onChange={() => handlePropertySelect(property.id)}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                        />
-                        <a
-                          href={property.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800"
-                        >
-                          <ExternalLink size={16} />
-                        </a>
-                      </div>
-                      <div className="text-sm text-gray-900 truncate mb-2" title={property.endereco}>
-                        {property.endereco}
-                      </div>
-                      <div className="grid grid-cols-2 gap-2 text-sm">
-                        <div className="text-gray-600">Valor:</div>
-                        <div className="text-right font-medium">{formatCurrency(property.preco_anunciado)}</div>
-                        <div className="text-gray-600">Área:</div>
-                        <div className="text-right">{property.area}m²</div>
-                        <div className="text-gray-600">Quartos:</div>
-                        <div className="text-right">{property.quartos}</div>
-                        <div className="text-gray-600">Banheiros:</div>
-                        <div className="text-right">{property.banheiros}</div>
-                        <div className="text-gray-600">Vagas:</div>
-                        <div className="text-right">{property.vagas}</div>
-                        <div className="text-gray-600">R$/m²:</div>
-                        <div className="text-right">{formatCurrency(property.preco_m2)}</div>
-                      </div>
-                    </div>
-                  ))}
+              {/* Not Recommended Properties */}
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <h4 className="text-lg font-medium text-gray-700 mb-3">
+                  Outros Imóveis Disponíveis
+                </h4>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-100">
+                      <tr>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Selecionar</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Link</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Endereço</th>
+                        <th className="px-3 py-2 text-right text-xs font-medium text-gray-500">Valor</th>
+                        <th className="px-3 py-2 text-right text-xs font-medium text-gray-500">Área</th>
+                        <th className="px-3 py-2 text-center text-xs font-medium text-gray-500">Qts/Ban/Vgs</th>
+                        <th className="px-3 py-2 text-right text-xs font-medium text-gray-500">R$/m²</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {properties
+                        .filter((property) => {
+                          const areaVariation = Math.abs(property.area - (simulacao?.imovel?.area || 0)) / (simulacao?.imovel?.area || 1) * 100;
+                          return !(
+                            property.quartos === simulacao?.imovel?.quartos &&
+                            property.banheiros === simulacao?.imovel?.banheiros &&
+                            property.vagas === simulacao?.imovel?.vagas &&
+                            areaVariation <= 10
+                          );
+                        })
+                        .map((property) => (
+                          <tr key={property.id} className="hover:bg-gray-50">
+                            <td className="px-3 py-2">
+                              <input
+                                type="checkbox"
+                                checked={selectedProperties.has(property.id)}
+                                onChange={() => handlePropertySelect(property.id)}
+                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                              />
+                            </td>
+                            <td className="px-3 py-2">
+                              <a
+                                href={property.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800"
+                              >
+                                <ExternalLink size={16} />
+                              </a>
+                            </td>
+                            <td className="px-3 py-2 text-sm text-gray-900" title={property.endereco}>
+                              {property.endereco}
+                            </td>
+                            <td className="px-3 py-2 text-sm text-right font-medium">
+                              {formatCurrency(property.preco_anunciado)}
+                            </td>
+                            <td className="px-3 py-2 text-sm text-right">
+                              {property.area}m²
+                            </td>
+                            <td className="px-3 py-2 text-sm text-center">
+                              {property.quartos}/{property.banheiros}/{property.vagas}
+                            </td>
+                            <td className="px-3 py-2 text-sm text-right">
+                              {formatCurrency(property.preco_m2)}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
