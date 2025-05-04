@@ -181,6 +181,7 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
         <AddReferenceModal
           onClose={() => setIsModalOpen(false)}
           simulationId={simulationId}
+          onUpdate={onUpdate}
         />
       )}
 
@@ -234,7 +235,7 @@ interface Property {
   preco_m2: number;
 }
 
-const AddReferenceModal: React.FC<{ onClose: () => void; simulationId: string }> = ({ onClose, simulationId }) => {
+const AddReferenceModal: React.FC<{ onClose: () => void; simulationId: string; onUpdate?: () => void }> = ({ onClose, simulationId, onUpdate }) => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [selectedProperties, setSelectedProperties] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
