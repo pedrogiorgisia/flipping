@@ -70,7 +70,7 @@ const DashboardPage: React.FC = () => {
 
         // Fetch properties data
         const propertiesResponse = await fetch(
-          `https://flippings.com.br/simulacoes?id_analise=${effectiveAnalysisId}&simulacao_principal=true`,
+          `https://flippings.com.br/simulacoes?id_analise=${effectiveAnalysisId}&simulacao_principal=true&reformado=false`,
         );
         if (!propertiesResponse.ok)
           throw new Error("Erro ao carregar simulações");
