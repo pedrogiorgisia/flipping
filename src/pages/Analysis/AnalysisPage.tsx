@@ -866,7 +866,7 @@ const AnalysisPage: React.FC = () => {
             expanded={expandedSections.referenceProperties}
             onToggle={() => toggleSection("referenceProperties")}
           >
-            <ReferenceProperties references={referenciasSimulacao} />
+            <ReferenceProperties references={referenciasSimulacao} simulationId={simulationId} />
           </Section>
         </div>
       </div>
