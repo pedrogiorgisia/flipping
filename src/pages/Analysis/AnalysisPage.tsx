@@ -562,14 +562,13 @@ const AnalysisPage: React.FC = () => {
                             maximumFractionDigits: 2,
                           }).format(parseFloat(simulacao.param_valor_venda) / 100) : "R$ 0,00"}
                           onChange={(e) => {
-                            const numStr = e.target.value.replace(/[^\d,]/g, '').replace(',', '.');
-                            const numValue = parseFloat(numStr) || 0;
+                            const value = e.target.value.replace(/\D/g, '');
                             handleParameterChange(
                               "param_valor_venda",
-                              numValue.toString()
+                              value.length > 0 ? value : "0"
                             );
                             if (simulacao && simulacao.imovel.area > 0) {
-                              const newValorM2 = numValue / simulacao.imovel.area;
+                              const newValorM2 = parseFloat(value) / simulacao.imovel.area;
                               handleParameterChange(
                                 "valor_m2_venda",
                                 newValorM2.toString()
@@ -577,13 +576,11 @@ const AnalysisPage: React.FC = () => {
                             }
                           }}
                           onFocus={(e) => {
-                            const value = simulacao?.param_valor_venda || "0";
-                            e.target.value = value.replace('.', ',');
+                            e.target.value = simulacao?.param_valor_venda || "0";
                           }}
                           onBlur={(e) => {
-                            const numStr = e.target.value.replace(/[^\d,]/g, '').replace(',', '.') || "0";
-                            const numValue = parseFloat(numStr);
-                            handleParameterChange("param_valor_venda", numValue.toString());
+                            const value = e.target.value.replace(/\D/g, '') || "0";
+                            handleParameterChange("param_valor_venda", value);
                           }}
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
