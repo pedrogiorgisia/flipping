@@ -231,11 +231,12 @@ const AddReferenceModal: React.FC<{ onClose: () => void; simulationId: string }>
   const [properties, setProperties] = useState<Property[]>([]);
   const [selectedProperties, setSelectedProperties] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
+  const { id: analysisId } = useParams<{ id: string }>();
 
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch(`https://flippings.com.br/imoveis?id_analise=${simulationId}&reformado=true`);
+        const response = await fetch(`https://flippings.com.br/imoveis?id_analise=${analysisId}&reformado=true`);
         if (!response.ok) throw new Error('Erro ao carregar imóveis');
         const data = await response.json();
         setProperties(data);
