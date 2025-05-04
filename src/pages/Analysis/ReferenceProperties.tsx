@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Trash, PlusCircle, ExternalLink } from "lucide-react";
 import toast from "react-hot-toast";
@@ -45,6 +44,8 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(value);
   };
 
@@ -291,6 +292,8 @@ const AddReferenceModal: React.FC<{ onClose: () => void; simulationId: string }>
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(value);
   };
 
@@ -318,7 +321,7 @@ const AddReferenceModal: React.FC<{ onClose: () => void; simulationId: string }>
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <th className="px-2 py-2 text-center">Selecionar</th>
+                  <th className="px-2 py-2 text-center"></th>
                   <th className="px-2 py-2 text-left">Endereço</th>
                   <th className="px-2 py-2 text-right">Valor</th>
                   <th className="px-2 py-2 text-right">Área</th>
