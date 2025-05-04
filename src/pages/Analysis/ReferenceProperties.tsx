@@ -386,7 +386,7 @@ const AddReferenceModal: React.FC<{
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-green-100">
                       <tr>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Selecionar</th>
+                        <th className="px-3 py-2"></th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Link</th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Endereço</th>
                         <th className="px-3 py-2 text-right text-xs font-medium text-gray-500">Valor</th>
@@ -457,7 +457,7 @@ const AddReferenceModal: React.FC<{
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-100">
                       <tr>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Selecionar</th>
+                        <th className="px-3 py-2"></th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Link</th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Endereço</th>
                         <th className="px-3 py-2 text-right text-xs font-medium text-gray-500">Valor</th>
