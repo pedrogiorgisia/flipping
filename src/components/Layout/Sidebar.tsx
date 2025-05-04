@@ -53,7 +53,7 @@ const Sidebar: React.FC = () => {
   return (
     <aside className="hidden md:flex md:flex-col w-64 bg-white border-r border-gray-200">
       <div className="flex items-center justify-center h-16 border-b border-gray-200">
-        <h1 className="text-xl font-bold text-blue-600">FlipInvest</h1>
+        <h1 className="text-xl font-bold text-blue-600">Flippings</h1>
       </div>
       <nav className="flex-1 overflow-y-auto">
         {navItems.map((item) => (

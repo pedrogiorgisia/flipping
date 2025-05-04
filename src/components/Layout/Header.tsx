@@ -1,7 +1,7 @@
-import React from 'react';
-import { ArrowLeft, LogOut, FolderOpen } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import React from "react";
+import { ArrowLeft, LogOut, FolderOpen } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ const Header: React.FC = () => {
           <button
             type="button"
             className="text-gray-600 hover:text-gray-900 focus:outline-none flex items-center"
-            onClick={() => navigate('/analyses')}
+            onClick={() => navigate("/analyses")}
           >
             <FolderOpen size={20} className="mr-2" />
             <span className="text-sm">Minhas Análises</span>
@@ -31,7 +31,7 @@ const Header: React.FC = () => {
         </div>
 
         <div className="flex-1 text-center">
-          <h1 className="text-xl font-bold text-gray-800">FlipInvest</h1>
+          <h1 className="text-xl font-bold text-gray-800"></h1>
         </div>
 
         <button
