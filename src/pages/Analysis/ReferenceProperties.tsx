@@ -29,6 +29,7 @@ interface ReferencePropertiesProps {
   references: ReferenceProperty[];
   onRemove?: (id: string) => void;
   simulationId: string;
+  onUpdate?: () => void;
 }
 
 const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
@@ -294,6 +295,7 @@ const AddReferenceModal: React.FC<{ onClose: () => void; simulationId: string }>
       setProperties(properties.filter(p => !selectedProperties.has(p.id)));
       onClose();
       toast.success('Referências adicionadas com sucesso');
+      onUpdate?.();
     } catch (error) {
       toast.error('Erro ao adicionar referências');
       console.error(error);
