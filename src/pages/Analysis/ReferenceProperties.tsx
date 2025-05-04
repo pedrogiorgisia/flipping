@@ -202,6 +202,7 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
           onClose={() => setIsModalOpen(false)}
           simulationId={simulationId}
           onUpdate={fetchReferences}
+          simulacao={simulacao}
         />
       )}
 
@@ -259,7 +260,8 @@ const AddReferenceModal: React.FC<{
   onClose: () => void;
   simulationId: string;
   onUpdate: () => void;
-}> = ({ onClose, simulationId, onUpdate }) => {
+  simulacao?: any;
+}> = ({ onClose, simulationId, onUpdate, simulacao }) => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [selectedProperties, setSelectedProperties] = useState<Set<string>>(
     new Set(),
@@ -371,75 +373,118 @@ const AddReferenceModal: React.FC<{
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <th className="px-2 py-2 text-center"></th>
-                  <th className="px-2 py-2 text-left">Endereço</th>
-                  <th className="px-2 py-2 text-right">Valor</th>
-                  <th className="px-2 py-2 text-right">Área</th>
-                  <th className="px-2 py-2 text-center">Qts</th>
-                  <th className="px-2 py-2 text-center">Ban</th>
-                  <th className="px-2 py-2 text-center">Vgs</th>
-                  <th className="px-2 py-2 text-right">Cond.</th>
-                  <th className="px-2 py-2 text-right">IPTU</th>
-                  <th className="px-2 py-2 text-right">R$/m²</th>
-                  <th className="px-2 py-2 text-center">Link</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {properties.map((property) => (
-                  <tr key={property.id} className="hover:bg-gray-50 text-sm">
-                    <td className="px-2 py-2 text-center">
-                      <input
-                        type="checkbox"
-                        checked={selectedProperties.has(property.id)}
-                        onChange={() => handlePropertySelect(property.id)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      />
-                    </td>
-                    <td className="px-2 py-2 text-gray-900 truncate max-w-xs">
-                      {property.endereco}
-                    </td>
-                    <td className="px-2 py-2 text-gray-900 text-right">
-                      {formatCurrency(property.preco_anunciado)}
-                    </td>
-                    <td className="px-2 py-2 text-gray-900 text-right">
-                      {property.area}m²
-                    </td>
-                    <td className="px-2 py-2 text-gray-900 text-center">
-                      {property.quartos}
-                    </td>
-                    <td className="px-2 py-2 text-gray-900 text-center">
-                      {property.banheiros}
-                    </td>
-                    <td className="px-2 py-2 text-gray-900 text-center">
-                      {property.vagas}
-                    </td>
-                    <td className="px-2 py-2 text-gray-900 text-right">
-                      {formatCurrency(property.condominio_mensal)}
-                    </td>
-                    <td className="px-2 py-2 text-gray-900 text-right">
-                      {formatCurrency(property.iptu_anual)}
-                    </td>
-                    <td className="px-2 py-2 text-gray-900 text-right">
-                      {formatCurrency(property.preco_m2)}
-                    </td>
-                    <td className="px-2 py-2 text-center">
-                      <a
-                        href={property.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        <ExternalLink size={16} />
-                      </a>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="space-y-6">
+            {/* Recommended Properties */}
+            <div className="bg-green-50 border border-green-100 rounded-lg p-4">
+              <h4 className="text-lg font-medium text-green-800 mb-3">
+                Imóveis Recomendados para Referência
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {properties
+                  .filter((property) => {
+                    const areaVariation = Math.abs(property.area - (simulacao?.imovel?.area || 0)) / (simulacao?.imovel?.area || 1) * 100;
+                    return (
+                      property.quartos === simulacao?.imovel?.quartos &&
+                      property.banheiros === simulacao?.imovel?.banheiros &&
+                      property.vagas === simulacao?.imovel?.vagas &&
+                      areaVariation <= 10
+                    );
+                  })
+                  .map((property) => (
+                    <div key={property.id} className="bg-white rounded-lg shadow-sm p-4 border border-green-200 hover:border-green-300 transition-colors">
+                      <div className="flex justify-between items-start mb-2">
+                        <input
+                          type="checkbox"
+                          checked={selectedProperties.has(property.id)}
+                          onChange={() => handlePropertySelect(property.id)}
+                          className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                        />
+                        <a
+                          href={property.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          <ExternalLink size={16} />
+                        </a>
+                      </div>
+                      <div className="text-sm text-gray-900 truncate mb-2" title={property.endereco}>
+                        {property.endereco}
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div className="text-gray-600">Valor:</div>
+                        <div className="text-right font-medium">{formatCurrency(property.preco_anunciado)}</div>
+                        <div className="text-gray-600">Área:</div>
+                        <div className="text-right">{property.area}m²</div>
+                        <div className="text-gray-600">Quartos:</div>
+                        <div className="text-right">{property.quartos}</div>
+                        <div className="text-gray-600">Banheiros:</div>
+                        <div className="text-right">{property.banheiros}</div>
+                        <div className="text-gray-600">Vagas:</div>
+                        <div className="text-right">{property.vagas}</div>
+                        <div className="text-gray-600">R$/m²:</div>
+                        <div className="text-right">{formatCurrency(property.preco_m2)}</div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            {/* Not Recommended Properties */}
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <h4 className="text-lg font-medium text-gray-700 mb-3">
+                Outros Imóveis Disponíveis
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {properties
+                  .filter((property) => {
+                    const areaVariation = Math.abs(property.area - (simulacao?.imovel?.area || 0)) / (simulacao?.imovel?.area || 1) * 100;
+                    return !(
+                      property.quartos === simulacao?.imovel?.quartos &&
+                      property.banheiros === simulacao?.imovel?.banheiros &&
+                      property.vagas === simulacao?.imovel?.vagas &&
+                      areaVariation <= 10
+                    );
+                  })
+                  .map((property) => (
+                    <div key={property.id} className="bg-white rounded-lg shadow-sm p-4 border border-gray-200 hover:border-gray-300 transition-colors">
+                      <div className="flex justify-between items-start mb-2">
+                        <input
+                          type="checkbox"
+                          checked={selectedProperties.has(property.id)}
+                          onChange={() => handlePropertySelect(property.id)}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <a
+                          href={property.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          <ExternalLink size={16} />
+                        </a>
+                      </div>
+                      <div className="text-sm text-gray-900 truncate mb-2" title={property.endereco}>
+                        {property.endereco}
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div className="text-gray-600">Valor:</div>
+                        <div className="text-right font-medium">{formatCurrency(property.preco_anunciado)}</div>
+                        <div className="text-gray-600">Área:</div>
+                        <div className="text-right">{property.area}m²</div>
+                        <div className="text-gray-600">Quartos:</div>
+                        <div className="text-right">{property.quartos}</div>
+                        <div className="text-gray-600">Banheiros:</div>
+                        <div className="text-right">{property.banheiros}</div>
+                        <div className="text-gray-600">Vagas:</div>
+                        <div className="text-right">{property.vagas}</div>
+                        <div className="text-gray-600">R$/m²:</div>
+                        <div className="text-right">{formatCurrency(property.preco_m2)}</div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
           </div>
         )}
 
