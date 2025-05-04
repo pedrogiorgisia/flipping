@@ -1,0 +1,31 @@
+ReferenceProperties.tsx:206 Uncaught ReferenceError: simulacao is not defined
+    at ReferenceProperties (ReferenceProperties.tsx:206:11)
+ReferenceProperties.tsx:206 Uncaught ReferenceError: simulacao is not defined
+    at ReferenceProperties (ReferenceProperties.tsx:206:11)
+chunk-6BKLQ22S.js?v=bae75c13:14032 The above error occurred in the <ReferenceProperties> component:
+
+    at ReferenceProperties (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/src/pages/Analysis/ReferenceProperties.tsx?t=1746402573362:23:15)
+    at div
+    at div
+    at Section (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/src/pages/Analysis/AnalysisPage.tsx?t=1746402573362:1456:20)
+    at div
+    at div
+    at main
+    at div
+    at div
+    at MainLayout (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/src/components/Layout/MainLayout.tsx?t=1746393168293:19:23)
+    at AnalysisPage (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/src/pages/Analysis/AnalysisPage.tsx?t=1746402573362:271:40)
+    at RenderedRoute (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=bae75c13:4089:5)
+    at Routes (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=bae75c13:4559:5)
+    at RenderedRoute (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=bae75c13:4089:5)
+    at Routes (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=bae75c13:4559:5)
+    at AnalysisProvider (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/src/context/AnalysisContext.tsx:23:3)
+    at AuthProvider (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/src/context/AuthContext.tsx:21:32)
+    at Router (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=bae75c13:4502:15)
+    at BrowserRouter (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=bae75c13:5248:5)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+chunk-6BKLQ22S.js?v=bae75c13:9129 Uncaught ReferenceError: simulacao is not defined
+    at ReferenceProperties (ReferenceProperties.tsx:206:11)
