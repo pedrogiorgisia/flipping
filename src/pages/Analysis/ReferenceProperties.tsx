@@ -35,7 +35,8 @@ interface ReferencePropertiesProps {
 const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
   references: initialReferences,
   onRemove,
-  simulationId
+  simulationId,
+  onUpdate
 }) => {
   const [references, setReferences] = useState(initialReferences);
   const [isModalOpen, setIsModalOpen] = useState(false);
