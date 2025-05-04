@@ -29,19 +29,12 @@ interface ReferencePropertiesProps {
   references: ReferenceProperty[];
   onRemove?: (id: string) => void;
   simulationId: string;
-  simulationProperty: {
-    area: number;
-    quartos: number;
-    banheiros: number;
-    vagas: number;
-  } | null;
 }
 
 const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
   references: initialReferences,
   onRemove,
   simulationId,
-  simulationProperty,
 }) => {
   const [references, setReferences] = useState(initialReferences);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -111,26 +104,6 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
     return total / references.length;
   };
 
-  const recommendedProperties = simulationProperty
-    ? references.filter((reference) => {
-        const areaDifference = Math.abs(
-          reference.imovel.area - simulationProperty.area,
-        );
-        const areaPercentage = (areaDifference / simulationProperty.area) * 100;
-        return (
-          reference.imovel.quartos === simulationProperty.quartos &&
-          reference.imovel.banheiros === simulationProperty.banheiros &&
-          areaPercentage <= 10 &&
-          reference.imovel.vagas === simulationProperty.vagas
-        );
-      })
-    : [];
-
-  const nonRecommendedProperties = simulationProperty
-    ? references.filter((reference) => !recommendedProperties.includes(reference))
-    : references;
-
-
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -151,161 +124,77 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
         </button>
       </div>
 
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-3">
-          Imóveis recomendados para referência
-        </h3>
-        <div className="overflow-x-auto bg-white rounded-lg shadow">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <th className="px-2 py-2 text-left">Endereço</th>
-                <th className="px-2 py-2 text-right">Valor</th>
-                <th className="px-2 py-2 text-right">Área</th>
-                <th className="px-2 py-2 text-center">Qts</th>
-                <th className="px-2 py-2 text-center">Ban</th>
-                <th className="px-2 py-2 text-center">Vgs</th>
-                <th className="px-2 py-2 text-right">Cond.</th>
-                <th className="px-2 py-2 text-right">IPTU</th>
-                <th className="px-2 py-2 text-right">R$/m²</th>
-                <th className="px-2 py-2 text-center">Ações</th>
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-2 py-2 text-left">Endereço</th>
+              <th className="px-2 py-2 text-right">Valor</th>
+              <th className="px-2 py-2 text-right">Área</th>
+              <th className="px-2 py-2 text-center">Qts</th>
+              <th className="px-2 py-2 text-center">Ban</th>
+              <th className="px-2 py-2 text-center">Vgs</th>
+              <th className="px-2 py-2 text-right">Cond.</th>
+              <th className="px-2 py-2 text-right">IPTU</th>
+              <th className="px-2 py-2 text-right">R$/m²</th>
+              <th className="px-2 py-2 text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {references.map((reference) => (
+              <tr key={reference.id} className="hover:bg-gray-50 text-sm">
+                <td className="px-2 py-2 text-gray-900 truncate max-w-xs">
+                  {reference.imovel.endereco}
+                </td>
+                <td className="px-2 py-2 text-gray-900 text-right">
+                  {formatCurrency(reference.imovel.preco_anunciado)}
+                </td>
+                <td className="px-2 py-2 text-gray-900 text-right">
+                  {reference.imovel.area}m²
+                </td>
+                <td className="px-2 py-2 text-gray-900 text-center">
+                  {reference.imovel.quartos}
+                </td>
+                <td className="px-2 py-2 text-gray-900 text-center">
+                  {reference.imovel.banheiros}
+                </td>
+                <td className="px-2 py-2 text-gray-900 text-center">
+                  {reference.imovel.vagas}
+                </td>
+                <td className="px-2 py-2 text-gray-900 text-right">
+                  {formatCurrency(reference.imovel.condominio_mensal)}
+                </td>
+                <td className="px-2 py-2 text-gray-900 text-right">
+                  {formatCurrency(reference.imovel.iptu_anual)}
+                </td>
+                <td className="px-2 py-2 text-gray-900 text-right">
+                  {formatCurrency(reference.imovel.preco_m2)}
+                </td>
+                <td className="px-2 py-2 text-gray-900 text-center">
+                  <div className="flex justify-center space-x-2">
+                    <a
+                      href={reference.imovel.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      <ExternalLink size={16} />
+                    </a>
+                    <button
+                      onClick={() => {
+                        setReferenceToDelete(reference.id);
+                        setIsDeleteModalOpen(true);
+                      }}
+                      className="text-gray-400 hover:text-red-600"
+                    >
+                      <Trash size={16} />
+                    </button>
+                  </div>
+                </td>
               </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {recommendedProperties.map((reference) => (
-                <tr key={reference.id} className="hover:bg-gray-50 text-sm">
-                  <td className="px-2 py-2 text-gray-900 truncate max-w-xs">
-                    {reference.imovel.endereco}
-                  </td>
-                  <td className="px-2 py-2 text-gray-900 text-right">
-                    {formatCurrency(reference.imovel.preco_anunciado)}
-                  </td>
-                  <td className="px-2 py-2 text-gray-900 text-right">
-                    {reference.imovel.area}m²
-                  </td>
-                  <td className="px-2 py-2 text-gray-900 text-center">
-                    {reference.imovel.quartos}
-                  </td>
-                  <td className="px-2 py-2 text-gray-900 text-center">
-                    {reference.imovel.banheiros}
-                  </td>
-                  <td className="px-2 py-2 text-gray-900 text-center">
-                    {reference.imovel.vagas}
-                  </td>
-                  <td className="px-2 py-2 text-gray-900 text-right">
-                    {formatCurrency(reference.imovel.condominio_mensal)}
-                  </td>
-                  <td className="px-2 py-2 text-gray-900 text-right">
-                    {formatCurrency(reference.imovel.iptu_anual)}
-                  </td>
-                  <td className="px-2 py-2 text-gray-900 text-right">
-                    {formatCurrency(reference.imovel.preco_m2)}
-                  </td>
-                  <td className="px-2 py-2 text-gray-900 text-center">
-                    <div className="flex justify-center space-x-2">
-                      <a
-                        href={reference.imovel.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        <ExternalLink size={16} />
-                      </a>
-                      <button
-                        onClick={() => {
-                          setReferenceToDelete(reference.id);
-                          setIsDeleteModalOpen(true);
-                        }}
-                        className="text-gray-400 hover:text-red-600"
-                      >
-                        <Trash size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Non-Recommended Properties Table */}
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-3">
-          Imóveis que não parecem ser referências
-        </h3>
-        <div className="overflow-x-auto bg-white rounded-lg shadow">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <th className="px-2 py-2 text-left">Endereço</th>
-                <th className="px-2 py-2 text-right">Valor</th>
-                <th className="px-2 py-2 text-right">Área</th>
-                <th className="px-2 py-2 text-center">Qts</th>
-                <th className="px-2 py-2 text-center">Ban</th>
-                <th className="px-2 py-2 text-center">Vgs</th>
-                <th className="px-2 py-2 text-right">Cond.</th>
-                <th className="px-2 py-2 text-right">IPTU</th>
-                <th className="px-2 py-2 text-right">R$/m²</th>
-                <th className="px-2 py-2 text-center">Ações</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {nonRecommendedProperties.map((reference) => (
-                <tr key={reference.id} className="hover:bg-gray-50 text-sm">
-                  <td className="px-2 py-2 text-gray-900 truncate max-w-xs">
-                    {reference.imovel.endereco}
-                  </td>
-                  <td className="px-2 py-2 text-gray-900 text-right">
-                    {formatCurrency(reference.imovel.preco_anunciado)}
-                  </td>
-                  <td className="px-2 py-2 text-gray-900 text-right">
-                    {reference.imovel.area}m²
-                  </td>
-                  <td className="px-2 py-2 text-gray-900 text-center">
-                    {reference.imovel.quartos}
-                  </td>
-                  <td className="px-2 py-2 text-gray-900 text-center">
-                    {reference.imovel.banheiros}
-                  </td>
-                  <td className="px-2 py-2 text-gray-900 text-center">
-                    {reference.imovel.vagas}
-                  </td>
-                  <td className="px-2 py-2 text-gray-900 text-right">
-                    {formatCurrency(reference.imovel.condominio_mensal)}
-                  </td>
-                  <td className="px-2 py-2 text-gray-900 text-right">
-                    {formatCurrency(reference.imovel.iptu_anual)}
-                  </td>
-                  <td className="px-2 py-2 text-gray-900 text-right">
-                    {formatCurrency(reference.imovel.preco_m2)}
-                  </td>
-                  <td className="px-2 py-2 text-gray-900 text-center">
-                    <div className="flex justify-center space-x-2">
-                      <a
-                        href={reference.imovel.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        <ExternalLink size={16} />
-                      </a>
-                      <button
-                        onClick={() => {
-                          setReferenceToDelete(reference.id);
-                          setIsDeleteModalOpen(true);
-                        }}
-                        className="text-gray-400 hover:text-red-600"
-                      >
-                        <Trash size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {isModalOpen && (
