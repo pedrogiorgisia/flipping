@@ -1,0 +1,133 @@
+Ok, agora eu preciso montar o popup de adicionar referência. Ele tem que ser muito user friendly. A ideia desse popup, é que ao usuário clicar apareça uma tabela com uma lista de imóveis que ele pode adicionar como referência. Nessa tabela pode ter os mesmos campos que são apresentados no imóveis referência, inclusive com a ação do link para o anuncio, mas sem a ação de "excluir".
+Precisa também ter um checkbox para cada linha, para que o usuário possa selecionar quais imóveis ele quer add como referência. E depois algum lugar para ele adicionar as referências.
+
+A API que deve ser chamada para abrir a lista de possíveis imóveis para referencia é a GET /imóveis, passando o id_analise, porém precisa de uma lógica importante feita em tempo de execução da tela: Não devem ser apresentados na tabela os imóveis que já são referência e nem o próprio imóvel da simulação.
+
+Ex de chamada da API:
+curl -X 'GET' \
+  'https://flippings.com.br/imoveis?id_analise=fa7eb13d-5eb1-46be-96c7-d1c92a1924ca' \
+  -H 'accept: application/json'
+
+Ex retorno:
+[
+  {
+    "id": "b97bd783-3af6-4242-9b5d-61774605c9b7",
+    "id_analise": "fa7eb13d-5eb1-46be-96c7-d1c92a1924ca",
+    "url": "https://www.exemplo.com/imovel/123456",
+    "imobiliaria": "Imobiliária Exemplo",
+    "preco_anunciado": 500000,
+    "area": 100,
+    "quartos": 3,
+    "banheiros": 2,
+    "vagas": 1,
+    "condominio_mensal": 500,
+    "iptu_anual": 2000,
+    "endereco": "Rua das Flores, 123, Bairro Jardim, Cidade-UF",
+    "codigo_ref_externo": "REF123456",
+    "data_anuncio": "2025-04-25T00:00:00",
+    "comentarios": "Apartamento bem localizado, próximo ao metrô e com ótima vista.",
+    "criado_em": "2025-04-25T21:05:22.949824-03:00",
+    "reformado": false,
+    "preco_m2": 5000
+  },
+  {
+    "id": "ffd3a47e-c02b-4296-b4d0-96883a286568",
+    "id_analise": "fa7eb13d-5eb1-46be-96c7-d1c92a1924ca",
+    "url": "https://www.exemplo.com/imovel/123456",
+    "imobiliaria": "Imobiliária Exemplo",
+    "preco_anunciado": 500000,
+    "area": 100,
+    "quartos": 3,
+    "banheiros": 2,
+    "vagas": 1,
+    "condominio_mensal": 500,
+    "iptu_anual": 2000,
+    "endereco": "Rua das Flores, 123, Bairro Jardim, Cidade-UF",
+    "codigo_ref_externo": "REF123456",
+    "data_anuncio": "2025-04-25T00:00:00",
+    "comentarios": "Apartamento bem localizado, próximo ao metrô e com ótima vista.",
+    "criado_em": "2025-04-25T21:09:15.697933-03:00",
+    "reformado": false,
+    "preco_m2": 5000
+  },
+  {
+    "id": "1e7a33bb-0d23-4b31-ac9f-f414ab43bcbd",
+    "id_analise": "fa7eb13d-5eb1-46be-96c7-d1c92a1924ca",
+    "url": "https://www.exemplo.com/imovel/123456",
+    "imobiliaria": "Imobiliária Exemplo",
+    "preco_anunciado": 500000,
+    "area": 100,
+    "quartos": 3,
+    "banheiros": 2,
+    "vagas": 1,
+    "condominio_mensal": 500,
+    "iptu_anual": 2000,
+    "endereco": "Rua das Flores, 123, Bairro Jardim, Cidade-UF",
+    "codigo_ref_externo": "REF123456",
+    "data_anuncio": "2025-04-25T00:00:00",
+    "comentarios": "Apartamento bem localizado, próximo ao metrô e com ótima vista.",
+    "criado_em": "2025-04-25T21:21:15.638907-03:00",
+    "reformado": false,
+    "preco_m2": 5000
+  },
+  {
+    "id": "23a758f3-dbcc-432a-9bfe-27431990bcf1",
+    "id_analise": "fa7eb13d-5eb1-46be-96c7-d1c92a1924ca",
+    "url": "https://www.quintoandar.com.br/imovel/894865520/comprar/apartamento-3-quartos-pinheiros-sao-paulo",
+    "imobiliaria": "Quinto Andar",
+    "preco_anunciado": 1400000,
+    "area": 95,
+    "quartos": 3,
+    "banheiros": 3,
+    "vagas": 1,
+    "condominio_mensal": 1700,
+    "iptu_anual": 2112,
+    "endereco": "Rua Joaquim Antunes, 544",
+    "codigo_ref_externo": "2165520",
+    "data_anuncio": null,
+    "comentarios": null,
+    "criado_em": "2025-04-30T22:07:59.885106-03:00",
+    "reformado": false,
+    "preco_m2": 14736.84
+  },
+  {
+    "id": "5af7845d-f755-457a-a293-95a8112b88f0",
+    "id_analise": "fa7eb13d-5eb1-46be-96c7-d1c92a1924ca",
+    "url": "https://www.quintoandar.com.br/imovel/894751359/comprar/apartamento-3-quartos-pinheiros-sao-paulo",
+    "imobiliaria": "Quinto Andar",
+    "preco_anunciado": 1690000,
+    "area": 107,
+    "quartos": 3,
+    "banheiros": 3,
+    "vagas": 1,
+    "condominio_mensal": 2500,
+    "iptu_anual": 4308,
+    "endereco": "Rua Artur de Azevedo, 1192",
+    "codigo_ref_externo": "2051359",
+    "data_anuncio": null,
+    "comentarios": null,
+    "criado_em": "2025-04-30T22:10:27.084012-03:00",
+    "reformado": false,
+    "preco_m2": 15794.39
+  },
+  {
+    "id": "683fe615-4297-4d33-bda8-0dd0d5674a59",
+    "id_analise": "fa7eb13d-5eb1-46be-96c7-d1c92a1924ca",
+    "url": "https://www.quintoandar.com.br/imovel/894865520/comprar/apartamento-3-quartos-pinheiros-sao-paulo",
+    "imobiliaria": "Quinto Andar",
+    "preco_anunciado": 1400000,
+    "area": 95,
+    "quartos": 3,
+    "banheiros": 3,
+    "vagas": 1,
+    "condominio_mensal": 1700,
+    "iptu_anual": 2112,
+    "endereco": "Rua Joaquim Antunes, 544",
+    "codigo_ref_externo": "2165520",
+    "data_anuncio": "2025-04-25T00:00:00",
+    "comentarios": "Apartamento bem localizado, próximo ao metrô e com ótima vista.",
+    "criado_em": "2025-04-25T21:01:18.488662-03:00",
+    "reformado": false,
+    "preco_m2": 14736.84
+  }
+]
