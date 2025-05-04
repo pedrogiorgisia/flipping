@@ -29,19 +29,37 @@ interface ReferencePropertiesProps {
   references: ReferenceProperty[];
   onRemove?: (id: string) => void;
   simulationId: string;
-  onUpdate?: () => void;
 }
 
 const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
   references: initialReferences,
   onRemove,
   simulationId,
-  onUpdate
 }) => {
   const [references, setReferences] = useState(initialReferences);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [referenceToDelete, setReferenceToDelete] = useState<string | null>(null);
+  const [referenceToDelete, setReferenceToDelete] = useState<string | null>(
+    null,
+  );
+
+  const fetchReferences = async () => {
+    try {
+      const response = await fetch(
+        `https://flippings.com.br/referencia-simulacao?id_simulacao=${simulationId}`,
+      );
+      if (!response.ok) throw new Error("Erro ao carregar referências");
+      const data = await response.json();
+      setReferences(data);
+    } catch (error) {
+      toast.error("Erro ao carregar referências");
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchReferences();
+  }, [simulationId]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -54,25 +72,26 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
 
   const handleRemove = async (id: string) => {
     try {
-      const response = await fetch(`https://flippings.com.br/referencia-simulacao/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'accept': 'application/json'
-        }
-      });
+      const response = await fetch(
+        `https://flippings.com.br/referencia-simulacao/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            accept: "application/json",
+          },
+        },
+      );
 
       if (!response.ok) {
-        throw new Error('Erro ao excluir referência');
+        throw new Error("Erro ao excluir referência");
       }
 
       onRemove?.(id);
       setIsDeleteModalOpen(false);
       setReferenceToDelete(null);
-      // Refresh references list
-      const updatedRefs = references.filter(ref => ref.id !== id);
-      setReferences(updatedRefs);
+      fetchReferences(); // Atualiza a lista de referências após a exclusão
     } catch (error) {
-      toast.error('Erro ao excluir referência');
+      toast.error("Erro ao excluir referência");
     }
   };
 
@@ -182,7 +201,7 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
         <AddReferenceModal
           onClose={() => setIsModalOpen(false)}
           simulationId={simulationId}
-          onUpdate={onUpdate}
+          onUpdate={fetchReferences}
         />
       )}
 
@@ -236,21 +255,29 @@ interface Property {
   preco_m2: number;
 }
 
-const AddReferenceModal: React.FC<{ onClose: () => void; simulationId: string; onUpdate?: () => void }> = ({ onClose, simulationId, onUpdate }) => {
+const AddReferenceModal: React.FC<{
+  onClose: () => void;
+  simulationId: string;
+  onUpdate: () => void;
+}> = ({ onClose, simulationId, onUpdate }) => {
   const [properties, setProperties] = useState<Property[]>([]);
-  const [selectedProperties, setSelectedProperties] = useState<Set<string>>(new Set());
+  const [selectedProperties, setSelectedProperties] = useState<Set<string>>(
+    new Set(),
+  );
   const [isLoading, setIsLoading] = useState(true);
   const analysisId = useEffectiveAnalysisId();
 
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch(`https://flippings.com.br/imoveis?id_analise=${analysisId}&reformado=true`);
-        if (!response.ok) throw new Error('Erro ao carregar imóveis');
+        const response = await fetch(
+          `https://flippings.com.br/imoveis?id_analise=${analysisId}&reformado=true`,
+        );
+        if (!response.ok) throw new Error("Erro ao carregar imóveis");
         const data = await response.json();
         setProperties(data);
       } catch (error) {
-        toast.error('Erro ao carregar imóveis');
+        toast.error("Erro ao carregar imóveis");
         console.error(error);
       } finally {
         setIsLoading(false);
@@ -258,7 +285,7 @@ const AddReferenceModal: React.FC<{ onClose: () => void; simulationId: string; o
     };
 
     fetchProperties();
-  }, [simulationId]);
+  }, [simulationId, analysisId]);
 
   const handlePropertySelect = (propertyId: string) => {
     const newSelected = new Set(selectedProperties);
@@ -272,34 +299,26 @@ const AddReferenceModal: React.FC<{ onClose: () => void; simulationId: string; o
 
   const handleAddReferences = async () => {
     try {
-      const addPromises = Array.from(selectedProperties).map(propertyId =>
-        fetch('https://flippings.com.br/referencia-simulacao', {
-          method: 'POST',
+      const addPromises = Array.from(selectedProperties).map((propertyId) =>
+        fetch("https://flippings.com.br/referencia-simulacao", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             id_simulacao: simulationId,
             id_imovel_referencia: propertyId,
           }),
-        })
+        }),
       );
 
-      const responses = await Promise.all(addPromises);
-      const newReferences = await Promise.all(
-        responses.map(async (response) => {
-          const data = await response.json();
-          return data;
-        })
-      );
-      
-      // Update references list with new items
-      setProperties(properties.filter(p => !selectedProperties.has(p.id)));
+      await Promise.all(addPromises);
+
       onClose();
-      toast.success('Referências adicionadas com sucesso');
-      onUpdate?.();
+      toast.success("Referências adicionadas com sucesso");
+      onUpdate(); // Chama a função para atualizar as referências
     } catch (error) {
-      toast.error('Erro ao adicionar referências');
+      toast.error("Erro ao adicionar referências");
       console.error(error);
     }
   };
