@@ -267,21 +267,9 @@ const AddReferenceModal: React.FC<{
   const [isLoading, setIsLoading] = useState(true);
   const analysisId = useEffectiveAnalysisId();
 
-  const [simulationDetails, setSimulationDetails] = useState<any>(null);
-  const [recommendedProperties, setRecommendedProperties] = useState<Property[]>([]);
-  const [otherProperties, setOtherProperties] = useState<Property[]>([]);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch simulation details
-        const simulationResponse = await fetch(
-          `https://flippings.com.br/simulacao/${simulationId}`
-        );
-        if (!simulationResponse.ok) throw new Error("Erro ao carregar simulação");
-        const simulationData = await simulationResponse.json();
-        setSimulationDetails(simulationData);
-
         // Fetch all properties
         const propertiesResponse = await fetch(
           `https://flippings.com.br/imoveis?id_analise=${analysisId}&reformado=true`,
@@ -302,33 +290,11 @@ const AddReferenceModal: React.FC<{
         );
 
         // Filter out properties that are already references
-        const availableProperties = propertiesData.filter(
+        const filteredProperties = propertiesData.filter(
           (property: Property) => !existingReferenceIds.has(property.id)
         );
 
-        // Separate properties into recommended and others
-        const recommended: Property[] = [];
-        const others: Property[] = [];
-
-        availableProperties.forEach((property: Property) => {
-          const areaMin = simulationData.area * 0.9;
-          const areaMax = simulationData.area * 1.1;
-          
-          if (
-            property.quartos === simulationData.quartos &&
-            property.banheiros === simulationData.banheiros &&
-            property.vagas === simulationData.vagas &&
-            property.area >= areaMin &&
-            property.area <= areaMax
-          ) {
-            recommended.push(property);
-          } else {
-            others.push(property);
-          }
-        });
-
-        setRecommendedProperties(recommended);
-        setOtherProperties(others);
+        setProperties(filteredProperties);
       } catch (error) {
         toast.error("Erro ao carregar imóveis");
         console.error(error);
@@ -405,90 +371,7 @@ const AddReferenceModal: React.FC<{
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
           </div>
         ) : (
-          <div className="space-y-6">
-            {/* Recommended Properties */}
-            <div>
-              <h4 className="text-lg font-medium text-gray-900 mb-3">
-                Imóveis recomendados para referência ({recommendedProperties.length})
-              </h4>
-              <div className="overflow-x-auto bg-gray-50 rounded-lg p-4">
-                <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <th className="px-2 py-2 text-center"></th>
-                  <th className="px-2 py-2 text-left">Endereço</th>
-                  <th className="px-2 py-2 text-right">Valor</th>
-                  <th className="px-2 py-2 text-right">Área</th>
-                  <th className="px-2 py-2 text-center">Qts</th>
-                  <th className="px-2 py-2 text-center">Ban</th>
-                  <th className="px-2 py-2 text-center">Vgs</th>
-                  <th className="px-2 py-2 text-right">Cond.</th>
-                  <th className="px-2 py-2 text-right">IPTU</th>
-                  <th className="px-2 py-2 text-right">R$/m²</th>
-                  <th className="px-2 py-2 text-center">Link</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {recommendedProperties.map((property) => (
-                  <tr key={property.id} className="hover:bg-gray-100 text-sm">
-                    <td className="px-2 py-2 text-center">
-                      <input
-                        type="checkbox"
-                        checked={selectedProperties.has(property.id)}
-                        onChange={() => handlePropertySelect(property.id)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      />
-                    </td>
-                    <td className="px-2 py-2 text-gray-900 truncate max-w-xs">
-                      {property.endereco}
-                    </td>
-                    <td className="px-2 py-2 text-gray-900 text-right">
-                      {formatCurrency(property.preco_anunciado)}
-                    </td>
-                    <td className="px-2 py-2 text-gray-900 text-right">
-                      {property.area}m²
-                    </td>
-                    <td className="px-2 py-2 text-gray-900 text-center">
-                      {property.quartos}
-                    </td>
-                    <td className="px-2 py-2 text-gray-900 text-center">
-                      {property.banheiros}
-                    </td>
-                    <td className="px-2 py-2 text-gray-900 text-center">
-                      {property.vagas}
-                    </td>
-                    <td className="px-2 py-2 text-gray-900 text-right">
-                      {formatCurrency(property.condominio_mensal)}
-                    </td>
-                    <td className="px-2 py-2 text-gray-900 text-right">
-                      {formatCurrency(property.iptu_anual)}
-                    </td>
-                    <td className="px-2 py-2 text-gray-900 text-right">
-                      {formatCurrency(property.preco_m2)}
-                    </td>
-                    <td className="px-2 py-2 text-center">
-                      <a
-                        href={property.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        <ExternalLink size={16} />
-                      </a>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Other Properties */}
-        <div>
-          <h4 className="text-lg font-medium text-gray-900 mb-3">
-            Imóveis que não parecem ser referências ({otherProperties.length})
-          </h4>
-          <div className="overflow-x-auto bg-gray-50 rounded-lg p-4">
+          <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr className="text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -506,8 +389,8 @@ const AddReferenceModal: React.FC<{
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {otherProperties.map((property) => (
-                  <tr key={property.id} className="hover:bg-gray-100 text-sm">
+                {properties.map((property) => (
+                  <tr key={property.id} className="hover:bg-gray-50 text-sm">
                     <td className="px-2 py-2 text-center">
                       <input
                         type="checkbox"
@@ -558,11 +441,9 @@ const AddReferenceModal: React.FC<{
               </tbody>
             </table>
           </div>
-        </div>
-      </div>
-    )}
+        )}
 
-    <div className="flex justify-end space-x-2 mt-4">
+        <div className="flex justify-end space-x-2 mt-4">
           <button
             onClick={onClose}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
