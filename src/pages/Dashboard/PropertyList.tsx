@@ -74,7 +74,7 @@ const PropertyList: React.FC<PropertyListProps> = ({ properties }) => {
         <h3 className="text-lg font-medium text-gray-900">Oportunidades</h3>
       </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
+        <table className="min-w-full divide-y divide-gray-200 table-fixed">
           <thead className="bg-gray-50">
             <tr>
               <th
