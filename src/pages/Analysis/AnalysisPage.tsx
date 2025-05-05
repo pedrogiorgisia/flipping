@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import MainLayout from "../../components/Layout/MainLayout";
-import { ChevronDown, ChevronUp, Plus, Home } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import {
   getSimulacoes,
   getReferenciaSimulacao,
   atualizarSimulacao,
 } from "../../api";
-import ReferenceProperties from "./ReferenceProperties";
-import toast from "react-hot-toast";
+import ReferenceProperties, { ReferenceProperty } from "./ReferenceProperties";
 
 interface Simulacao {
   id: string;
@@ -394,501 +393,495 @@ const AnalysisPage: React.FC = () => {
 
   return (
     <MainLayout>
-      {/* Sticky Header */}
-      <div className="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-3">
-              <h1 className="text-2xl font-bold text-gray-900">
-                Simulação & Investimento
-              </h1>
-              <div className="text-sm text-gray-500 flex items-center space-x-2">
-                <Link to="/dashboard" className="hover:text-gray-700">
-                  <Home size={16} />
-                </Link>
-                <span>/</span>
-                <span>Simulações</span>
-                <span>/</span>
-                <span className="text-gray-900">#{simulationId}</span>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">
+          Simulação e Investimento
+        </h1>
+
+        <div className="space-y-8">
+          <Section
+            title="Detalhes do Imóvel"
+            expanded={expandedSections.propertyDetails}
+            onToggle={() => toggleSection("propertyDetails")}
+          >
+            <PropertyDetails property={simulacao.imovel} />
+          </Section>
+
+          <Section
+            title="Análise e Parâmetros"
+            expanded={expandedSections.analysisAndParameters}
+            onToggle={() => toggleSection("analysisAndParameters")}
+          >
+            <div className="grid grid-cols-3 gap-8">
+              <div className="col-span-2 bg-white p-6 rounded-lg shadow-sm">
+                <div className="grid grid-cols-2 gap-8">
+                  {/* Coluna 1: Parâmetros de Compra */}
+                  <div>
+                    <h3 className="text-md font-medium mb-4 text-gray-700">
+                      Parâmetros de Compra
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm text-gray-500">
+                          Valor de compra (R$)
+                        </label>
+                        <input
+                          type="text"
+                          value={formatCurrencyInput(
+                            simulacao?.param_valor_compra,
+                          )}
+                          onChange={(e) => {
+                            const rawValue = parseCurrencyInput(e.target.value);
+                            handleParameterChange(
+                              "param_valor_compra",
+                              rawValue,
+                            );
+                          }}
+                          onBlur={(e) => {
+                            const rawValue = parseCurrencyInput(e.target.value);
+                            handleParameterChange(
+                              "param_valor_compra",
+                              rawValue,
+                            );
+                          }}
+                          className="input-field"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Valor do m²:{" "}
+                          {formatCurrency(
+                            parseFloat(simulacao?.valor_compra || "0") /
+                              (simulacao?.imovel?.area || 1),
+                          )}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-500">
+                          Entrada (%)
+                        </label>
+                        <input
+                          type="number"
+                          value={simulacao?.param_entrada_pct || ""}
+                          onChange={(e) =>
+                            handleParameterChange(
+                              "param_entrada_pct",
+                              e.target.value,
+                            )
+                          }
+                          className="input-field"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-500">
+                          ITBI (%)
+                        </label>
+                        <input
+                          type="number"
+                          value={simulacao?.param_itbi_pct || ""}
+                          onChange={(e) =>
+                            handleParameterChange(
+                              "param_itbi_pct",
+                              e.target.value,
+                            )
+                          }
+                          className="input-field"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-500">
+                          Avaliação bancária (R$)
+                        </label>
+                        <input
+                          type="text"
+                          value={formatCurrencyInput(
+                            simulacao?.param_avaliacao_bancaria,
+                          )}
+                          onChange={(e) => {
+                            const rawValue = parseCurrencyInput(e.target.value);
+                            handleParameterChange(
+                              "param_avaliacao_bancaria",
+                              rawValue,
+                            );
+                          }}
+                          onBlur={(e) => {
+                            const rawValue = parseCurrencyInput(e.target.value);
+                            handleParameterChange(
+                              "param_avaliacao_bancaria",
+                              rawValue,
+                            );
+                          }}
+                          className="input-field"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-500">
+                          Registro em cartório (%)
+                        </label>
+                        <input
+                          type="number"
+                          value={simulacao?.param_registro_cartorio_pct || ""}
+                          onChange={(e) =>
+                            handleParameterChange(
+                              "param_registro_cartorio_pct",
+                              e.target.value,
+                            )
+                          }
+                          className="input-field"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-500">
+                          Contas gerais (agua, luz etc.) (R$)
+                        </label>
+                        <input
+                          type="text"
+                          value={formatCurrencyInput(
+                            simulacao?.param_contas_gerais,
+                          )}
+                          onChange={(e) => {
+                            const rawValue = parseCurrencyInput(e.target.value);
+                            handleParameterChange(
+                              "param_contas_gerais",
+                              rawValue,
+                            );
+                          }}
+                          onBlur={(e) => {
+                            const rawValue = parseCurrencyInput(e.target.value);
+                            handleParameterChange(
+                              "param_contas_gerais",
+                              rawValue,
+                            );
+                          }}
+                          className="input-field"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Coluna 2: Parâmetros de Financiamento e Venda */}
+                  <div>
+                    <h3 className="text-md font-medium mb-4 text-gray-700">
+                      Financiamento e Venda
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm text-gray-500">
+                          Valor de venda (R$)
+                        </label>
+                        <input
+                          type="text"
+                          value={formatCurrencyInput(
+                            simulacao?.param_valor_venda,
+                          )}
+                          onChange={(e) => {
+                            const rawValue = parseCurrencyInput(e.target.value);
+                            handleParameterChange(
+                              "param_valor_venda",
+                              rawValue,
+                            );
+                            if (simulacao && simulacao.imovel.area > 0) {
+                              const newValorM2 =
+                                parseFloat(rawValue) /
+                                100 /
+                                simulacao.imovel.area;
+                              handleParameterChange(
+                                "valor_m2_venda",
+                                newValorM2.toString(),
+                              );
+                            }
+                          }}
+                          onBlur={(e) => {
+                            const rawValue = parseCurrencyInput(e.target.value);
+                            handleParameterChange(
+                              "param_valor_venda",
+                              rawValue,
+                            );
+                          }}
+                          className="input-field"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Valor do m²:{" "}
+                          {formatCurrency(
+                            parseFloat(simulacao?.valor_m2_venda || "0"),
+                          )}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-500">
+                          Tempo de venda (meses)
+                        </label>
+                        <input
+                          type="number"
+                          value={simulacao?.param_tempo_venda || ""}
+                          onChange={(e) =>
+                            handleParameterChange(
+                              "param_tempo_venda",
+                              e.target.value,
+                            )
+                          }
+                          className="input-field"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-500">
+                          Custo estimado reforma (R$)
+                        </label>
+                        <input
+                          type="text"
+                          value={formatCurrencyInput(
+                            simulacao?.param_custo_reforma,
+                          )}
+                          onChange={(e) => {
+                            const rawValue = parseCurrencyInput(e.target.value);
+                            handleParameterChange(
+                              "param_custo_reforma",
+                              rawValue,
+                            );
+                          }}
+                          onBlur={(e) => {
+                            const rawValue = parseCurrencyInput(e.target.value);
+                            handleParameterChange(
+                              "param_custo_reforma",
+                              rawValue,
+                            );
+                          }}
+                          className="input-field"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-500">
+                          Taxa CET (%)
+                        </label>
+                        <input
+                          type="number"
+                          value={simulacao?.param_taxa_cet || ""}
+                          onChange={(e) =>
+                            handleParameterChange(
+                              "param_taxa_cet",
+                              e.target.value,
+                            )
+                          }
+                          className="input-field"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-500">
+                          Prazo financiamento (meses)
+                        </label>
+                        <input
+                          type="number"
+                          value={simulacao?.param_prazo_financiamento || ""}
+                          onChange={(e) =>
+                            handleParameterChange(
+                              "param_prazo_financiamento",
+                              e.target.value,
+                            )
+                          }
+                          className="input-field"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-500">
+                          Corretagem venda (%)
+                        </label>
+                        <input
+                          type="number"
+                          value={simulacao?.param_corretagem_venda_pct || ""}
+                          onChange={(e) =>
+                            handleParameterChange(
+                              "param_corretagem_venda_pct",
+                              e.target.value,
+                            )
+                          }
+                          className="input-field"
+                        />
+                      </div>
+                      <div>
+                        <label className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={simulacao?.param_incide_ir || false}
+                            onChange={(e) =>
+                              handleParameterChange(
+                                "param_incide_ir",
+                                e.target.checked,
+                              )
+                            }
+                            className="form-checkbox h-4 w-4 text-blue-600"
+                          />
+                          <span className="ml-2 text-sm text-gray-700">
+                            Incide Imposto de Renda?
+                          </span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={salvarSimulacao}
+                  className="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Salvar simulação
+                </button>
               </div>
-            </div>
-            <button 
-              onClick={salvarSimulacao}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
-            >
-              <Plus size={16} />
-              <span>Nova Simulação</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        {/* Property Details Section */}
-        <Section
-          title="Informações do Imóvel"
-          expanded={expandedSections.propertyDetails}
-          onToggle={() => toggleSection("propertyDetails")}
-        >
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <PropertyInfoCard
-                icon="📍"
-                title="Endereço"
-                value={simulacao?.imovel?.endereco}
-              />
-              <PropertyInfoCard
-                icon="📐"
-                title="Área"
-                value={`${simulacao?.imovel?.area} m²`}
-              />
-              <PropertyInfoCard
-                icon="💰"
-                title="Preço Anunciado"
-                value={formatCurrency(simulacao?.imovel?.preco_anunciado)}
-              />
-              <PropertyInfoCard
-                icon="🏢"
-                title="Imobiliária"
-                value={simulacao?.imovel?.imobiliaria}
-              />
-              <PropertyInfoCard
-                icon="🛏️"
-                title="Quartos"
-                value={simulacao?.imovel?.quartos}
-              />
-              <PropertyInfoCard
-                icon="🚿"
-                title="Banheiros"
-                value={simulacao?.imovel?.banheiros}
-              />
-              <PropertyInfoCard
-                icon="🚗"
-                title="Vagas"
-                value={simulacao?.imovel?.vagas}
-              />
-              <PropertyInfoCard
-                icon="📅"
-                title="Data Anúncio"
-                value={simulacao?.imovel?.data_anuncio ? new Date(simulacao?.imovel?.data_anuncio).toLocaleDateString("pt-BR") : "Não disponível"}
-              />
-              <PropertyInfoCard
-                icon="💸"
-                title="Condomínio"
-                value={formatCurrency(simulacao?.imovel?.condominio_mensal)}
-              />
-              <PropertyInfoCard
-                icon="📄"
-                title="IPTU Anual"
-                value={formatCurrency(simulacao?.imovel?.iptu_anual)}
-              />
-            </div>
-          </div>
-        </Section>
-
-        {/* Analysis Parameters Section */}
-        <Section
-          title="Análise e Parâmetros"
-          expanded={expandedSections.analysisAndParameters}
-          onToggle={() => toggleSection("analysisAndParameters")}
-        >
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Parameters Cards */}
-            <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 className="text-lg font-semibold mb-4">Parâmetros de Compra</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Keep existing input fields but with updated styling */}
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Valor de compra (R$)
-                    </label>
-                    <input
-                      type="text"
-                      value={formatCurrencyInput(simulacao?.param_valor_compra)}
-                      onChange={(e) => {
-                        const rawValue = parseCurrencyInput(e.target.value);
-                        handleParameterChange("param_valor_compra", rawValue);
-                      }}
-                      className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Entrada (%)
-                    </label>
-                    <input
-                      type="number"
-                      value={simulacao?.param_entrada_pct || ""}
-                      onChange={(e) =>
-                        handleParameterChange(
-                          "param_entrada_pct",
-                          e.target.value,
-                        )
-                      }
-                      className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      ITBI (%)
-                    </label>
-                    <input
-                      type="number"
-                      value={simulacao?.param_itbi_pct || ""}
-                      onChange={(e) =>
-                        handleParameterChange(
-                          "param_itbi_pct",
-                          e.target.value,
-                        )
-                      }
-                      className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Avaliação bancária (R$)
-                    </label>
-                    <input
-                      type="text"
-                      value={formatCurrencyInput(
-                        simulacao?.param_avaliacao_bancaria,
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-md font-medium mb-2">
+                  Análise de Viabilidade
+                </h3>
+                <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+                  <div>
+                    <h4 className="text-sm font-medium">Custos de Aquisição</h4>
+                    <p className="text-sm">
+                      Entrada: {formatCurrency(simulacao.calc_entrada || 0)}
+                    </p>
+                    <p className="text-sm">
+                      ITBI: {formatCurrency(simulacao.calc_itbi || 0)}
+                    </p>
+                    <p className="text-sm">
+                      Avaliação do Banco:{" "}
+                      {formatCurrency(
+                        parseFloat(simulacao.param_avaliacao_bancaria) || 0,
                       )}
-                      onChange={(e) => {
-                        const rawValue = parseCurrencyInput(e.target.value);
-                        handleParameterChange(
-                          "param_avaliacao_bancaria",
-                          rawValue,
-                        );
-                      }}
-                      className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
+                    </p>
+                    <p className="text-sm">
+                      Registro:{" "}
+                      {formatCurrency(simulacao.valor_registro_cartorio || 0)}
+                    </p>
+                    <p className="text-sm font-medium text-blue-600">
+                      Total:{" "}
+                      {formatCurrency(
+                        (simulacao.calc_entrada || 0) +
+                          (simulacao.calc_itbi || 0) +
+                          (parseFloat(simulacao.param_avaliacao_bancaria) ||
+                            0) +
+                          (simulacao.valor_registro_cartorio || 0),
+                      )}
+                    </p>
                   </div>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Registro em cartório (%)
-                    </label>
-                    <input
-                      type="number"
-                      value={simulacao?.param_registro_cartorio_pct || ""}
-                      onChange={(e) =>
-                        handleParameterChange(
-                          "param_registro_cartorio_pct",
-                          e.target.value,
-                        )
-                      }
-                      className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
+                  <div>
+                    <h4 className="text-sm font-medium">Custos até a venda</h4>
+                    <p className="text-sm">
+                      Parcelas Financiamento:{" "}
+                      {formatCurrency(simulacao.calc_parcelas_rs || 0)}
+                    </p>
+                    <p className="text-sm">
+                      Condomínio:{" "}
+                      {formatCurrency(simulacao.calc_condominio_rs || 0)}
+                    </p>
+                    <p className="text-sm">
+                      IPTU: {formatCurrency(simulacao.iptu_total || 0)}
+                    </p>
+                    <p className="text-sm">
+                      Contas gerais (água, luz, etc.):{" "}
+                      {formatCurrency(simulacao.contas_gerais_total || 0)}
+                    </p>
+                    <p className="text-sm">
+                      Reforma:{" "}
+                      {formatCurrency(
+                        parseFloat(simulacao.param_custo_reforma) || 0,
+                      )}
+                    </p>
+                    <p className="text-sm font-medium text-blue-600">
+                      Total:{" "}
+                      {formatCurrency(
+                        (simulacao.calc_parcelas_rs || 0) +
+                          (simulacao.calc_condominio_rs || 0) +
+                          (simulacao.iptu_total || 0) +
+                          (simulacao.contas_gerais_total || 0) +
+                          (parseFloat(simulacao.param_custo_reforma) || 0),
+                      )}
+                    </p>
                   </div>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Contas gerais (agua, luz etc.) (R$)
-                    </label>
-                    <input
-                      type="text"
-                      value={formatCurrencyInput(simulacao?.param_contas_gerais)}
-                      onChange={(e) => {
-                        const rawValue = parseCurrencyInput(e.target.value);
-                        handleParameterChange(
-                          "param_contas_gerais",
-                          rawValue,
-                        );
-                      }}
-                      className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
+                  <div>
+                    <h4 className="text-sm font-medium">Custos de Venda</h4>
+                    <p className="text-sm">
+                      Quitação do Financiamento:{" "}
+                      {formatCurrency(simulacao.calc_quitacao_rs || 0)}
+                    </p>
+                    <p className="text-sm">
+                      Corretagem:{" "}
+                      {formatCurrency(
+                        (parseFloat(simulacao.valor_venda) || 0) *
+                          (parseFloat(simulacao.param_corretagem_venda_pct) /
+                            100),
+                      )}
+                    </p>
+                    <p className="text-sm">
+                      Imposto de Renda:{" "}
+                      {formatCurrency(simulacao.imposto_renda || 0)}
+                    </p>
                   </div>
-                </div>
-              </div>
-
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 className="text-lg font-semibold mb-4">Financiamento e Venda</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Valor de venda (R$)
-                    </label>
-                    <input
-                      type="text"
-                      value={formatCurrencyInput(simulacao?.param_valor_venda)}
-                      onChange={(e) => {
-                        const rawValue = parseCurrencyInput(e.target.value);
-                        handleParameterChange("param_valor_venda", rawValue);
-                        if (simulacao && simulacao.imovel.area > 0) {
-                          const newValorM2 =
-                            parseFloat(rawValue) /
-                            100 /
-                            simulacao.imovel.area;
-                          handleParameterChange(
-                            "valor_m2_venda",
-                            newValorM2.toString(),
-                          );
-                        }
-                      }}
-                      className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Tempo de venda (meses)
-                    </label>
-                    <input
-                      type="number"
-                      value={simulacao?.param_tempo_venda || ""}
-                      onChange={(e) =>
-                        handleParameterChange(
-                          "param_tempo_venda",
-                          e.target.value,
-                        )
-                      }
-                      className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Custo estimado reforma (R$)
-                    </label>
-                    <input
-                      type="text"
-                      value={formatCurrencyInput(simulacao?.param_custo_reforma)}
-                      onChange={(e) => {
-                        const rawValue = parseCurrencyInput(e.target.value);
-                        handleParameterChange(
-                          "param_custo_reforma",
-                          rawValue,
-                        );
-                      }}
-                      className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Taxa CET (%)
-                    </label>
-                    <input
-                      type="number"
-                      value={simulacao?.param_taxa_cet || ""}
-                      onChange={(e) =>
-                        handleParameterChange(
-                          "param_taxa_cet",
-                          e.target.value,
-                        )
-                      }
-                      className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Prazo financiamento (meses)
-                    </label>
-                    <input
-                      type="number"
-                      value={simulacao?.param_prazo_financiamento || ""}
-                      onChange={(e) =>
-                        handleParameterChange(
-                          "param_prazo_financiamento",
-                          e.target.value,
-                        )
-                      }
-                      className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Corretagem venda (%)
-                    </label>
-                    <input
-                      type="number"
-                      value={simulacao?.param_corretagem_venda_pct || ""}
-                      onChange={(e) =>
-                        handleParameterChange(
-                          "param_corretagem_venda_pct",
-                          e.target.value,
-                        )
-                      }
-                      className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={simulacao?.param_incide_ir || false}
-                        onChange={(e) =>
-                          handleParameterChange(
-                            "param_incide_ir",
-                            e.target.checked,
-                          )
-                        }
-                        className="form-checkbox h-4 w-4 text-blue-600"
-                      />
-                      <span className="ml-2 text-sm text-gray-700">
-                        Incide Imposto de Renda?
-                      </span>
-                    </label>
+                  <div>
+                    <h4 className="text-sm font-medium">Resultados</h4>
+                    <p className="text-sm">
+                      Investimento Total:{" "}
+                      {formatCurrency(simulacao.investimento_total || 0)}
+                    </p>
+                    <p className="text-sm">
+                      Preço de Venda:{" "}
+                      {formatCurrency(parseFloat(simulacao.valor_venda) || 0)}
+                    </p>
+                    <p className="text-sm">
+                      Lucro Líquido:{" "}
+                      {formatCurrency(simulacao.lucro_liquido || 0)}
+                    </p>
+                    <p className="text-sm font-medium text-blue-600">
+                      ROI: {((simulacao.roi_liquido || 0) * 100).toFixed(2)}%
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* Analysis Results Card */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <h3 className="text-lg font-semibold mb-4">Análise de Viabilidade</h3>
-              <div className="space-y-6">
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                  <h4 className="text-sm font-medium text-blue-900 mb-3">Resumo do Investimento</h4>
-                  <div className="space-y-3">
-                    <ResultItem
-                      label="Investimento Total"
-                      value={formatCurrency(simulacao?.investimento_total)}
-                    />
-                    <ResultItem
-                      label="Lucro Líquido"
-                      value={formatCurrency(simulacao?.lucro_liquido)}
-                    />
-                    <ResultItem
-                      label="ROI"
-                      value={`${((simulacao?.roi_liquido || 0) * 100).toFixed(2)}%`}
-                      highlight
-                    />
-                  </div>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium">Custos de Aquisição</h4>
-                  <p className="text-sm">
-                    Entrada: {formatCurrency(simulacao.calc_entrada || 0)}
-                  </p>
-                  <p className="text-sm">
-                    ITBI: {formatCurrency(simulacao.calc_itbi || 0)}
-                  </p>
-                  <p className="text-sm">
-                    Avaliação do Banco:{" "}
-                    {formatCurrency(
-                      parseFloat(simulacao.param_avaliacao_bancaria) || 0,
-                    )}
-                  </p>
-                  <p className="text-sm">
-                    Registro:{" "}
-                    {formatCurrency(simulacao.valor_registro_cartorio || 0)}
-                  </p>
-                  <p className="text-sm font-medium text-blue-600">
-                    Total:{" "}
-                    {formatCurrency(
-                      (simulacao.calc_entrada || 0) +
-                        (simulacao.calc_itbi || 0) +
-                        (parseFloat(simulacao.param_avaliacao_bancaria) ||
-                          0) +
-                        (simulacao.valor_registro_cartorio || 0),
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium">Custos até a venda</h4>
-                  <p className="text-sm">
-                    Parcelas Financiamento:{" "}
-                    {formatCurrency(simulacao.calc_parcelas_rs || 0)}
-                  </p>
-                  <p className="text-sm">
-                    Condomínio:{" "}
-                    {formatCurrency(simulacao.calc_condominio_rs || 0)}
-                  </p>
-                  <p className="text-sm">
-                    IPTU: {formatCurrency(simulacao.iptu_total || 0)}
-                  </p>
-                  <p className="text-sm">
-                    Contas gerais (água, luz, etc.):{" "}
-                    {formatCurrency(simulacao.contas_gerais_total || 0)}
-                  </p>
-                  <p className="text-sm">
-                    Reforma:{" "}
-                    {formatCurrency(
-                      parseFloat(simulacao.param_custo_reforma) || 0,
-                    )}
-                  </p>
-                  <p className="text-sm font-medium text-blue-600">
-                    Total:{" "}
-                    {formatCurrency(
-                      (simulacao.calc_parcelas_rs || 0) +
-                        (simulacao.calc_condominio_rs || 0) +
-                        (simulacao.iptu_total || 0) +
-                        (simulacao.contas_gerais_total || 0) +
-                        (parseFloat(simulacao.param_custo_reforma) || 0),
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium">Custos de Venda</h4>
-                  <p className="text-sm">
-                    Quitação do Financiamento:{" "}
-                    {formatCurrency(simulacao.calc_quitacao_rs || 0)}
-                  </p>
-                  <p className="text-sm">
-                    Corretagem:{" "}
-                    {formatCurrency(
-                      (parseFloat(simulacao.valor_venda) || 0) *
-                        (parseFloat(simulacao.param_corretagem_venda_pct) /
-                          100),
-                    )}
-                  </p>
-                  <p className="text-sm">
-                    Imposto de Renda:{" "}
-                    {formatCurrency(simulacao.imposto_renda || 0)}
-                  </p>
-                </div>
+            <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h2 className="text-lg font-semibold text-blue-800 mb-4">
+                Resumo do Investimento
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <KPICard
+                  title="Valor de Compra"
+                  value={formatCurrency(parseFloat(simulacao.valor_compra))}
+                />
+                <KPICard
+                  title="Valor de Venda"
+                  value={formatCurrency(parseFloat(simulacao.valor_venda))}
+                />
+                <KPICard
+                  title="Investimento Total"
+                  value={formatCurrency(simulacao.investimento_total)}
+                />
+                <KPICard
+                  title="Lucro Líquido"
+                  value={formatCurrency(simulacao.lucro_liquido)}
+                />
+                <KPICard
+                  title="ROI da Operação"
+                  value={`${(simulacao.roi_liquido * 100).toFixed(2)}%`}
+                  highlight
+                />
               </div>
             </div>
-          </div>
-        </Section>
+          </Section>
 
-        {/* Reference Properties Section */}
-        <Section
-          title="Imóveis de Referência"
-          expanded={expandedSections.referenceProperties}
-          onToggle={() => toggleSection("referenceProperties")}
-        >
-          <ReferenceProperties 
-            references={referenciasSimulacao}
-            simulationId={simulationId}
-            simulacao={simulacao}
-            onUpdate={() => {
-              getReferenciaSimulacao(simulationId).then(data => {
-                setReferenciasSimulacao(data);
-              });
-            }}
-          />
-        </Section>
+          <Section
+            title="Imóveis de Referência"
+            expanded={expandedSections.referenceProperties}
+            onToggle={() => toggleSection("referenceProperties")}
+          >
+            <ReferenceProperties 
+              references={referenciasSimulacao} 
+              simulationId={simulationId}
+              simulacao={simulacao}
+              onUpdate={() => {
+                getReferenciaSimulacao(simulationId).then(data => {
+                  setReferenciasSimulacao(data);
+                });
+              }}
+            />
+          </Section>
+        </div>
       </div>
     </MainLayout>
   );
 };
-
-const PropertyInfoCard: React.FC<{
-  icon: string;
-  title: string;
-  value: string | number;
-}> = ({ icon, title, value }) => (
-  <div className="p-4 bg-gray-50 rounded-lg">
-    <div className="flex items-center space-x-3">
-      <span className="text-xl">{icon}</span>
-      <div>
-        <p className="text-sm text-gray-500">{title}</p>
-        <p className="font-medium">{value}</p>
-      </div>
-    </div>
-  </div>
-);
-
-const ResultItem: React.FC<{
-  label: string;
-  value: string;
-  highlight?: boolean;
-}> = ({ label, value, highlight }) => (
-  <div className="flex justify-between items-center">
-    <span className="text-sm text-gray-600">{label}</span>
-    <span className={`font-medium ${highlight ? 'text-blue-600' : ''}`}>
-      {value}
-    </span>
-  </div>
-);
 
 const Section: React.FC<{
   title: string;
@@ -907,7 +900,6 @@ const Section: React.FC<{
     {expanded && <div className="px-6 py-4">{children}</div>}
   </div>
 );
-
 
 const KPICard: React.FC<{
   title: string;
