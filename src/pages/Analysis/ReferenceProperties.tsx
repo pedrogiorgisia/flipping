@@ -97,13 +97,31 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
     }
   };
 
+  const [parameters, setParameters] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchParameters = async () => {
+      try {
+        const response = await fetch(`https://flippings.com.br/parametros/${analysisId}`);
+        if (!response.ok) throw new Error("Erro ao carregar parâmetros");
+        const data = await response.json();
+        setParameters(data);
+      } catch (error) {
+        console.error("Erro ao carregar parâmetros:", error);
+      }
+    };
+    fetchParameters();
+  }, [analysisId]);
+
   const calculateAveragePrice = () => {
     if (!references.length) return 0;
     const total = references.reduce(
       (sum, ref) => sum + ref.imovel.preco_anunciado,
       0,
     );
-    return total / references.length;
+    const average = total / references.length;
+    const reductionPct = parameters?.reducao_pct || 0;
+    return average * (1 - reductionPct / 100);
   };
 
   return (
