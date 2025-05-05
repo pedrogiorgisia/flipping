@@ -341,7 +341,7 @@ const AnalysisPage: React.FC = () => {
       ...prev,
       [section]: !prev[section],
     }));
-  }; // Adicione este fechamento de chave
+  };
 
   const salvarSimulacao = async () => {
     if (!simulacao || !simulationId) return;
@@ -444,7 +444,7 @@ const AnalysisPage: React.FC = () => {
                               rawValue,
                             );
                           }}
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                          className="input-field"
                         />
                         <p className="text-xs text-gray-500 mt-1">
                           Valor do m²:{" "}
@@ -467,7 +467,7 @@ const AnalysisPage: React.FC = () => {
                               e.target.value,
                             )
                           }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                          className="input-field"
                         />
                       </div>
                       <div>
@@ -483,7 +483,7 @@ const AnalysisPage: React.FC = () => {
                               e.target.value,
                             )
                           }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                          className="input-field"
                         />
                       </div>
                       <div>
@@ -509,7 +509,7 @@ const AnalysisPage: React.FC = () => {
                               rawValue,
                             );
                           }}
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                          className="input-field"
                         />
                       </div>
                       <div>
@@ -525,7 +525,7 @@ const AnalysisPage: React.FC = () => {
                               e.target.value,
                             )
                           }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                          className="input-field"
                         />
                       </div>
                       <div>
@@ -551,7 +551,7 @@ const AnalysisPage: React.FC = () => {
                               rawValue,
                             );
                           }}
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                          className="input-field"
                         />
                       </div>
                     </div>
@@ -596,7 +596,7 @@ const AnalysisPage: React.FC = () => {
                               rawValue,
                             );
                           }}
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                          className="input-field"
                         />
                         <p className="text-xs text-gray-500 mt-1">
                           Valor do m²:{" "}
@@ -618,7 +618,7 @@ const AnalysisPage: React.FC = () => {
                               e.target.value,
                             )
                           }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                          className="input-field"
                         />
                       </div>
                       <div>
@@ -644,7 +644,7 @@ const AnalysisPage: React.FC = () => {
                               rawValue,
                             );
                           }}
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                          className="input-field"
                         />
                       </div>
                       <div>
@@ -660,7 +660,7 @@ const AnalysisPage: React.FC = () => {
                               e.target.value,
                             )
                           }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                          className="input-field"
                         />
                       </div>
                       <div>
@@ -676,7 +676,7 @@ const AnalysisPage: React.FC = () => {
                               e.target.value,
                             )
                           }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                          className="input-field"
                         />
                       </div>
                       <div>
@@ -692,7 +692,7 @@ const AnalysisPage: React.FC = () => {
                               e.target.value,
                             )
                           }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                          className="input-field"
                         />
                       </div>
                       <div>
