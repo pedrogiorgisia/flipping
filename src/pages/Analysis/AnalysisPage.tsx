@@ -11,21 +11,21 @@ import ReferenceProperties, { ReferenceProperty } from "./ReferenceProperties";
 
 interface Simulacao {
   id: string;
-  param_valor_compra: string;
-  param_valor_venda: string;
-  param_entrada_pct: string;
-  param_itbi_pct: string;
-  param_avaliacao_bancaria: string;
-  param_registro_cartorio_pct: string;
-  param_contas_gerais: string;
-  param_custo_reforma: string;
-  param_taxa_cet: string;
-  param_prazo_financiamento: string;
-  param_tempo_venda: string;
-  param_corretagem_venda_pct: string;
+  param_valor_compra: number;
+  param_valor_venda: number;
+  param_entrada_pct: number;
+  param_itbi_pct: number;
+  param_avaliacao_bancaria: number;
+  param_registro_cartorio_pct: number;
+  param_contas_gerais: number;
+  param_custo_reforma: number;
+  param_taxa_cet: number;
+  param_prazo_financiamento: number;
+  param_tempo_venda: number;
+  param_corretagem_venda_pct: number;
   param_incide_ir: boolean;
-  valor_compra: string;
-  valor_m2_venda: string;
+  valor_compra: number;
+  valor_m2_venda: number;
   imovel: {
     id: string;
     id_analise: string;
@@ -59,37 +59,18 @@ interface Simulacao {
   contas_gerais_total: number;
 }
 
-// Função auxiliar para formatar moeda
-const formatCurrencyInput = (value) => {
-  if (!value) return "R$ 0,00";
-  const number = parseFloat(value.replace(/\D/g, "")) / 100;
-  return new Intl.NumberFormat("pt-BR", {
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
-  }).format(number);
-};
-
-// Função auxiliar para parsear o valor formatado
-const parseCurrencyInput = (value) => {
-  if (!value) return "0";
-  // Remove todos os caracteres exceto números e vírgula
-  const numericValue = value.replace(/[^\d,]/g, "");
-  // Converte para o formato correto (ex: 1234,56 -> 1234.56)
-  const formattedValue = numericValue.replace(",", ".");
-  // Divide por 100 para ajustar as casas decimais corretamente
-  return (parseFloat(formattedValue) / 100).toString();
-};
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
 
 const PropertyDetails: React.FC<{ property: Simulacao["imovel"] }> = ({
   property,
 }) => {
   if (!property) return null;
-
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
 
   return (
     <div className="bg-white p-4 rounded-lg shadow">
@@ -164,7 +145,7 @@ const PropertyDetails: React.FC<{ property: Simulacao["imovel"] }> = ({
 
 const AnalysisPage: React.FC = () => {
   const { propertyId: simulationId } = useParams<{ propertyId: string }>();
-  const [simulacao, setSimulacao] = useState<any>(null);
+  const [simulacao, setSimulacao] = useState<Simulacao | null>(null);
   const [referenciasSimulacao, setReferenciasSimulacao] = useState<
     ReferenceProperty[]
   >([]);
@@ -177,52 +158,27 @@ const AnalysisPage: React.FC = () => {
     referenceProperties: true,
   });
 
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
-
   const handleParameterChange = useCallback(
     (field: keyof Simulacao, value: any) => {
       setSimulacao((prev: Simulacao | null) => {
         if (!prev) return null;
-        const updatedSimulacao = { ...prev, [field]: value };
-
-        // Converta todos os valores para números
-        const valorCompra = parseFloat(
-          parseCurrencyInput(updatedSimulacao.param_valor_compra || "0"),
-        );
-        const valorVenda = parseFloat(
-          parseCurrencyInput(updatedSimulacao.param_valor_venda || "0"),
-        );
-        const entradaPct = parseFloat(
-          updatedSimulacao.param_entrada_pct || "0",
-        );
-        const itbiPct = parseFloat(updatedSimulacao.param_itbi_pct || "0");
-        const registroCartorioPct = parseFloat(
-          updatedSimulacao.param_registro_cartorio_pct || "0",
-        );
-        const taxaCET =
-          parseFloat(updatedSimulacao.param_taxa_cet || "0") / 100 / 12;
-        const prazoFinanciamento = parseInt(
-          updatedSimulacao.param_prazo_financiamento || "0",
-        );
-        const tempoVenda = parseInt(updatedSimulacao.param_tempo_venda || "0");
-        const reformaRS = parseFloat(
-          parseCurrencyInput(updatedSimulacao.param_custo_reforma || "0"),
-        );
-        const avaliacaoBancaria = parseFloat(
-          parseCurrencyInput(updatedSimulacao.param_avaliacao_bancaria || "0"),
-        );
-        const contasGerais = parseFloat(
-          parseCurrencyInput(updatedSimulacao.param_contas_gerais || "0"),
-        );
-        const corretagemVendaPct = parseFloat(
-          updatedSimulacao.param_corretagem_venda_pct || "0",
-        );
+        const updatedSimulacao = { ...prev, [field]: parseFloat(value) || 0 };
 
         // Cálculos
+        const valorCompra = updatedSimulacao.param_valor_compra;
+        const valorVenda = updatedSimulacao.param_valor_venda;
+        const entradaPct = updatedSimulacao.param_entrada_pct;
+        const itbiPct = updatedSimulacao.param_itbi_pct;
+        const registroCartorioPct =
+          updatedSimulacao.param_registro_cartorio_pct;
+        const taxaCET = updatedSimulacao.param_taxa_cet / 100 / 12;
+        const prazoFinanciamento = updatedSimulacao.param_prazo_financiamento;
+        const tempoVenda = updatedSimulacao.param_tempo_venda;
+        const reformaRS = updatedSimulacao.param_custo_reforma;
+        const avaliacaoBancaria = updatedSimulacao.param_avaliacao_bancaria;
+        const contasGerais = updatedSimulacao.param_contas_gerais;
+        const corretagemVendaPct = updatedSimulacao.param_corretagem_venda_pct;
+
         const valorEntrada = valorCompra * (entradaPct / 100);
         const valorItbi = valorCompra * (itbiPct / 100);
         const valorRegistroCartorio = valorCompra * (registroCartorioPct / 100);
@@ -286,8 +242,8 @@ const AnalysisPage: React.FC = () => {
           imposto_renda: impostoRenda,
           iptu_total: iptuTotal,
           contas_gerais_total: contasGeraisTotal,
-          valor_compra: valorCompra.toString(),
-          valor_venda: valorVenda.toString(),
+          valor_compra: valorCompra,
+          valor_venda: valorVenda,
         };
       });
     },
@@ -311,10 +267,8 @@ const AnalysisPage: React.FC = () => {
           getReferenciaSimulacao(simulationId),
         ]);
 
-        // Inicialize a simulação
         setSimulacao(simulacaoData);
 
-        // Chame handleParameterChange para cada parâmetro relevante
         (Object.keys(simulacaoData) as Array<keyof Simulacao>).forEach(
           (param) => {
             if (param.startsWith("param_")) {
@@ -337,55 +291,36 @@ const AnalysisPage: React.FC = () => {
     fetchData();
   }, [simulationId, handleParameterChange]);
 
-  const recalculateValues = () => {
-    console.log("Recalculating values with parameters:", simulacao);
-    // Implemente a lógica de recálculo aqui
-  };
-
   const toggleSection = (section: keyof typeof expandedSections) => {
     setExpandedSections((prev) => ({
       ...prev,
       [section]: !prev[section],
     }));
-  }; // Adicione este fechamento de chave
+  };
 
   const salvarSimulacao = async () => {
     if (!simulacao || !simulationId) return;
 
-    const parseDecimal = (value) => {
-      if (typeof value === "string") {
-        return parseFloat(value.replace(/\D/g, "")) / 100;
-      }
-      return value;
-    };
-
     const dadosParaAtualizar = {
       id_imovel: simulacao.imovel.id,
-      param_valor_compra: parseDecimal(simulacao.param_valor_compra),
-      param_valor_venda: parseDecimal(simulacao.param_valor_venda),
-      param_entrada_pct: parseFloat(simulacao.param_entrada_pct),
-      param_itbi_pct: parseFloat(simulacao.param_itbi_pct),
-      param_avaliacao_bancaria: parseDecimal(
-        simulacao.param_avaliacao_bancaria,
-      ),
-      param_registro_cartorio_pct: parseFloat(
-        simulacao.param_registro_cartorio_pct,
-      ),
-      param_contas_gerais: parseDecimal(simulacao.param_contas_gerais),
-      param_tempo_venda: parseInt(simulacao.param_tempo_venda),
-      param_custo_reforma: parseDecimal(simulacao.param_custo_reforma),
-      param_taxa_cet: parseFloat(simulacao.param_taxa_cet),
-      param_prazo_financiamento: parseInt(simulacao.param_prazo_financiamento),
-      param_corretagem_venda_pct: parseFloat(
-        simulacao.param_corretagem_venda_pct,
-      ),
+      param_valor_compra: simulacao.param_valor_compra,
+      param_valor_venda: simulacao.param_valor_venda,
+      param_entrada_pct: simulacao.param_entrada_pct,
+      param_itbi_pct: simulacao.param_itbi_pct,
+      param_avaliacao_bancaria: simulacao.param_avaliacao_bancaria,
+      param_registro_cartorio_pct: simulacao.param_registro_cartorio_pct,
+      param_contas_gerais: simulacao.param_contas_gerais,
+      param_tempo_venda: simulacao.param_tempo_venda,
+      param_custo_reforma: simulacao.param_custo_reforma,
+      param_taxa_cet: simulacao.param_taxa_cet,
+      param_prazo_financiamento: simulacao.param_prazo_financiamento,
+      param_corretagem_venda_pct: simulacao.param_corretagem_venda_pct,
       param_incide_ir: simulacao.param_incide_ir,
       simulacao_principal: simulacao.simulacao_principal,
     };
 
     try {
       await atualizarSimulacao(simulationId, dadosParaAtualizar);
-      // Recarregar a página após salvar
       window.location.reload();
     } catch (error) {
       console.error("Erro ao salvar a simulação:", error);
@@ -432,31 +367,22 @@ const AnalysisPage: React.FC = () => {
                           Valor de compra (R$)
                         </label>
                         <input
-                          type="text"
-                          value={formatCurrencyInput(
-                            simulacao?.param_valor_compra,
-                          )}
-                          onChange={(e) => {
-                            const rawValue = parseCurrencyInput(e.target.value);
+                          type="number"
+                          step="0.01"
+                          value={simulacao.param_valor_compra || ""}
+                          onChange={(e) =>
                             handleParameterChange(
                               "param_valor_compra",
-                              rawValue,
-                            );
-                          }}
-                          onBlur={(e) => {
-                            const rawValue = parseCurrencyInput(e.target.value);
-                            handleParameterChange(
-                              "param_valor_compra",
-                              rawValue,
-                            );
-                          }}
+                              e.target.value,
+                            )
+                          }
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
                         <p className="text-xs text-gray-500 mt-1">
                           Valor do m²:{" "}
                           {formatCurrency(
-                            parseFloat(simulacao?.valor_compra || "0") /
-                              (simulacao?.imovel?.area || 1),
+                            simulacao.param_valor_compra /
+                              simulacao.imovel.area,
                           )}
                         </p>
                       </div>
@@ -466,7 +392,8 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.param_entrada_pct || ""}
+                          step="0.01"
+                          value={simulacao.param_entrada_pct || ""}
                           onChange={(e) =>
                             handleParameterChange(
                               "param_entrada_pct",
@@ -482,7 +409,8 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.param_itbi_pct || ""}
+                          step="0.01"
+                          value={simulacao.param_itbi_pct || ""}
                           onChange={(e) =>
                             handleParameterChange(
                               "param_itbi_pct",
@@ -497,24 +425,15 @@ const AnalysisPage: React.FC = () => {
                           Avaliação bancária (R$)
                         </label>
                         <input
-                          type="text"
-                          value={formatCurrencyInput(
-                            simulacao?.param_avaliacao_bancaria,
-                          )}
-                          onChange={(e) => {
-                            const rawValue = parseCurrencyInput(e.target.value);
+                          type="number"
+                          step="0.01"
+                          value={simulacao.param_avaliacao_bancaria || ""}
+                          onChange={(e) =>
                             handleParameterChange(
                               "param_avaliacao_bancaria",
-                              rawValue,
-                            );
-                          }}
-                          onBlur={(e) => {
-                            const rawValue = parseCurrencyInput(e.target.value);
-                            handleParameterChange(
-                              "param_avaliacao_bancaria",
-                              rawValue,
-                            );
-                          }}
+                              e.target.value,
+                            )
+                          }
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
                       </div>
@@ -524,7 +443,8 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.param_registro_cartorio_pct || ""}
+                          step="0.01"
+                          value={simulacao.param_registro_cartorio_pct || ""}
                           onChange={(e) =>
                             handleParameterChange(
                               "param_registro_cartorio_pct",
@@ -539,24 +459,15 @@ const AnalysisPage: React.FC = () => {
                           Contas gerais (agua, luz etc.) (R$)
                         </label>
                         <input
-                          type="text"
-                          value={formatCurrencyInput(
-                            simulacao?.param_contas_gerais,
-                          )}
-                          onChange={(e) => {
-                            const rawValue = parseCurrencyInput(e.target.value);
+                          type="number"
+                          step="0.01"
+                          value={simulacao.param_contas_gerais || ""}
+                          onChange={(e) =>
                             handleParameterChange(
                               "param_contas_gerais",
-                              rawValue,
-                            );
-                          }}
-                          onBlur={(e) => {
-                            const rawValue = parseCurrencyInput(e.target.value);
-                            handleParameterChange(
-                              "param_contas_gerais",
-                              rawValue,
-                            );
-                          }}
+                              e.target.value,
+                            )
+                          }
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
                       </div>
@@ -574,40 +485,21 @@ const AnalysisPage: React.FC = () => {
                           Valor de venda (R$)
                         </label>
                         <input
-                          type="text"
-                          value={formatCurrencyInput(
-                            simulacao?.param_valor_venda,
-                          )}
-                          onChange={(e) => {
-                            const rawValue = parseCurrencyInput(e.target.value);
+                          type="number"
+                          step="0.01"
+                          value={simulacao.param_valor_venda || ""}
+                          onChange={(e) =>
                             handleParameterChange(
                               "param_valor_venda",
-                              rawValue,
-                            );
-                            if (simulacao && simulacao.imovel.area > 0) {
-                              const newValorM2 =
-                                parseFloat(rawValue) /
-                                100 /
-                                simulacao.imovel.area;
-                              handleParameterChange(
-                                "valor_m2_venda",
-                                newValorM2.toString(),
-                              );
-                            }
-                          }}
-                          onBlur={(e) => {
-                            const rawValue = parseCurrencyInput(e.target.value);
-                            handleParameterChange(
-                              "param_valor_venda",
-                              rawValue,
-                            );
-                          }}
+                              e.target.value,
+                            )
+                          }
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
                         <p className="text-xs text-gray-500 mt-1">
                           Valor do m²:{" "}
                           {formatCurrency(
-                            parseFloat(simulacao?.valor_m2_venda || "0"),
+                            simulacao.param_valor_venda / simulacao.imovel.area,
                           )}
                         </p>
                       </div>
@@ -617,7 +509,7 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.param_tempo_venda || ""}
+                          value={simulacao.param_tempo_venda || ""}
                           onChange={(e) =>
                             handleParameterChange(
                               "param_tempo_venda",
@@ -632,24 +524,15 @@ const AnalysisPage: React.FC = () => {
                           Custo estimado reforma (R$)
                         </label>
                         <input
-                          type="text"
-                          value={formatCurrencyInput(
-                            simulacao?.param_custo_reforma,
-                          )}
-                          onChange={(e) => {
-                            const rawValue = parseCurrencyInput(e.target.value);
+                          type="number"
+                          step="0.01"
+                          value={simulacao.param_custo_reforma || ""}
+                          onChange={(e) =>
                             handleParameterChange(
                               "param_custo_reforma",
-                              rawValue,
-                            );
-                          }}
-                          onBlur={(e) => {
-                            const rawValue = parseCurrencyInput(e.target.value);
-                            handleParameterChange(
-                              "param_custo_reforma",
-                              rawValue,
-                            );
-                          }}
+                              e.target.value,
+                            )
+                          }
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         />
                       </div>
@@ -659,7 +542,8 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.param_taxa_cet || ""}
+                          step="0.01"
+                          value={simulacao.param_taxa_cet || ""}
                           onChange={(e) =>
                             handleParameterChange(
                               "param_taxa_cet",
@@ -675,7 +559,7 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.param_prazo_financiamento || ""}
+                          value={simulacao.param_prazo_financiamento || ""}
                           onChange={(e) =>
                             handleParameterChange(
                               "param_prazo_financiamento",
@@ -691,7 +575,8 @@ const AnalysisPage: React.FC = () => {
                         </label>
                         <input
                           type="number"
-                          value={simulacao?.param_corretagem_venda_pct || ""}
+                          step="0.01"
+                          value={simulacao.param_corretagem_venda_pct || ""}
                           onChange={(e) =>
                             handleParameterChange(
                               "param_corretagem_venda_pct",
@@ -705,7 +590,7 @@ const AnalysisPage: React.FC = () => {
                         <label className="flex items-center">
                           <input
                             type="checkbox"
-                            checked={simulacao?.param_incide_ir || false}
+                            checked={simulacao.param_incide_ir || false}
                             onChange={(e) =>
                               handleParameterChange(
                                 "param_incide_ir",
@@ -737,29 +622,26 @@ const AnalysisPage: React.FC = () => {
                   <div>
                     <h4 className="text-sm font-medium">Custos de Aquisição</h4>
                     <p className="text-sm">
-                      Entrada: {formatCurrency(simulacao.calc_entrada || 0)}
+                      Entrada: {formatCurrency(simulacao.calc_entrada)}
                     </p>
                     <p className="text-sm">
-                      ITBI: {formatCurrency(simulacao.calc_itbi || 0)}
+                      ITBI: {formatCurrency(simulacao.calc_itbi)}
                     </p>
                     <p className="text-sm">
                       Avaliação do Banco:{" "}
-                      {formatCurrency(
-                        parseFloat(simulacao.param_avaliacao_bancaria) || 0,
-                      )}
+                      {formatCurrency(simulacao.param_avaliacao_bancaria)}
                     </p>
                     <p className="text-sm">
                       Registro:{" "}
-                      {formatCurrency(simulacao.valor_registro_cartorio || 0)}
+                      {formatCurrency(simulacao.valor_registro_cartorio)}
                     </p>
                     <p className="text-sm font-medium text-blue-600">
                       Total:{" "}
                       {formatCurrency(
-                        (simulacao.calc_entrada || 0) +
-                          (simulacao.calc_itbi || 0) +
-                          (parseFloat(simulacao.param_avaliacao_bancaria) ||
-                            0) +
-                          (simulacao.valor_registro_cartorio || 0),
+                        simulacao.calc_entrada +
+                          simulacao.calc_itbi +
+                          simulacao.param_avaliacao_bancaria +
+                          simulacao.valor_registro_cartorio,
                       )}
                     </p>
                   </div>
@@ -767,33 +649,29 @@ const AnalysisPage: React.FC = () => {
                     <h4 className="text-sm font-medium">Custos até a venda</h4>
                     <p className="text-sm">
                       Parcelas Financiamento:{" "}
-                      {formatCurrency(simulacao.calc_parcelas_rs || 0)}
+                      {formatCurrency(simulacao.calc_parcelas_rs)}
                     </p>
                     <p className="text-sm">
-                      Condomínio:{" "}
-                      {formatCurrency(simulacao.calc_condominio_rs || 0)}
+                      Condomínio: {formatCurrency(simulacao.calc_condominio_rs)}
                     </p>
                     <p className="text-sm">
-                      IPTU: {formatCurrency(simulacao.iptu_total || 0)}
+                      IPTU: {formatCurrency(simulacao.iptu_total)}
                     </p>
                     <p className="text-sm">
                       Contas gerais (água, luz, etc.):{" "}
-                      {formatCurrency(simulacao.contas_gerais_total || 0)}
+                      {formatCurrency(simulacao.contas_gerais_total)}
                     </p>
                     <p className="text-sm">
-                      Reforma:{" "}
-                      {formatCurrency(
-                        parseFloat(simulacao.param_custo_reforma) || 0,
-                      )}
+                      Reforma: {formatCurrency(simulacao.param_custo_reforma)}
                     </p>
                     <p className="text-sm font-medium text-blue-600">
                       Total:{" "}
                       {formatCurrency(
-                        (simulacao.calc_parcelas_rs || 0) +
-                          (simulacao.calc_condominio_rs || 0) +
-                          (simulacao.iptu_total || 0) +
-                          (simulacao.contas_gerais_total || 0) +
-                          (parseFloat(simulacao.param_custo_reforma) || 0),
+                        simulacao.calc_parcelas_rs +
+                          simulacao.calc_condominio_rs +
+                          simulacao.iptu_total +
+                          simulacao.contas_gerais_total +
+                          simulacao.param_custo_reforma,
                       )}
                     </p>
                   </div>
@@ -801,37 +679,35 @@ const AnalysisPage: React.FC = () => {
                     <h4 className="text-sm font-medium">Custos de Venda</h4>
                     <p className="text-sm">
                       Quitação do Financiamento:{" "}
-                      {formatCurrency(simulacao.calc_quitacao_rs || 0)}
+                      {formatCurrency(simulacao.calc_quitacao_rs)}
                     </p>
                     <p className="text-sm">
                       Corretagem:{" "}
                       {formatCurrency(
-                        (parseFloat(simulacao.valor_venda) || 0) *
-                          (parseFloat(simulacao.param_corretagem_venda_pct) /
-                            100),
+                        simulacao.param_valor_venda *
+                          (simulacao.param_corretagem_venda_pct / 100),
                       )}
                     </p>
                     <p className="text-sm">
                       Imposto de Renda:{" "}
-                      {formatCurrency(simulacao.imposto_renda || 0)}
+                      {formatCurrency(simulacao.imposto_renda)}
                     </p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium">Resultados</h4>
                     <p className="text-sm">
                       Investimento Total:{" "}
-                      {formatCurrency(simulacao.investimento_total || 0)}
+                      {formatCurrency(simulacao.investimento_total)}
                     </p>
                     <p className="text-sm">
                       Preço de Venda:{" "}
-                      {formatCurrency(parseFloat(simulacao.valor_venda) || 0)}
+                      {formatCurrency(simulacao.param_valor_venda)}
                     </p>
                     <p className="text-sm">
-                      Lucro Líquido:{" "}
-                      {formatCurrency(simulacao.lucro_liquido || 0)}
+                      Lucro Líquido: {formatCurrency(simulacao.lucro_liquido)}
                     </p>
                     <p className="text-sm font-medium text-blue-600">
-                      ROI: {((simulacao.roi_liquido || 0) * 100).toFixed(2)}%
+                      ROI: {(simulacao.roi_liquido * 100).toFixed(2)}%
                     </p>
                   </div>
                 </div>
@@ -844,11 +720,11 @@ const AnalysisPage: React.FC = () => {
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 <KPICard
                   title="Valor de Compra"
-                  value={formatCurrency(parseFloat(simulacao.valor_compra))}
+                  value={formatCurrency(simulacao.param_valor_compra)}
                 />
                 <KPICard
                   title="Valor de Venda"
-                  value={formatCurrency(parseFloat(simulacao.valor_venda))}
+                  value={formatCurrency(simulacao.param_valor_venda)}
                 />
                 <KPICard
                   title="Investimento Total"
@@ -860,7 +736,8 @@ const AnalysisPage: React.FC = () => {
                 />
                 <KPICard
                   title="ROI da Operação"
-                  value={`${(simulacao.roi_liquido * 100).toFixed(2)}%`}                  highlight
+                  value={`${(simulacao.roi_liquido * 100).toFixed(2)}%`}
+                  highlight
                 />
               </div>
             </div>
@@ -871,12 +748,12 @@ const AnalysisPage: React.FC = () => {
             expanded={expandedSections.referenceProperties}
             onToggle={() => toggleSection("referenceProperties")}
           >
-            <ReferenceProperties 
-              references={referenciasSimulacao} 
+            <ReferenceProperties
+              references={referenciasSimulacao}
               simulationId={simulationId}
               simulacao={simulacao}
               onUpdate={() => {
-                getReferenciaSimulacao(simulationId).then(data => {
+                getReferenciaSimulacao(simulationId).then((data) => {
                   setReferenciasSimulacao(data);
                 });
               }}
