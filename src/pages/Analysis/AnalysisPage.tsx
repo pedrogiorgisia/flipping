@@ -162,7 +162,13 @@ const AnalysisPage: React.FC = () => {
     (field: keyof Simulacao, value: any) => {
       setSimulacao((prev: Simulacao | null) => {
         if (!prev) return null;
-        const updatedSimulacao = { ...prev, [field]: parseFloat(value) || 0 };
+        let updatedValue;
+        if (field === "param_incide_ir") {
+          updatedValue = Boolean(value);
+        } else {
+          updatedValue = parseFloat(value) || 0;
+        }
+        const updatedSimulacao = { ...prev, [field]: updatedValue };
 
         // Cálculos
         const valorCompra = updatedSimulacao.param_valor_compra;
@@ -592,10 +598,18 @@ const AnalysisPage: React.FC = () => {
                             type="checkbox"
                             id="incide_ir"
                             checked={simulacao.param_incide_ir === true}
-                            onChange={(e) => handleParameterChange("param_incide_ir", e.target.checked)}
+                            onChange={(e) =>
+                              handleParameterChange(
+                                "param_incide_ir",
+                                e.target.checked,
+                              )
+                            }
                             className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer"
                           />
-                          <label htmlFor="incide_ir" className="ml-2 text-sm text-gray-700 cursor-pointer">
+                          <label
+                            htmlFor="incide_ir"
+                            className="ml-2 text-sm text-gray-700 cursor-pointer"
+                          >
                             Incide Imposto de Renda?
                           </label>
                         </div>
