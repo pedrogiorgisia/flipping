@@ -71,7 +71,8 @@ const formatCurrencyInput = (value) => {
 
 // Função auxiliar para parsear o valor formatado
 const parseCurrencyInput = (value) => {
-  return value.replace(/\D/g, "") || "0";
+  const numericValue = value.replace(/[^\d,]/g, "").replace(",", ".");
+  return numericValue || "0";
 };
 
 const PropertyDetails: React.FC<{ property: Simulacao["imovel"] }> = ({
