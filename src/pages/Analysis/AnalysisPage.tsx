@@ -591,14 +591,19 @@ const AnalysisPage: React.FC = () => {
                           <input
                             type="checkbox"
                             id="incide_ir"
-                            checked={simulacao.param_incide_ir === true || simulacao.param_incide_ir === 1}
+                            checked={Boolean(simulacao.param_incide_ir)}
                             onChange={(e) =>
                               handleParameterChange(
                                 "param_incide_ir",
-                                e.target.checked,
+                                true,
                               )
                             }
-                            className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                            onClick={(e) => {
+                              if (!e.currentTarget.checked) {
+                                handleParameterChange("param_incide_ir", false);
+                              }
+                            }}
+                            className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer"
                           />
                           <label htmlFor="incide_ir" className="ml-2 text-sm text-gray-700 cursor-pointer">
                             Incide Imposto de Renda?
