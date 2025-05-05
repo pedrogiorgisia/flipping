@@ -185,10 +185,10 @@ const AnalysisPage: React.FC = () => {
 
         // Converta todos os valores para números
         const valorCompra = parseFloat(
-          updatedSimulacao.param_valor_compra || "0",
+          parseCurrencyInput(updatedSimulacao.param_valor_compra || "0"),
         );
         const valorVenda = parseFloat(
-          updatedSimulacao.param_valor_venda || "0",
+          parseCurrencyInput(updatedSimulacao.param_valor_venda || "0"),
         );
         const entradaPct = parseFloat(
           updatedSimulacao.param_entrada_pct || "0",
@@ -204,13 +204,13 @@ const AnalysisPage: React.FC = () => {
         );
         const tempoVenda = parseInt(updatedSimulacao.param_tempo_venda || "0");
         const reformaRS = parseFloat(
-          updatedSimulacao.param_custo_reforma || "0",
+          parseCurrencyInput(updatedSimulacao.param_custo_reforma || "0"),
         );
         const avaliacaoBancaria = parseFloat(
-          updatedSimulacao.param_avaliacao_bancaria || "0",
+          parseCurrencyInput(updatedSimulacao.param_avaliacao_bancaria || "0"),
         );
         const contasGerais = parseFloat(
-          updatedSimulacao.param_contas_gerais || "0",
+          parseCurrencyInput(updatedSimulacao.param_contas_gerais || "0"),
         );
         const corretagemVendaPct = parseFloat(
           updatedSimulacao.param_corretagem_venda_pct || "0",
@@ -854,8 +854,7 @@ const AnalysisPage: React.FC = () => {
                 />
                 <KPICard
                   title="ROI da Operação"
-                  value={`${(simulacao.roi_liquido * 100).toFixed(2)}%`}
-                  highlight
+                  value={`${(simulacao.roi_liquido * 100).toFixed(2)}%`}                  highlight
                 />
               </div>
             </div>
