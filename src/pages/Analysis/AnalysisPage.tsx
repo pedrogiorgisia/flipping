@@ -71,8 +71,13 @@ const formatCurrencyInput = (value) => {
 
 // Função auxiliar para parsear o valor formatado
 const parseCurrencyInput = (value) => {
-  const numericValue = value.replace(/[^\d,]/g, "").replace(",", ".");
-  return numericValue || "0";
+  if (!value) return "0";
+  // Remove todos os caracteres exceto números e vírgula
+  const numericValue = value.replace(/[^\d,]/g, "");
+  // Converte para o formato correto (ex: 1234,56 -> 1234.56)
+  const formattedValue = numericValue.replace(",", ".");
+  // Divide por 100 para ajustar as casas decimais corretamente
+  return (parseFloat(formattedValue) / 100).toString();
 };
 
 const PropertyDetails: React.FC<{ property: Simulacao["imovel"] }> = ({
