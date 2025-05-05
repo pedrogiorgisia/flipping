@@ -1,37 +1,77 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  html {
-    font-family: 'Inter', system-ui, sans-serif;
+@layer components {
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6;
+  }
+  
+  .input-field {
+    @apply w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500;
+  }
+  
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors;
+  }
+  
+  .section-title {
+    @apply text-xl font-semibold text-gray-900 mb-4;
   }
 }
 
-@layer components {
-  .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6 transition-all duration-200;
-  }
-  
-  .card-hover {
-    @apply hover:shadow-md hover:border-gray-300;
-  }
+.property-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
 
-  .input-field {
-    @apply mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-2.5 text-sm;
-  }
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
 
-  .btn-primary {
-    @apply bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
-  }
+.breadcrumb {
+  @apply flex items-center space-x-2 text-sm text-gray-500;
+}
 
-  .info-label {
-    @apply text-sm text-gray-500 mb-1;
-  }
+.breadcrumb-item {
+  @apply hover:text-gray-700;
+}
 
-  .info-value {
-    @apply text-sm font-medium text-gray-900;
-  }
+.breadcrumb-separator {
+  @apply text-gray-400;
+}
+
+.info-card {
+  @apply bg-gray-50 p-4 rounded-lg flex items-center space-x-3;
+}
+
+.info-icon {
+  @apply text-xl;
+}
+
+.analysis-card {
+  @apply bg-blue-50 p-4 rounded-lg border border-blue-100;
+}
+
+.result-row {
+  @apply flex justify-between items-center py-2;
+}
+
+.result-label {
+  @apply text-sm text-gray-600;
+}
+
+.result-value {
+  @apply font-medium;
+}
+
+.result-highlight {
+  @apply text-blue-600;
 }
