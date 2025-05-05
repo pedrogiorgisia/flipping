@@ -591,11 +591,11 @@ const AnalysisPage: React.FC = () => {
                           <input
                             type="checkbox"
                             id="incide_ir"
-                            checked={simulacao.param_incide_ir || false}
+                            checked={Boolean(simulacao.param_incide_ir)}
                             onChange={(e) =>
                               handleParameterChange(
                                 "param_incide_ir",
-                                e.target.checked,
+                                e.target.checked ? 1 : 0,
                               )
                             }
                             className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
