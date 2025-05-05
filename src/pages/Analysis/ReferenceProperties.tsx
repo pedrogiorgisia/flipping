@@ -98,6 +98,7 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
   };
 
   const [parameters, setParameters] = useState<any>(null);
+  const analysisId = useEffectiveAnalysisId();
 
   useEffect(() => {
     const fetchParameters = async () => {
