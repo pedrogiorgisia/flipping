@@ -591,18 +591,8 @@ const AnalysisPage: React.FC = () => {
                           <input
                             type="checkbox"
                             id="incide_ir"
-                            checked={Boolean(simulacao.param_incide_ir)}
-                            onChange={(e) =>
-                              handleParameterChange(
-                                "param_incide_ir",
-                                true,
-                              )
-                            }
-                            onClick={(e) => {
-                              if (!e.currentTarget.checked) {
-                                handleParameterChange("param_incide_ir", false);
-                              }
-                            }}
+                            checked={simulacao.param_incide_ir === true}
+                            onChange={(e) => handleParameterChange("param_incide_ir", e.target.checked)}
                             className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer"
                           />
                           <label htmlFor="incide_ir" className="ml-2 text-sm text-gray-700 cursor-pointer">
