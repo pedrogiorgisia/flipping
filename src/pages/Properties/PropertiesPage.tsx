@@ -552,24 +552,23 @@ const PropertiesPage: React.FC = () => {
                   <p>{formError}</p>
                 </div>
               )}
-              <div className="space-y-4 text-sm">
+              <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <label className="block text-gray-700 mb-1" htmlFor="url">
                     URL do anúncio
                   </label>
-                  <div className="flex gap-2 items-start">
-                    <input
-                      id="url"
-                      name="url"
-                      type="url"
-                      required
-                      className="flex-1 px-2 py-1 border border-gray-300 rounded-md"
-                      placeholder="https://..."
-                      defaultValue={
-                        editingProperty?.url || importedData?.url || ""
-                      }
-                    />
-                    <div className="flex-shrink-0">
+                  <input
+                    id="url"
+                    name="url"
+                    type="url"
+                    required
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                    placeholder="https://..."
+                    defaultValue={
+                      editingProperty?.url || importedData?.url || ""
+                    }
+                  />
+                  <div className="mt-1 flex items-center">
                     <button
                       type="button"
                       onClick={async (e) => {
@@ -631,212 +630,196 @@ const PropertiesPage: React.FC = () => {
                     </button>
                   </div>
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      className="block text-gray-700 mb-1"
-                      htmlFor="preco_anunciado"
-                    >
-                      Preço (R$)
-                    </label>
-                    <input
-                      id="preco_anunciado"
-                      name="preco_anunciado"
-                      type="number"
-                      required
-                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                      placeholder="0,00"
-                      defaultValue={
-                        editingProperty?.preco_anunciado ||
-                        importedData?.preco_anunciado ||
-                        ""
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-700 mb-1" htmlFor="area">
-                      Área (m²)
-                    </label>
-                    <input
-                      id="area"
-                      name="area"
-                      type="number"
-                      required
-                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                      placeholder="0"
-                      defaultValue={
-                        editingProperty?.area || importedData?.area || ""
-                      }
-                    />
-                  </div>
+                <div>
+                  <label
+                    className="block text-gray-700 mb-1"
+                    htmlFor="imobiliaria"
+                  >
+                    Imobiliária
+                  </label>
+                  <input
+                    id="imobiliaria"
+                    name="imobiliaria"
+                    type="text"
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                    defaultValue={
+                      editingProperty?.imobiliaria ||
+                      importedData?.imobiliaria ||
+                      ""
+                    }
+                  />
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-gray-700 mb-1" htmlFor="quartos">
-                      Quartos
-                    </label>
-                    <input
-                      id="quartos"
-                      name="quartos"
-                      type="number"
-                      required
-                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                      placeholder="0"
-                      defaultValue={
-                        editingProperty?.quartos || importedData?.quartos || ""
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label
-                      className="block text-gray-700 mb-1"
-                      htmlFor="banheiros"
-                    >
-                      Banheiros
-                    </label>
-                    <input
-                      id="banheiros"
-                      name="banheiros"
-                      type="number"
-                      required
-                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                      placeholder="0"
-                      defaultValue={
-                        editingProperty?.banheiros ||
-                        importedData?.banheiros ||
-                        ""
-                      }
-                    />
-                  </div>
+                <div>
+                  <label
+                    className="block text-gray-700 mb-1"
+                    htmlFor="preco_anunciado"
+                  >
+                    Preço (R$)
+                  </label>
+                  <input
+                    id="preco_anunciado"
+                    name="preco_anunciado"
+                    type="number"
+                    required
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                    placeholder="0,00"
+                    defaultValue={
+                      editingProperty?.preco_anunciado ||
+                      importedData?.preco_anunciado ||
+                      ""
+                    }
+                  />
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-gray-700 mb-1" htmlFor="vagas">
-                      Vagas
-                    </label>
-                    <input
-                      id="vagas"
-                      name="vagas"
-                      type="number"
-                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                      placeholder="0"
-                      defaultValue={
-                        editingProperty?.vagas || importedData?.vagas || ""
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label
-                      className="block text-gray-700 mb-1"
-                      htmlFor="condominio_mensal"
-                    >
-                      Condomínio mensal (R$)
-                    </label>
-                    <input
-                      id="condominio_mensal"
-                      name="condominio_mensal"
-                      type="number"
-                      required
-                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                      placeholder="0,00"
-                      defaultValue={
-                        editingProperty?.condominio_mensal ||
-                        importedData?.condominio_mensal ||
-                        ""
-                      }
-                    />
-                  </div>
+                <div>
+                  <label className="block text-gray-700 mb-1" htmlFor="area">
+                    Área (m²)
+                  </label>
+                  <input
+                    id="area"
+                    name="area"
+                    type="number"
+                    required
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                    placeholder="0"
+                    defaultValue={
+                      editingProperty?.area || importedData?.area || ""
+                    }
+                  />
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      className="block text-gray-700 mb-1"
-                      htmlFor="iptu_anual"
-                    >
-                      IPTU anual (R$)
-                    </label>
-                    <input
-                      id="iptu_anual"
-                      name="iptu_anual"
-                      type="number"
-                      required
-                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                      placeholder="0,00"
-                      defaultValue={
-                        editingProperty?.iptu_anual ||
-                        importedData?.iptu_anual ||
-                        ""
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label
-                      className="block text-gray-700 mb-1"
-                      htmlFor="codigo_ref_externo"
-                    >
-                      Código
-                    </label>
-                    <input
-                      id="codigo_ref_externo"
-                      name="codigo_ref_externo"
-                      type="text"
-                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                      defaultValue={
-                        editingProperty?.codigo_ref_externo ||
-                        importedData?.codigo_ref_externo ||
-                        ""
-                      }
-                    />
-                  </div>
+                <div>
+                  <label className="block text-gray-700 mb-1" htmlFor="quartos">
+                    Quartos
+                  </label>
+                  <input
+                    id="quartos"
+                    name="quartos"
+                    type="number"
+                    required
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                    placeholder="0"
+                    defaultValue={
+                      editingProperty?.quartos || importedData?.quartos || ""
+                    }
+                  />
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      className="block text-gray-700 mb-1"
-                      htmlFor="imobiliaria"
-                    >
-                      Imobiliária
-                    </label>
-                    <input
-                      id="imobiliaria"
-                      name="imobiliaria"
-                      type="text"
-                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                      defaultValue={
-                        editingProperty?.imobiliaria ||
-                        importedData?.imobiliaria ||
-                        ""
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label
-                      className="block text-gray-700 mb-1"
-                      htmlFor="data_anuncio"
-                    >
-                      Data do anúncio
-                    </label>
-                    <input
-                      id="data_anuncio"
-                      name="data_anuncio"
-                      type="date"
-                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                      defaultValue={
-                        editingProperty?.data_anuncio
-                          ? new Date(editingProperty.data_anuncio)
-                              .toISOString()
-                              .split("T")[0]
-                          : importedData?.data_anuncio || ""
-                      }
-                    />
-                  </div>
+                <div>
+                  <label
+                    className="block text-gray-700 mb-1"
+                    htmlFor="banheiros"
+                  >
+                    Banheiros
+                  </label>
+                  <input
+                    id="banheiros"
+                    name="banheiros"
+                    type="number"
+                    required
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                    placeholder="0"
+                    defaultValue={
+                      editingProperty?.banheiros ||
+                      importedData?.banheiros ||
+                      ""
+                    }
+                  />
                 </div>
-                
+                <div>
+                  <label className="block text-gray-700 mb-1" htmlFor="vagas">
+                    Vagas
+                  </label>
+                  <input
+                    id="vagas"
+                    name="vagas"
+                    type="number"
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                    placeholder="0"
+                    defaultValue={
+                      editingProperty?.vagas || importedData?.vagas || ""
+                    }
+                  />
+                </div>
+                <div>
+                  <label
+                    className="block text-gray-700 mb-1"
+                    htmlFor="condominio_mensal"
+                  >
+                    Condomínio mensal (R$)
+                  </label>
+                  <input
+                    id="condominio_mensal"
+                    name="condominio_mensal"
+                    type="number"
+                    required
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                    placeholder="0,00"
+                    defaultValue={
+                      editingProperty?.condominio_mensal ||
+                      importedData?.condominio_mensal ||
+                      ""
+                    }
+                  />
+                </div>
+                <div>
+                  <label
+                    className="block text-gray-700 mb-1"
+                    htmlFor="iptu_anual"
+                  >
+                    IPTU anual (R$)
+                  </label>
+                  <input
+                    id="iptu_anual"
+                    name="iptu_anual"
+                    type="number"
+                    required
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                    placeholder="0,00"
+                    defaultValue={
+                      editingProperty?.iptu_anual ||
+                      importedData?.iptu_anual ||
+                      ""
+                    }
+                  />
+                </div>
+                <div>
+                  <label
+                    className="block text-gray-700 mb-1"
+                    htmlFor="codigo_ref_externo"
+                  >
+                    Código
+                  </label>
+                  <input
+                    id="codigo_ref_externo"
+                    name="codigo_ref_externo"
+                    type="text"
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                    defaultValue={
+                      editingProperty?.codigo_ref_externo ||
+                      importedData?.codigo_ref_externo ||
+                      ""
+                    }
+                  />
+                </div>
+                <div>
+                  <label
+                    className="block text-gray-700 mb-1"
+                    htmlFor="data_anuncio"
+                  >
+                    Data do anúncio
+                  </label>
+                  <input
+                    id="data_anuncio"
+                    name="data_anuncio"
+                    type="date"
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                    defaultValue={
+                      editingProperty?.data_anuncio
+                        ? new Date(editingProperty.data_anuncio)
+                            .toISOString()
+                            .split("T")[0]
+                        : importedData?.data_anuncio || ""
+                    }
+                  />
+                </div>
                 <div className="col-span-2">
                   <label
                     className="block text-gray-700 mb-1"
