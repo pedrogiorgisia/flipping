@@ -1,45 +1,44 @@
-
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Lock, Mail, AlertCircle } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Lock, Mail, AlertCircle } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
-      const response = await fetch('https://flippings.com.br/login', {
-        method: 'POST',
+      const response = await fetch("https://flippings.com.br/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email: email,
-          senha: password
-        })
+          senha: password,
+        }),
       });
 
       const data = await response.json();
-      
+
       if (response.ok && data.usuario_id) {
         login(data.usuario_id);
-        navigate('/analyses');
+        navigate("/analyses");
       } else {
-        setError(data.message || 'Email ou senha inválidos');
+        setError(data.message || "Email ou senha inválidos");
       }
     } catch (err) {
-      console.error('Erro no login:', err);
-      setError('Erro de conexão com o servidor. Tente novamente.');
+      console.error("Erro no login:", err);
+      setError("Erro de conexão com o servidor. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -51,7 +50,9 @@ const LoginPage: React.FC = () => {
         <div className="w-full max-w-md">
           <div className="text-center mb-10">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Flippings</h1>
-            <p className="text-gray-600">Análise de Oportunidades Imobiliárias</p>
+            <p className="text-gray-600">
+              Análise de Oportunidades Imobiliárias
+            </p>
           </div>
 
           {error && (
@@ -63,7 +64,10 @@ const LoginPage: React.FC = () => {
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Email
               </label>
               <div className="relative">
@@ -83,7 +87,10 @@ const LoginPage: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Senha
               </label>
               <div className="relative">
@@ -110,12 +117,18 @@ const LoginPage: React.FC = () => {
                   type="checkbox"
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 block text-sm text-gray-700"
+                >
                   Lembrar-me
                 </label>
               </div>
               <div>
-                <a href="#" className="text-sm font-medium text-blue-600 hover:text-blue-500">
+                <a
+                  href="#"
+                  className="text-sm font-medium text-blue-600 hover:text-blue-500"
+                >
                   Esqueceu a senha?
                 </a>
               </div>
@@ -125,28 +138,29 @@ const LoginPage: React.FC = () => {
               type="submit"
               disabled={isLoading}
               className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-                isLoading ? 'opacity-70 cursor-not-allowed' : ''
+                isLoading ? "opacity-70 cursor-not-allowed" : ""
               }`}
             >
-              {isLoading ? 'Entrando...' : 'Entrar'}
+              {isLoading ? "Entrando..." : "Entrar"}
             </button>
           </form>
-
-          <div className="mt-6">
-            <p className="text-center text-sm text-gray-500">
-              <span>Credenciais de demonstração: demo@example.com / password</span>
-            </p>
-          </div>
         </div>
       </div>
-      <div className="hidden lg:block lg:w-1/2 bg-cover bg-center" style={{
-        backgroundImage: "url('https://images.pexels.com/photos/1546168/pexels-photo-1546168.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')"
-      }}>
+      <div
+        className="hidden lg:block lg:w-1/2 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url('https://images.pexels.com/photos/1546168/pexels-photo-1546168.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')",
+        }}
+      >
         <div className="h-full w-full bg-black bg-opacity-30 flex items-center justify-center">
           <div className="max-w-md px-8 py-12 text-white">
-            <h2 className="text-3xl font-bold mb-4">Identifique Oportunidades</h2>
+            <h2 className="text-3xl font-bold mb-4">
+              Identifique Oportunidades
+            </h2>
             <p className="text-lg opacity-90">
-              Analise imóveis, calcule ROI e tome decisões baseadas em dados com nossa plataforma completa de análise.
+              Analise imóveis, calcule ROI e tome decisões baseadas em dados com
+              nossa plataforma completa de análise.
             </p>
           </div>
         </div>
