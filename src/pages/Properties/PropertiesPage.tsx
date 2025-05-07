@@ -380,13 +380,7 @@ const PropertiesPage: React.FC = () => {
               <Plus size={16} className="mr-2" />
               Novo Imóvel
             </button>
-            <button
-              onClick={handleImportHTML}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50"
-            >
-              <Upload size={16} className="mr-2" />
-              Importar HTML
-            </button>
+            
           </div>
           <div className="flex flex-wrap items-center gap-4">
             <div className="grid grid-cols-3 gap-4">
@@ -824,74 +818,7 @@ const PropertiesPage: React.FC = () => {
           </div>
         </div>
       )}
-      {isImportModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
-              Importar HTML
-            </h2>
-            <p className="text-gray-600 mb-4">
-              Faça upload de um arquivo HTML de um anúncio para importar
-              automaticamente os detalhes do imóvel. <br />
-              <br />
-              HTML aceitos: Quinto Andar, Zap imóveis, Loft
-            </p>
-
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-4">
-              <Upload size={32} className="mx-auto text-gray-400 mb-2" />
-              <p className="text-sm text-gray-600 mb-2">
-                Arraste e solte um arquivo HTML, ou clique para selecionar
-              </p>
-              <input
-                type="file"
-                className="hidden"
-                id="html-upload"
-                accept=".html,.htm"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    setSelectedFile(file);
-                  }
-                }}
-              />
-              <button
-                onClick={() => document.getElementById("html-upload")?.click()}
-                className="mt-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
-              >
-                Selecionar Arquivo
-              </button>
-            </div>
-
-            {selectedFile && (
-              <p className="text-sm text-gray-600 mb-4">
-                Arquivo selecionado: {selectedFile.name}
-              </p>
-            )}
-
-            {importError && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md">
-                {importError}
-              </div>
-            )}
-
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={closeModals}
-                className="px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleProcessHTML}
-                disabled={!selectedFile || isProcessing}
-                className={`px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 ${!selectedFile || isProcessing ? "opacity-50 cursor-not-allowed" : ""}`}
-              >
-                {isProcessing ? "Processando..." : "Processar HTML"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      
     </MainLayout>
   );
 };
