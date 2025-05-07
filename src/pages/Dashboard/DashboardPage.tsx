@@ -35,7 +35,6 @@ const useEffectiveAnalysisId = () => {
   const analysisIdFromParams = id;
   const analysisIdFromState = (location.state as any)?.id_analise;
 
-  //Prioritize id from params, then state, otherwise return null;
   return analysisIdFromParams || analysisIdFromState || null;
 };
 
@@ -54,13 +53,18 @@ const DashboardPage: React.FC = () => {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedRoiRange, setSelectedRoiRange] = useState<string | null>(null);
+  const [enderecoFilter, setEnderecoFilter] = useState("");
+  const [areaMinFilter, setAreaMinFilter] = useState("");
+  const [areaMaxFilter, setAreaMaxFilter] = useState("");
+  const [precoAnunciadoMinFilter, setPrecoAnunciadoMinFilter] = useState("");
+  const [precoAnunciadoMaxFilter, setPrecoAnunciadoMaxFilter] = useState("");
+  const [roiMinFilter, setRoiMinFilter] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
 
-        // Fetch summary data
         const summaryResponse = await fetch(
           `https://flippings.com.br/imoveis/resumo?id_analise=${effectiveAnalysisId}`,
         );
@@ -68,7 +72,6 @@ const DashboardPage: React.FC = () => {
         const summaryData = await summaryResponse.json();
         setSummary(summaryData);
 
-        // Fetch properties data
         const propertiesResponse = await fetch(
           `https://flippings.com.br/simulacoes?id_analise=${effectiveAnalysisId}&simulacao_principal=true&reformado=false`,
         );
@@ -77,7 +80,6 @@ const DashboardPage: React.FC = () => {
         const propertiesData = await propertiesResponse.json();
         setProperties(propertiesData);
 
-        // Calculate ROI distribution
         const distribution = [
           {
             range: ">30%",
@@ -123,25 +125,35 @@ const DashboardPage: React.FC = () => {
     }).format(value);
   };
 
-  const getFilteredProperties = () => {
-    if (!selectedRoiRange) return properties;
-
+  const getFilteredProperties = useCallback(() => {
     return properties.filter((property) => {
-      const roi = property.calc_roi;
-      switch (selectedRoiRange) {
-        case ">30%":
-          return roi > 0.3;
-        case "20-30%":
-          return roi > 0.2 && roi <= 0.3;
-        case "15-20%":
-          return roi > 0.15 && roi <= 0.2;
-        case "<15%":
-          return roi <= 0.15;
-        default:
-          return true;
-      }
+      const roiPercentage = property.calc_roi * 100;
+      return (
+        property.imovel.endereco
+          .toLowerCase()
+          .includes(enderecoFilter.toLowerCase()) &&
+        (areaMinFilter === "" ||
+          property.imovel.area >= parseFloat(areaMinFilter)) &&
+        (areaMaxFilter === "" ||
+          property.imovel.area <= parseFloat(areaMaxFilter)) &&
+        (precoAnunciadoMinFilter === "" ||
+          property.imovel.preco_anunciado >=
+            parseFloat(precoAnunciadoMinFilter)) &&
+        (precoAnunciadoMaxFilter === "" ||
+          property.imovel.preco_anunciado <=
+            parseFloat(precoAnunciadoMaxFilter)) &&
+        (roiMinFilter === "" || roiPercentage >= parseFloat(roiMinFilter))
+      );
     });
-  };
+  }, [
+    properties,
+    enderecoFilter,
+    areaMinFilter,
+    areaMaxFilter,
+    precoAnunciadoMinFilter,
+    precoAnunciadoMaxFilter,
+    roiMinFilter,
+  ]);
 
   if (isLoading) {
     return (
@@ -189,57 +201,136 @@ const DashboardPage: React.FC = () => {
         <p className="text-gray-600 mt-1">Visão geral da sua análise</p>
       </div>
 
-      <DashboardStats stats={stats} />
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-        <div className="lg:col-span-3 bg-white rounded-lg shadow">
-          <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">
-              Distribuição de ROI
-            </h3>
-          </div>
-          <div className="p-6">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {roiDistribution.map((item) => (
-                <div
-                  key={item.range}
-                  className={`bg-gray-50 rounded-lg p-4 cursor-pointer transition-colors duration-200 ${
-                    selectedRoiRange === item.range
-                      ? "ring-2 ring-blue-500 bg-blue-50"
-                      : "hover:bg-gray-100"
-                  }`}
-                  onClick={() =>
-                    setSelectedRoiRange(
-                      selectedRoiRange === item.range ? null : item.range,
-                    )
-                  }
-                >
-                  <div className="text-sm text-gray-500">{item.range} ROI</div>
-                  <div className="text-lg font-medium text-gray-900">
-                    {item.count} imóveis
-                  </div>
-                </div>
-              ))}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        {stats.map((stat, index) => (
+          <div key={index} className={`${stat.color} rounded-lg p-4 shadow`}>
+            <div className="flex items-center">
+              <div className={`${stat.color} rounded-full p-2 mr-3`}>
+                {stat.icon}
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500">
+                  {stat.label}
+                </p>
+                <p className="text-lg font-semibold text-gray-900">
+                  {stat.value}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        ))}
       </div>
 
-      {properties.length > 0 && (
-        <div className="mt-6">
-          <PropertyList properties={getFilteredProperties()} />
-          {selectedRoiRange && (
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={() => setSelectedRoiRange(null)}
-                className="text-sm text-blue-600 hover:text-blue-800"
-              >
-                Limpar filtro
-              </button>
-            </div>
-          )}
+      <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 className="text-xl font-semibold mb-4">Oportunidades</h2>
+        <p className="text-gray-600 mb-4">
+          Lista de simulações de investimento para os apartamentos não
+          reformados
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-4">
+          <div>
+            <label
+              htmlFor="enderecoFilter"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Endereço
+            </label>
+            <input
+              type="text"
+              id="enderecoFilter"
+              value={enderecoFilter}
+              onChange={(e) => setEnderecoFilter(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              placeholder="Filtrar por endereço"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="areaMinFilter"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Área Mínima (m²)
+            </label>
+            <input
+              type="number"
+              id="areaMinFilter"
+              value={areaMinFilter}
+              onChange={(e) => setAreaMinFilter(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              placeholder="Área mínima"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="areaMaxFilter"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Área Máxima (m²)
+            </label>
+            <input
+              type="number"
+              id="areaMaxFilter"
+              value={areaMaxFilter}
+              onChange={(e) => setAreaMaxFilter(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              placeholder="Área máxima"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="precoAnunciadoMinFilter"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Preço Anunciado Mín.
+            </label>
+            <input
+              type="number"
+              id="precoAnunciadoMinFilter"
+              value={precoAnunciadoMinFilter}
+              onChange={(e) => setPrecoAnunciadoMinFilter(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              placeholder="Preço mínimo"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="precoAnunciadoMaxFilter"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Preço Anunciado Máx.
+            </label>
+            <input
+              type="number"
+              id="precoAnunciadoMaxFilter"
+              value={precoAnunciadoMaxFilter}
+              onChange={(e) => setPrecoAnunciadoMaxFilter(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              placeholder="Preço máximo"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="roiMinFilter"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              ROI Mínimo (%)
+            </label>
+            <input
+              type="number"
+              id="roiMinFilter"
+              value={roiMinFilter}
+              onChange={(e) => setRoiMinFilter(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              placeholder="ROI mínimo"
+            />
+          </div>
         </div>
-      )}
+
+        {properties.length > 0 && (
+          <PropertyList properties={getFilteredProperties()} />
+        )}
+      </div>
     </MainLayout>
   );
 };

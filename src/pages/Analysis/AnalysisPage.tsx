@@ -1,3 +1,15 @@
+import {
+  FaBed,
+  FaBath,
+  FaCar,
+  FaRulerCombined,
+  FaCalendarAlt,
+  FaBuilding,
+  FaMapMarkerAlt,
+  FaMoneyBillWave,
+  FaFileInvoiceDollar,
+  FaHashtag,
+} from "react-icons/fa";
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import MainLayout from "../../components/Layout/MainLayout";
@@ -72,72 +84,65 @@ const PropertyDetails: React.FC<{ property: Simulacao["imovel"] }> = ({
 }) => {
   if (!property) return null;
 
+  const detailItems = [
+    { icon: <FaMapMarkerAlt />, label: "Endereço", value: property.endereco },
+    { icon: <FaRulerCombined />, label: "Área", value: `${property.area} m²` },
+    {
+      icon: <FaMoneyBillWave />,
+      label: "Preço Anunciado",
+      value: formatCurrency(property.preco_anunciado),
+    },
+    { icon: <FaBuilding />, label: "Imobiliária", value: property.imobiliaria },
+    {
+      icon: <FaCalendarAlt />,
+      label: "Data do Anúncio",
+      value: property.data_anuncio
+        ? new Date(property.data_anuncio).toLocaleDateString("pt-BR")
+        : "Não disponível",
+    },
+    {
+      icon: <FaHashtag />,
+      label: "Código de Referência",
+      value: property.codigo_ref_externo,
+    },
+    { icon: <FaBed />, label: "Quartos", value: property.quartos },
+    { icon: <FaBath />, label: "Banheiros", value: property.banheiros },
+    { icon: <FaCar />, label: "Vagas", value: property.vagas },
+    {
+      icon: <FaMoneyBillWave />,
+      label: "Condomínio Mensal",
+      value: formatCurrency(property.condominio_mensal),
+    },
+    {
+      icon: <FaFileInvoiceDollar />,
+      label: "IPTU Anual",
+      value: formatCurrency(property.iptu_anual),
+    },
+  ];
+
   return (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Detalhes do Imóvel</h2>
+    <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">Detalhes do Imóvel</h2>
         <a
           href={property.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 hover:text-blue-800 text-sm"
+          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300"
         >
           Ver anúncio
         </a>
       </div>
-      <div className="grid grid-cols-4 gap-4">
-        <div>
-          <p className="text-sm text-gray-500">Endereço</p>
-          <p className="font-medium">{property.endereco}</p>
-        </div>
-        <div>
-          <p className="text-sm text-gray-500">Área</p>
-          <p className="font-medium">{property.area} m²</p>
-        </div>
-        <div>
-          <p className="text-sm text-gray-500">Preço Anunciado</p>
-          <p className="font-medium">
-            {formatCurrency(property.preco_anunciado)}
-          </p>
-        </div>
-        <div>
-          <p className="text-sm text-gray-500">Imobiliária</p>
-          <p className="font-medium">{property.imobiliaria}</p>
-        </div>
-        <div>
-          <p className="text-sm text-gray-500">Data do Anúncio</p>
-          <p className="font-medium">
-            {property.data_anuncio
-              ? new Date(property.data_anuncio).toLocaleDateString("pt-BR")
-              : "Não disponível"}
-          </p>
-        </div>
-        <div>
-          <p className="text-sm text-gray-500">Código de Referência</p>
-          <p className="font-medium">{property.codigo_ref_externo}</p>
-        </div>
-        <div>
-          <p className="text-sm text-gray-500">Quartos</p>
-          <p className="font-medium">{property.quartos}</p>
-        </div>
-        <div>
-          <p className="text-sm text-gray-500">Banheiros</p>
-          <p className="font-medium">{property.banheiros}</p>
-        </div>
-        <div>
-          <p className="text-sm text-gray-500">Vagas</p>
-          <p className="font-medium">{property.vagas}</p>
-        </div>
-        <div>
-          <p className="text-sm text-gray-500">Condomínio Mensal</p>
-          <p className="font-medium">
-            {formatCurrency(property.condominio_mensal)}
-          </p>
-        </div>
-        <div>
-          <p className="text-sm text-gray-500">IPTU Anual</p>
-          <p className="font-medium">{formatCurrency(property.iptu_anual)}</p>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {detailItems.map((item, index) => (
+          <div key={index} className="flex items-center space-x-3">
+            <div className="text-blue-600 text-xl">{item.icon}</div>
+            <div>
+              <p className="text-sm text-gray-500">{item.label}</p>
+              <p className="font-medium text-gray-800">{item.value}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -359,372 +364,304 @@ const AnalysisPage: React.FC = () => {
             expanded={expandedSections.analysisAndParameters}
             onToggle={() => toggleSection("analysisAndParameters")}
           >
-            <div className="grid grid-cols-3 gap-8">
-              <div className="col-span-2 bg-white p-6 rounded-lg shadow-sm">
-                <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {/* Coluna 1: Parâmetros de Compra */}
-                  <div>
-                    <h3 className="text-md font-medium mb-4 text-gray-700">
+                  <div className="space-y-6">
+                    <h4 className="text-lg font-medium text-gray-700 mb-4">
                       Parâmetros de Compra
-                    </h3>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm text-gray-500">
-                          Valor de compra (R$)
+                    </h4>
+                    {[
+                      {
+                        label: "Valor de compra (R$)",
+                        param: "param_valor_compra",
+                      },
+                      { label: "Entrada (%)", param: "param_entrada_pct" },
+                      { label: "ITBI (%)", param: "param_itbi_pct" },
+                      {
+                        label: "Avaliação bancária (R$)",
+                        param: "param_avaliacao_bancaria",
+                      },
+                      {
+                        label: "Registro em cartório (%)",
+                        param: "param_registro_cartorio_pct",
+                      },
+                      {
+                        label: "Contas gerais (R$)",
+                        param: "param_contas_gerais",
+                      },
+                    ].map((item) => (
+                      <div
+                        key={item.param}
+                        className="bg-gray-50 p-4 rounded-md"
+                      >
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          {item.label}
                         </label>
                         <input
                           type="number"
                           step="0.01"
-                          value={simulacao.param_valor_compra || ""}
+                          value={simulacao[item.param] || ""}
                           onChange={(e) =>
-                            handleParameterChange(
-                              "param_valor_compra",
-                              e.target.value,
-                            )
+                            handleParameterChange(item.param, e.target.value)
                           }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                          className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                         />
-                        <p className="text-xs text-gray-500 mt-1">
-                          Valor do m²:{" "}
-                          {formatCurrency(
-                            simulacao.param_valor_compra /
-                              simulacao.imovel.area,
-                          )}
-                        </p>
+                        {item.param === "param_valor_compra" && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            Valor do m²:{" "}
+                            {formatCurrency(
+                              simulacao.param_valor_compra /
+                                simulacao.imovel.area,
+                            )}
+                          </p>
+                        )}
                       </div>
-                      <div>
-                        <label className="block text-sm text-gray-500">
-                          Entrada (%)
-                        </label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={simulacao.param_entrada_pct || ""}
-                          onChange={(e) =>
-                            handleParameterChange(
-                              "param_entrada_pct",
-                              e.target.value,
-                            )
-                          }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-gray-500">
-                          ITBI (%)
-                        </label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={simulacao.param_itbi_pct || ""}
-                          onChange={(e) =>
-                            handleParameterChange(
-                              "param_itbi_pct",
-                              e.target.value,
-                            )
-                          }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-gray-500">
-                          Avaliação bancária (R$)
-                        </label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={simulacao.param_avaliacao_bancaria || ""}
-                          onChange={(e) =>
-                            handleParameterChange(
-                              "param_avaliacao_bancaria",
-                              e.target.value,
-                            )
-                          }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-gray-500">
-                          Registro em cartório (%)
-                        </label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={simulacao.param_registro_cartorio_pct || ""}
-                          onChange={(e) =>
-                            handleParameterChange(
-                              "param_registro_cartorio_pct",
-                              e.target.value,
-                            )
-                          }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-gray-500">
-                          Contas gerais (agua, luz etc.) (R$)
-                        </label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={simulacao.param_contas_gerais || ""}
-                          onChange={(e) =>
-                            handleParameterChange(
-                              "param_contas_gerais",
-                              e.target.value,
-                            )
-                          }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                        />
-                      </div>
-                    </div>
+                    ))}
                   </div>
 
                   {/* Coluna 2: Parâmetros de Financiamento e Venda */}
-                  <div>
-                    <h3 className="text-md font-medium mb-4 text-gray-700">
+                  <div className="space-y-6">
+                    <h4 className="text-lg font-medium text-gray-700 mb-4">
                       Financiamento e Venda
-                    </h3>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm text-gray-500">
-                          Valor de venda (R$)
+                    </h4>
+                    {[
+                      {
+                        label: "Valor de venda (R$)",
+                        param: "param_valor_venda",
+                      },
+                      {
+                        label: "Tempo de venda (meses)",
+                        param: "param_tempo_venda",
+                      },
+                      {
+                        label: "Custo estimado reforma (R$)",
+                        param: "param_custo_reforma",
+                      },
+                      { label: "Taxa CET (%)", param: "param_taxa_cet" },
+                      {
+                        label: "Prazo financiamento (meses)",
+                        param: "param_prazo_financiamento",
+                      },
+                      {
+                        label: "Corretagem venda (%)",
+                        param: "param_corretagem_venda_pct",
+                      },
+                    ].map((item) => (
+                      <div
+                        key={item.param}
+                        className="bg-gray-50 p-4 rounded-md"
+                      >
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          {item.label}
                         </label>
                         <input
                           type="number"
                           step="0.01"
-                          value={simulacao.param_valor_venda || ""}
+                          value={simulacao[item.param] || ""}
                           onChange={(e) =>
-                            handleParameterChange(
-                              "param_valor_venda",
-                              e.target.value,
-                            )
+                            handleParameterChange(item.param, e.target.value)
                           }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                          className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                         />
-                        <p className="text-xs text-gray-500 mt-1">
-                          Valor do m²:{" "}
-                          {formatCurrency(
-                            simulacao.param_valor_venda / simulacao.imovel.area,
-                          )}
-                        </p>
+                        {item.param === "param_valor_venda" && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            Valor do m²:{" "}
+                            {formatCurrency(
+                              simulacao.param_valor_venda /
+                                simulacao.imovel.area,
+                            )}
+                          </p>
+                        )}
                       </div>
-                      <div>
-                        <label className="block text-sm text-gray-500">
-                          Tempo de venda (meses)
-                        </label>
+                    ))}
+                    <div className="bg-gray-50 p-4 rounded-md">
+                      <div className="flex items-center">
                         <input
-                          type="number"
-                          value={simulacao.param_tempo_venda || ""}
+                          type="checkbox"
+                          id="incide_ir"
+                          checked={simulacao.param_incide_ir === true}
                           onChange={(e) =>
                             handleParameterChange(
-                              "param_tempo_venda",
-                              e.target.value,
+                              "param_incide_ir",
+                              e.target.checked,
                             )
                           }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                          className="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                         />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-gray-500">
-                          Custo estimado reforma (R$)
+                        <label
+                          htmlFor="incide_ir"
+                          className="ml-2 block text-sm text-gray-700"
+                        >
+                          Incide Imposto de Renda?
                         </label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={simulacao.param_custo_reforma || ""}
-                          onChange={(e) =>
-                            handleParameterChange(
-                              "param_custo_reforma",
-                              e.target.value,
-                            )
-                          }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-gray-500">
-                          Taxa CET (%)
-                        </label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={simulacao.param_taxa_cet || ""}
-                          onChange={(e) =>
-                            handleParameterChange(
-                              "param_taxa_cet",
-                              e.target.value,
-                            )
-                          }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-gray-500">
-                          Prazo financiamento (meses)
-                        </label>
-                        <input
-                          type="number"
-                          value={simulacao.param_prazo_financiamento || ""}
-                          onChange={(e) =>
-                            handleParameterChange(
-                              "param_prazo_financiamento",
-                              e.target.value,
-                            )
-                          }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-gray-500">
-                          Corretagem venda (%)
-                        </label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          value={simulacao.param_corretagem_venda_pct || ""}
-                          onChange={(e) =>
-                            handleParameterChange(
-                              "param_corretagem_venda_pct",
-                              e.target.value,
-                            )
-                          }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                        />
-                      </div>
-                      <div>
-                        <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id="incide_ir"
-                            checked={simulacao.param_incide_ir === true}
-                            onChange={(e) =>
-                              handleParameterChange(
-                                "param_incide_ir",
-                                e.target.checked,
-                              )
-                            }
-                            className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer"
-                          />
-                          <label
-                            htmlFor="incide_ir"
-                            className="ml-2 text-sm text-gray-700 cursor-pointer"
-                          >
-                            Incide Imposto de Renda?
-                          </label>
-                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
                 <button
                   onClick={salvarSimulacao}
-                  className="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="mt-8 w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out"
                 >
                   Salvar simulação
                 </button>
               </div>
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h3 className="text-md font-medium mb-2">
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="text-xl font-semibold mb-6 text-gray-800">
                   Análise de Viabilidade
                 </h3>
-                <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
-                  <div>
-                    <h4 className="text-sm font-medium">Custos de Aquisição</h4>
-                    <p className="text-sm">
-                      Entrada: {formatCurrency(simulacao.calc_entrada)}
-                    </p>
-                    <p className="text-sm">
-                      ITBI: {formatCurrency(simulacao.calc_itbi)}
-                    </p>
-                    <p className="text-sm">
-                      Avaliação do Banco:{" "}
-                      {formatCurrency(simulacao.param_avaliacao_bancaria)}
-                    </p>
-                    <p className="text-sm">
-                      Registro:{" "}
-                      {formatCurrency(simulacao.valor_registro_cartorio)}
-                    </p>
-                    <p className="text-sm font-medium text-blue-600">
-                      Total:{" "}
-                      {formatCurrency(
+                <div className="space-y-6">
+                  {[
+                    {
+                      title: "Custos de Aquisição",
+                      items: [
+                        { label: "Entrada", value: simulacao.calc_entrada },
+                        { label: "ITBI", value: simulacao.calc_itbi },
+                        {
+                          label: "Avaliação do Banco",
+                          value: simulacao.param_avaliacao_bancaria,
+                        },
+                        {
+                          label: "Registro",
+                          value: simulacao.valor_registro_cartorio,
+                        },
+                      ],
+                      total:
                         simulacao.calc_entrada +
-                          simulacao.calc_itbi +
-                          simulacao.param_avaliacao_bancaria +
-                          simulacao.valor_registro_cartorio,
-                      )}
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium">Custos até a venda</h4>
-                    <p className="text-sm">
-                      Parcelas Financiamento:{" "}
-                      {formatCurrency(simulacao.calc_parcelas_rs)}
-                    </p>
-                    <p className="text-sm">
-                      Condomínio: {formatCurrency(simulacao.calc_condominio_rs)}
-                    </p>
-                    <p className="text-sm">
-                      IPTU: {formatCurrency(simulacao.iptu_total)}
-                    </p>
-                    <p className="text-sm">
-                      Contas gerais (água, luz, etc.):{" "}
-                      {formatCurrency(simulacao.contas_gerais_total)}
-                    </p>
-                    <p className="text-sm">
-                      Reforma: {formatCurrency(simulacao.param_custo_reforma)}
-                    </p>
-                    <p className="text-sm font-medium text-blue-600">
-                      Total:{" "}
-                      {formatCurrency(
+                        simulacao.calc_itbi +
+                        simulacao.param_avaliacao_bancaria +
+                        simulacao.valor_registro_cartorio,
+                    },
+                    {
+                      title: "Custos até a venda",
+                      items: [
+                        {
+                          label: "Parcelas Financiamento",
+                          value: simulacao.calc_parcelas_rs,
+                        },
+                        {
+                          label: "Condomínio",
+                          value: simulacao.calc_condominio_rs,
+                        },
+                        { label: "IPTU", value: simulacao.iptu_total },
+                        {
+                          label: "Contas gerais",
+                          value: simulacao.contas_gerais_total,
+                        },
+                        {
+                          label: "Reforma",
+                          value: simulacao.param_custo_reforma,
+                        },
+                      ],
+                      total:
                         simulacao.calc_parcelas_rs +
-                          simulacao.calc_condominio_rs +
-                          simulacao.iptu_total +
-                          simulacao.contas_gerais_total +
-                          simulacao.param_custo_reforma,
-                      )}
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium">Custos de Venda</h4>
-                    <p className="text-sm">
-                      Quitação do Financiamento:{" "}
-                      {formatCurrency(simulacao.calc_quitacao_rs)}
-                    </p>
-                    <p className="text-sm">
-                      Corretagem:{" "}
-                      {formatCurrency(
+                        simulacao.calc_condominio_rs +
+                        simulacao.iptu_total +
+                        simulacao.contas_gerais_total +
+                        simulacao.param_custo_reforma,
+                    },
+                    {
+                      title: "Custos de Venda",
+                      items: [
+                        {
+                          label: "Quitação do Financiamento",
+                          value: simulacao.calc_quitacao_rs,
+                        },
+                        {
+                          label: "Corretagem",
+                          value:
+                            simulacao.param_valor_venda *
+                            (simulacao.param_corretagem_venda_pct / 100),
+                        },
+                        {
+                          label: "Imposto de Renda",
+                          value: simulacao.imposto_renda,
+                        },
+                      ],
+                      total:
+                        simulacao.calc_quitacao_rs +
                         simulacao.param_valor_venda *
-                          (simulacao.param_corretagem_venda_pct / 100),
+                          (simulacao.param_corretagem_venda_pct / 100) +
+                        simulacao.imposto_renda,
+                    },
+                    {
+                      title: "Resultados",
+                      items: [
+                        {
+                          label: "Preço de venda (+)",
+                          value: simulacao.param_valor_venda,
+                        },
+                        {
+                          label: "Investimento total (-)",
+                          value: -simulacao.investimento_total,
+                        },
+                        {
+                          label: "Custo de venda (-)",
+                          value: -(
+                            simulacao.calc_quitacao_rs +
+                            simulacao.param_valor_venda *
+                              (simulacao.param_corretagem_venda_pct / 100) +
+                            simulacao.imposto_renda
+                          ),
+                        },
+                        {
+                          label: "Lucro líquido (=)",
+                          value: simulacao.lucro_liquido,
+                          highlight: true,
+                        },
+                        {
+                          label: "ROI (=)",
+                          value: `${(simulacao.roi_liquido * 100).toFixed(2)}%`,
+                          highlight: true,
+                        },
+                      ],
+                    },
+                  ].map((section, index) => (
+                    <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                      <h4 className="text-md font-medium text-gray-700 mb-2">
+                        {section.title}
+                      </h4>
+                      {section.items.map((item, itemIndex) => (
+                        <div
+                          key={itemIndex}
+                          className="flex justify-between text-sm"
+                        >
+                          <span className="text-gray-600">{item.label}</span>
+                          <span
+                            className={`font-medium ${
+                              item.highlight
+                                ? typeof item.value === "number"
+                                  ? item.value >= 0
+                                    ? "text-blue-600"
+                                    : "text-red-600"
+                                  : "text-blue-600"
+                                : "text-gray-800"
+                            }`}
+                          >
+                            {typeof item.value === "number"
+                              ? formatCurrency(item.value)
+                              : item.value}
+                          </span>
+                        </div>
+                      ))}
+                      {section.total !== undefined && (
+                        <div className="flex justify-between text-sm mt-2 pt-2 border-t border-gray-200">
+                          <span className="text-gray-600 font-medium">
+                            Total:
+                          </span>
+                          <span className="font-medium text-blue-600">
+                            {formatCurrency(section.total)}
+                          </span>
+                        </div>
                       )}
-                    </p>
-                    <p className="text-sm">
-                      Imposto de Renda:{" "}
-                      {formatCurrency(simulacao.imposto_renda)}
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium">Resultados</h4>
-                    <p className="text-sm">
-                      Investimento Total:{" "}
-                      {formatCurrency(simulacao.investimento_total)}
-                    </p>
-                    <p className="text-sm">
-                      Preço de Venda:{" "}
-                      {formatCurrency(simulacao.param_valor_venda)}
-                    </p>
-                    <p className="text-sm">
-                      Lucro Líquido: {formatCurrency(simulacao.lucro_liquido)}
-                    </p>
-                    <p className="text-sm font-medium text-blue-600">
-                      ROI: {(simulacao.roi_liquido * 100).toFixed(2)}%
-                    </p>
-                  </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
-            <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h2 className="text-lg font-semibold text-blue-800 mb-4">
+            <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+              <h2 className="text-xl font-semibold text-blue-800 mb-4">
                 Resumo do Investimento
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">

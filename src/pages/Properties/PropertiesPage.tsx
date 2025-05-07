@@ -233,14 +233,14 @@ const PropertiesPage: React.FC = () => {
           field === "data_anuncio"
             ? formData[field]
             : [
-                "preco_anunciado",
-                "area",
-                "quartos",
-                "banheiros",
-                "vagas",
-                "condominio_mensal",
-                "iptu_anual",
-              ].includes(field)
+                  "preco_anunciado",
+                  "area",
+                  "quartos",
+                  "banheiros",
+                  "vagas",
+                  "condominio_mensal",
+                  "iptu_anual",
+                ].includes(field)
               ? Number(formData[field])
               : formData[field];
       }
@@ -843,8 +843,10 @@ const PropertiesPage: React.FC = () => {
               Importar HTML
             </h2>
             <p className="text-gray-600 mb-4">
-              Faça upload de um arquivo HTML de um anúncio imobiliário para
-              importar automaticamente os detalhes da propriedade.
+              Faça upload de um arquivo HTML de um anúncio para importar
+              automaticamente os detalhes do imóvel. <br />
+              <br />
+              HTML aceitos: Quinto Andar, Zap imóveis, Loft
             </p>
 
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-4">

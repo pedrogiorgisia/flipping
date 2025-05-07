@@ -1,6 +1,20 @@
 import React from "react";
 import { Property } from "../../types/property";
-import { Home, DollarSign, MapPin, Calendar, ExternalLink } from "lucide-react";
+import {
+  Home,
+  DollarSign,
+  MapPin,
+  Calendar,
+  ExternalLink,
+  BedDouble,
+  Bath,
+  Car,
+  Square,
+  Info,
+  Code,
+  Building,
+} from "lucide-react";
+import Tooltip from "../Tooltip"; // Componente de tooltip a ser implementado
 
 interface PropertyDetailsProps {
   property: Property;
@@ -37,78 +51,131 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ property }) => {
           </a>
         </div>
       </div>
-      <div className="px-4 py-3">
-        <dl className="grid grid-cols-2 md:grid-cols-4 gap-x-3 gap-y-2">
-          <div>
-            <dt className="text-xs font-medium text-gray-500">Código</dt>
-            <dd className="text-sm text-gray-900">{property.code}</dd>
-          </div>
-          <div>
-            <dt className="text-xs font-medium text-gray-500">Imobiliária</dt>
-            <dd className="text-sm text-gray-900">{property.agency}</dd>
-          </div>
-          <div>
-            <dt className="text-xs font-medium text-gray-500">Preço</dt>
-            <dd className="text-sm text-gray-900 font-medium flex items-center">
-              <DollarSign size={14} className="mr-1 text-green-600" />
+      <div className="px-4 py-5">
+        <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-4">
+          <div className="col-span-full">
+            <dt className="text-sm font-medium text-gray-500">Preço</dt>
+            <dd className="mt-1 text-3xl font-semibold text-blue-600">
               {formatCurrency(property.price)}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs font-medium text-gray-500">Preço/m²</dt>
-            <dd className="text-sm text-gray-900">
-              {formatCurrency(property.price / property.area)}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs font-medium text-gray-500">Área</dt>
-            <dd className="text-sm text-gray-900">{property.area} m²</dd>
-          </div>
-          <div>
-            <dt className="text-xs font-medium text-gray-500">
-              Quartos/Banheiros
-            </dt>
-            <dd className="text-sm text-gray-900">
-              {property.bedrooms} / {property.bathrooms}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs font-medium text-gray-500">Vagas</dt>
-            <dd className="text-sm text-gray-900">{property.parkingSpaces}</dd>
-          </div>
-          <div>
-            <dt className="text-xs font-medium text-gray-500">Condomínio</dt>
-            <dd className="text-sm text-gray-900">
-              {formatCurrency(property.condoFee)}/mês
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs font-medium text-gray-500">IPTU</dt>
-            <dd className="text-sm text-gray-900">
-              {formatCurrency(property.yearlyTax)}/ano
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs font-medium text-gray-500">Anunciado em</dt>
-            <dd className="text-sm text-gray-900 flex items-center">
-              <Calendar size={14} className="mr-1 text-gray-400" />
-              {formatDate(property.createdAt)}
-            </dd>
-          </div>
-          <div className="col-span-2">
-            <dt className="text-xs font-medium text-gray-500">Endereço</dt>
-            <dd className="text-sm text-gray-900 flex items-start">
-              <MapPin
-                size={14}
-                className="mr-1 mt-0.5 flex-shrink-0 text-gray-400"
-              />
-              <span>{property.address}</span>
             </dd>
           </div>
 
           <div>
-            <dt className="text-xs font-medium text-gray-500">Status</dt>
-            <dd className="mt-0.5">
+            <dt className="text-sm font-medium text-gray-500 flex items-center">
+              <Square size={16} className="mr-2" />
+              Área
+            </dt>
+            <dd className="mt-1 text-sm text-gray-900">{property.area} m²</dd>
+          </div>
+
+          <div>
+            <dt className="text-sm font-medium text-gray-500 flex items-center">
+              <BedDouble size={16} className="mr-2" />
+              Quartos
+            </dt>
+            <dd className="mt-1 text-sm text-gray-900">{property.bedrooms}</dd>
+          </div>
+
+          <div>
+            <dt className="text-sm font-medium text-gray-500 flex items-center">
+              <Bath size={16} className="mr-2" />
+              Banheiros
+            </dt>
+            <dd className="mt-1 text-sm text-gray-900">{property.bathrooms}</dd>
+          </div>
+
+          <div>
+            <dt className="text-sm font-medium text-gray-500 flex items-center">
+              <Car size={16} className="mr-2" />
+              Vagas
+            </dt>
+            <dd className="mt-1 text-sm text-gray-900">
+              {property.parkingSpaces}
+            </dd>
+          </div>
+
+          <div>
+            <dt className="text-sm font-medium text-gray-500 flex items-center">
+              <DollarSign size={16} className="mr-2" />
+              Condomínio
+              <Tooltip content="Valor mensal do condomínio">
+                <Info size={14} className="ml-1 text-gray-400 cursor-help" />
+              </Tooltip>
+            </dt>
+            <dd className="mt-1 text-sm text-gray-900">
+              {formatCurrency(property.condoFee)}/mês
+            </dd>
+          </div>
+
+          <div>
+            <dt className="text-sm font-medium text-gray-500 flex items-center">
+              <DollarSign size={16} className="mr-2" />
+              IPTU
+              <Tooltip content="Imposto Predial e Territorial Urbano (anual)">
+                <Info size={14} className="ml-1 text-gray-400 cursor-help" />
+              </Tooltip>
+            </dt>
+            <dd className="mt-1 text-sm text-gray-900">
+              {formatCurrency(property.yearlyTax)}/ano
+            </dd>
+          </div>
+
+          <div>
+            <dt className="text-sm font-medium text-gray-500 flex items-center">
+              <DollarSign size={16} className="mr-2" />
+              Preço/m²
+            </dt>
+            <dd className="mt-1 text-sm text-gray-900">
+              {formatCurrency(property.price / property.area)}
+            </dd>
+          </div>
+
+          <div>
+            <dt className="text-sm font-medium text-gray-500 flex items-center">
+              <Code size={16} className="mr-2" />
+              Código
+            </dt>
+            <dd className="mt-1 text-sm text-gray-900">{property.code}</dd>
+          </div>
+
+          <div>
+            <dt className="text-sm font-medium text-gray-500 flex items-center">
+              <Building size={16} className="mr-2" />
+              Imobiliária
+            </dt>
+            <dd className="mt-1 text-sm text-gray-900">{property.agency}</dd>
+          </div>
+
+          <div>
+            <dt className="text-sm font-medium text-gray-500 flex items-center">
+              <Calendar size={16} className="mr-2" />
+              Anunciado em
+            </dt>
+            <dd className="mt-1 text-sm text-gray-900">
+              {formatDate(property.createdAt)}
+            </dd>
+          </div>
+
+          <div className="col-span-full">
+            <dt className="text-sm font-medium text-gray-500 flex items-center">
+              <MapPin size={16} className="mr-2" />
+              Endereço
+            </dt>
+            <dd className="mt-1 text-sm text-gray-900">
+              <a
+                href={`https://maps.google.com/?q=${encodeURIComponent(property.address)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                {property.address}
+              </a>
+            </dd>
+          </div>
+
+          <div className="col-span-full">
+            <dt className="text-sm font-medium text-gray-500">Status</dt>
+            <dd className="mt-1">
               <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                 Reformado
               </span>

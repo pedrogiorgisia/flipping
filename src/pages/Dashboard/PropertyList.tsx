@@ -70,9 +70,6 @@ const PropertyList: React.FC<PropertyListProps> = ({ properties }) => {
 
   return (
     <div className="bg-white shadow rounded-lg">
-      <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
-        <h3 className="text-lg font-medium text-gray-900">Oportunidades</h3>
-      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
