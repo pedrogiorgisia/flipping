@@ -552,23 +552,23 @@ const PropertiesPage: React.FC = () => {
                   <p>{formError}</p>
                 </div>
               )}
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <label className="block text-gray-700 mb-1" htmlFor="url">
-                    URL do anúncio
-                  </label>
-                  <input
-                    id="url"
-                    name="url"
-                    type="url"
-                    required
-                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                    placeholder="https://..."
-                    defaultValue={
-                      editingProperty?.url || importedData?.url || ""
-                    }
-                  />
-                  <div className="mt-1 flex items-center">
+              <div className="grid grid-cols-1 gap-4 text-sm">
+                <div className="flex items-end gap-4">
+                  <div className="flex-grow">
+                    <label className="block text-gray-700 mb-1" htmlFor="url">
+                      URL do anúncio
+                    </label>
+                    <input
+                      id="url"
+                      name="url"
+                      type="url"
+                      required
+                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                      placeholder="https://..."
+                      defaultValue={editingProperty?.url || importedData?.url || ""}
+                    />
+                  </div>
+                  <div className="flex-shrink-0">
                     <button
                       type="button"
                       onClick={async (e) => {
@@ -578,11 +578,11 @@ const PropertiesPage: React.FC = () => {
 
                         setFormError("");
                         setIsSaving(true);
-                        
+
                         try {
                           const formData = new FormData();
                           formData.append('url', url);
-                          
+
                           const response = await fetch('https://flippings.com.br/api/v1/parse-html', {
                             method: 'POST',
                             body: formData
@@ -601,7 +601,7 @@ const PropertiesPage: React.FC = () => {
                             const fields = ['imobiliaria', 'preco_anunciado', 'area', 'quartos', 
                               'banheiros', 'vagas', 'condominio_mensal', 'iptu_anual', 'endereco', 
                               'codigo_ref_externo', 'data_anuncio'];
-                            
+
                             fields.forEach(field => {
                               const input = formElement.querySelector(`[name="${field}"]`) as HTMLInputElement;
                               if (input && data[field] !== undefined) {
@@ -616,215 +616,155 @@ const PropertiesPage: React.FC = () => {
                         }
                       }}
                       disabled={isSaving}
-                      className="text-xs text-gray-500 hover:text-blue-600 disabled:opacity-50"
+                      className="px-4 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 disabled:opacity-50 h-[34px]"
                     >
-                      {isSaving ? (
-                        <span className="inline-flex items-center">
-                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          Importando...
-                        </span>
-                      ) : "Importar dados do anúncio"}
+                      {isSaving ? "Importando..." : "Importar dados do anúncio"}
                     </button>
                   </div>
                 </div>
-                <div>
-                  <label
-                    className="block text-gray-700 mb-1"
-                    htmlFor="imobiliaria"
-                  >
-                    Imobiliária
-                  </label>
-                  <input
-                    id="imobiliaria"
-                    name="imobiliaria"
-                    type="text"
-                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                    defaultValue={
-                      editingProperty?.imobiliaria ||
-                      importedData?.imobiliaria ||
-                      ""
-                    }
-                  />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-gray-700 mb-1" htmlFor="imobiliaria">
+                      Imobiliária
+                    </label>
+                    <input
+                      id="imobiliaria"
+                      name="imobiliaria"
+                      type="text"
+                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                      defaultValue={editingProperty?.imobiliaria || importedData?.imobiliaria || ""}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-1" htmlFor="preco_anunciado">
+                      Preço (R$)
+                    </label>
+                    <input
+                      id="preco_anunciado"
+                      name="preco_anunciado"
+                      type="number"
+                      required
+                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                      placeholder="0,00"
+                      defaultValue={editingProperty?.preco_anunciado || importedData?.preco_anunciado || ""}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-1" htmlFor="area">
+                      Área (m²)
+                    </label>
+                    <input
+                      id="area"
+                      name="area"
+                      type="number"
+                      required
+                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                      placeholder="0"
+                      defaultValue={editingProperty?.area || importedData?.area || ""}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-1" htmlFor="quartos">
+                      Quartos
+                    </label>
+                    <input
+                      id="quartos"
+                      name="quartos"
+                      type="number"
+                      required
+                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                      placeholder="0"
+                      defaultValue={editingProperty?.quartos || importedData?.quartos || ""}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-1" htmlFor="banheiros">
+                      Banheiros
+                    </label>
+                    <input
+                      id="banheiros"
+                      name="banheiros"
+                      type="number"
+                      required
+                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                      placeholder="0"
+                      defaultValue={editingProperty?.banheiros || importedData?.banheiros || ""}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-1" htmlFor="vagas">
+                      Vagas
+                    </label>
+                    <input
+                      id="vagas"
+                      name="vagas"
+                      type="number"
+                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                      placeholder="0"
+                      defaultValue={editingProperty?.vagas || importedData?.vagas || ""}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-1" htmlFor="condominio_mensal">
+                      Condomínio mensal (R$)
+                    </label>
+                    <input
+                      id="condominio_mensal"
+                      name="condominio_mensal"
+                      type="number"
+                      required
+                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                      placeholder="0,00"
+                      defaultValue={editingProperty?.condominio_mensal || importedData?.condominio_mensal || ""}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-1" htmlFor="iptu_anual">
+                      IPTU anual (R$)
+                    </label>
+                    <input
+                      id="iptu_anual"
+                      name="iptu_anual"
+                      type="number"
+                      required
+                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                      placeholder="0,00"
+                      defaultValue={editingProperty?.iptu_anual || importedData?.iptu_anual || ""}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-1" htmlFor="codigo_ref_externo">
+                      Código
+                    </label>
+                    <input
+                      id="codigo_ref_externo"
+                      name="codigo_ref_externo"
+                      type="text"
+                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                      defaultValue={editingProperty?.codigo_ref_externo || importedData?.codigo_ref_externo || ""}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-1" htmlFor="data_anuncio">
+                      Data do anúncio
+                    </label>
+                    <input
+                      id="data_anuncio"
+                      name="data_anuncio"
+                      type="date"
+                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                      defaultValue={
+                        editingProperty?.data_anuncio
+                          ? new Date(editingProperty.data_anuncio).toISOString().split("T")[0]
+                          : importedData?.data_anuncio || ""
+                      }
+                    />
+                  </div>
                 </div>
+
                 <div>
-                  <label
-                    className="block text-gray-700 mb-1"
-                    htmlFor="preco_anunciado"
-                  >
-                    Preço (R$)
-                  </label>
-                  <input
-                    id="preco_anunciado"
-                    name="preco_anunciado"
-                    type="number"
-                    required
-                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                    placeholder="0,00"
-                    defaultValue={
-                      editingProperty?.preco_anunciado ||
-                      importedData?.preco_anunciado ||
-                      ""
-                    }
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700 mb-1" htmlFor="area">
-                    Área (m²)
-                  </label>
-                  <input
-                    id="area"
-                    name="area"
-                    type="number"
-                    required
-                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                    placeholder="0"
-                    defaultValue={
-                      editingProperty?.area || importedData?.area || ""
-                    }
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700 mb-1" htmlFor="quartos">
-                    Quartos
-                  </label>
-                  <input
-                    id="quartos"
-                    name="quartos"
-                    type="number"
-                    required
-                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                    placeholder="0"
-                    defaultValue={
-                      editingProperty?.quartos || importedData?.quartos || ""
-                    }
-                  />
-                </div>
-                <div>
-                  <label
-                    className="block text-gray-700 mb-1"
-                    htmlFor="banheiros"
-                  >
-                    Banheiros
-                  </label>
-                  <input
-                    id="banheiros"
-                    name="banheiros"
-                    type="number"
-                    required
-                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                    placeholder="0"
-                    defaultValue={
-                      editingProperty?.banheiros ||
-                      importedData?.banheiros ||
-                      ""
-                    }
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700 mb-1" htmlFor="vagas">
-                    Vagas
-                  </label>
-                  <input
-                    id="vagas"
-                    name="vagas"
-                    type="number"
-                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                    placeholder="0"
-                    defaultValue={
-                      editingProperty?.vagas || importedData?.vagas || ""
-                    }
-                  />
-                </div>
-                <div>
-                  <label
-                    className="block text-gray-700 mb-1"
-                    htmlFor="condominio_mensal"
-                  >
-                    Condomínio mensal (R$)
-                  </label>
-                  <input
-                    id="condominio_mensal"
-                    name="condominio_mensal"
-                    type="number"
-                    required
-                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                    placeholder="0,00"
-                    defaultValue={
-                      editingProperty?.condominio_mensal ||
-                      importedData?.condominio_mensal ||
-                      ""
-                    }
-                  />
-                </div>
-                <div>
-                  <label
-                    className="block text-gray-700 mb-1"
-                    htmlFor="iptu_anual"
-                  >
-                    IPTU anual (R$)
-                  </label>
-                  <input
-                    id="iptu_anual"
-                    name="iptu_anual"
-                    type="number"
-                    required
-                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                    placeholder="0,00"
-                    defaultValue={
-                      editingProperty?.iptu_anual ||
-                      importedData?.iptu_anual ||
-                      ""
-                    }
-                  />
-                </div>
-                <div>
-                  <label
-                    className="block text-gray-700 mb-1"
-                    htmlFor="codigo_ref_externo"
-                  >
-                    Código
-                  </label>
-                  <input
-                    id="codigo_ref_externo"
-                    name="codigo_ref_externo"
-                    type="text"
-                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                    defaultValue={
-                      editingProperty?.codigo_ref_externo ||
-                      importedData?.codigo_ref_externo ||
-                      ""
-                    }
-                  />
-                </div>
-                <div>
-                  <label
-                    className="block text-gray-700 mb-1"
-                    htmlFor="data_anuncio"
-                  >
-                    Data do anúncio
-                  </label>
-                  <input
-                    id="data_anuncio"
-                    name="data_anuncio"
-                    type="date"
-                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                    defaultValue={
-                      editingProperty?.data_anuncio
-                        ? new Date(editingProperty.data_anuncio)
-                            .toISOString()
-                            .split("T")[0]
-                        : importedData?.data_anuncio || ""
-                    }
-                  />
-                </div>
-                <div className="col-span-2">
-                  <label
-                    className="block text-gray-700 mb-1"
-                    htmlFor="endereco"
-                  >
+                  <label className="block text-gray-700 mb-1" htmlFor="endereco">
                     Endereço
                   </label>
                   <input
@@ -833,31 +773,22 @@ const PropertiesPage: React.FC = () => {
                     type="text"
                     required
                     className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                    defaultValue={
-                      editingProperty?.endereco || importedData?.endereco || ""
-                    }
+                    defaultValue={editingProperty?.endereco || importedData?.endereco || ""}
                   />
                 </div>
-                <div className="col-span-2">
+                <div>
                   <label className="flex items-center">
                     <input
                       name="reformado"
                       type="checkbox"
                       className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                      defaultChecked={
-                        editingProperty?.reformado ||
-                        importedData?.reformado ||
-                        false
-                      }
+                      defaultChecked={editingProperty?.reformado || importedData?.reformado || false}
                     />
                     <span className="ml-2 text-gray-700">Reformado</span>
                   </label>
                 </div>
-                <div className="col-span-2">
-                  <label
-                    className="block text-gray-700 mb-1"
-                    htmlFor="comentarios"
-                  >
+                <div>
+                  <label className="block text-gray-700 mb-1" htmlFor="comentarios">
                     Comentários
                   </label>
                   <textarea
@@ -865,11 +796,7 @@ const PropertiesPage: React.FC = () => {
                     name="comentarios"
                     rows={2}
                     className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                    defaultValue={
-                      editingProperty?.comentarios ||
-                      importedData?.comentarios ||
-                      ""
-                    }
+                    defaultValue={editingProperty?.comentarios || importedData?.comentarios || ""}
                   ></textarea>
                 </div>
               </div>
