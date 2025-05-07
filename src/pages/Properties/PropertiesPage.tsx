@@ -568,6 +568,67 @@ const PropertiesPage: React.FC = () => {
                       editingProperty?.url || importedData?.url || ""
                     }
                   />
+                  <div className="mt-1 flex items-center">
+                    <button
+                      type="button"
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        const url = (document.getElementById('url') as HTMLInputElement).value;
+                        if (!url) return;
+
+                        setFormError("");
+                        setIsSaving(true);
+                        
+                        try {
+                          const formData = new FormData();
+                          formData.append('url', url);
+                          
+                          const response = await fetch('https://flippings.com.br/api/v1/parse-html', {
+                            method: 'POST',
+                            body: formData
+                          });
+
+                          if (!response.ok) {
+                            throw new Error('Failed to parse URL');
+                          }
+
+                          const data = await response.json();
+                          setImportedData(data);
+
+                          // Fill all form fields with the imported data
+                          const formElement = e.target.closest('form');
+                          if (formElement) {
+                            const fields = ['imobiliaria', 'preco_anunciado', 'area', 'quartos', 
+                              'banheiros', 'vagas', 'condominio_mensal', 'iptu_anual', 'endereco', 
+                              'codigo_ref_externo', 'data_anuncio'];
+                            
+                            fields.forEach(field => {
+                              const input = formElement.querySelector(`[name="${field}"]`) as HTMLInputElement;
+                              if (input && data[field] !== undefined) {
+                                input.value = data[field];
+                              }
+                            });
+                          }
+                        } catch (error) {
+                          setFormError("Não foi possível capturar os dados do anúncio");
+                        } finally {
+                          setIsSaving(false);
+                        }
+                      }}
+                      disabled={isSaving}
+                      className="text-xs text-gray-500 hover:text-blue-600 disabled:opacity-50"
+                    >
+                      {isSaving ? (
+                        <span className="inline-flex items-center">
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Importando...
+                        </span>
+                      ) : "Importar dados do anúncio"}
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <label
