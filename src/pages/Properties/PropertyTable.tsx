@@ -76,12 +76,6 @@ const PropertyTable: React.FC<PropertyTableProps> = ({
             </th>
             <th
               scope="col"
-              className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Comentários
-            </th>
-            <th
-              scope="col"
               className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
               Ações
@@ -115,11 +109,6 @@ const PropertyTable: React.FC<PropertyTableProps> = ({
               <td className="px-4 py-3 whitespace-nowrap">
                 <div className="text-sm text-gray-900">
                   {formatCurrency(property.iptu_anual)}
-                </div>
-              </td>
-              <td className="px-4 py-3 whitespace-nowrap">
-                <div className="text-sm text-gray-900">
-                  {truncateText(property.comentarios || "")}
                 </div>
               </td>
               <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium space-x-2">

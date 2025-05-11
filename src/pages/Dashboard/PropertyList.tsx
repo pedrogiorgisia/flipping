@@ -112,12 +112,6 @@ const PropertyList: React.FC<PropertyListProps> = ({ properties, onEdit }) => {
                 scope="col"
                 className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
               >
-                Custo Reforma
-              </th>
-              <th
-                scope="col"
-                className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-              >
                 Valor m² Venda
               </th>
               <th
@@ -151,9 +145,6 @@ const PropertyList: React.FC<PropertyListProps> = ({ properties, onEdit }) => {
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-900">
                   {formatCurrency(property.valor_m2_compra)}
-                </td>
-                <td className="px-4 py-3 text-sm text-gray-900">
-                  {formatCurrency(property.param_custo_reforma)}
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-900">
                   {formatCurrency(property.valor_m2_venda)}

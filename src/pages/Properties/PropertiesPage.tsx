@@ -354,6 +354,22 @@ const PropertiesPage: React.FC = () => {
     }
   };
 
+  const handleClearFilters = () => {
+    setFilters({
+      valor_min: "",
+      valor_max: "",
+      area_min: "",
+      area_max: "",
+      quartos: "",
+      banheiros: "",
+      reformado: "",
+      condominio_min: "",
+      condominio_max: "",
+      m2_min: "",
+      m2_max: "",
+    });
+  };
+
   if (isLoading) {
     return (
       <MainLayout>
@@ -381,7 +397,7 @@ const PropertiesPage: React.FC = () => {
               <Plus size={16} className="mr-2" />
               Novo Imóvel
             </button>
-            
+
           </div>
           <div className="flex flex-wrap items-center gap-4">
             <div className="grid grid-cols-3 gap-4">
@@ -448,7 +464,7 @@ const PropertiesPage: React.FC = () => {
                 </select>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center space-x-2">
               <button
                 onClick={() =>
                   setFilters({
@@ -531,7 +547,7 @@ const PropertiesPage: React.FC = () => {
         editingProperty={editingProperty}
         onSave={fetchProperties}
       />
-      
+
     </MainLayout>
   );
 };
