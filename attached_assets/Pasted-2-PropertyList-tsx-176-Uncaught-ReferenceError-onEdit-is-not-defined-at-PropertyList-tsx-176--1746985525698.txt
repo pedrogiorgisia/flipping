@@ -1,0 +1,30 @@
+2
+PropertyList.tsx:176 Uncaught ReferenceError: onEdit is not defined
+    at PropertyList.tsx:176:20
+    at Array.map (<anonymous>)
+    at PropertyList (PropertyList.tsx:135:31)
+chunk-6BKLQ22S.js?v=4818f315:14032 The above error occurred in the <PropertyList> component:
+
+    at PropertyList (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/src/pages/Dashboard/PropertyList.tsx?t=1746985418266:22:25)
+    at div
+    at main
+    at div
+    at div
+    at MainLayout (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/src/components/Layout/MainLayout.tsx:19:23)
+    at DashboardPage (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/src/pages/Dashboard/DashboardPage.tsx?t=1746985418608:38:31)
+    at RenderedRoute (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=4818f315:4089:5)
+    at Routes (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=4818f315:4559:5)
+    at RenderedRoute (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=4818f315:4089:5)
+    at Routes (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=4818f315:4559:5)
+    at AnalysisProvider (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/src/context/AnalysisContext.tsx:23:3)
+    at AuthProvider (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/src/context/AuthContext.tsx:21:32)
+    at Router (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=4818f315:4502:15)
+    at BrowserRouter (https://d38afb24-df1e-444b-becb-9d7f135f422d-00-26wl180jwg2g9.kirk.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=4818f315:5248:5)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+chunk-6BKLQ22S.js?v=4818f315:19413 Uncaught ReferenceError: onEdit is not defined
+    at PropertyList.tsx:176:20
+    at Array.map (<anonymous>)
+    at PropertyList (PropertyList.tsx:135:31)
