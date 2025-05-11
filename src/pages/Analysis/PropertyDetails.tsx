@@ -72,7 +72,7 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
           Ver anúncio
         </a>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {detailItems.map((item, index) => (
           <div key={index} className="flex items-center space-x-3">
             <div className="text-blue-600 text-xl">{item.icon}</div>
@@ -83,6 +83,19 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
           </div>
         ))}
       </div>
+      {property.comentarios && (
+        <div className="border-t pt-4">
+          <div className="flex items-start space-x-3">
+            <div className="text-blue-600 text-xl mt-1">
+              <FaFileInvoiceDollar />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Comentários</p>
+              <p className="font-medium text-gray-800 whitespace-pre-line">{property.comentarios}</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
