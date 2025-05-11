@@ -1,5 +1,5 @@
 import React from "react";
-import { ExternalLink, FileText } from "lucide-react";
+import { ExternalLink, FileText, Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffectiveAnalysisId } from "../../hooks/useEffectiveAnalysisId";
 import { useAnalysisContext } from "../../context/AnalysisContext";
