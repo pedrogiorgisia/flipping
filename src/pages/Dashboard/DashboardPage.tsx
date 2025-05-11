@@ -130,20 +130,20 @@ const DashboardPage: React.FC = () => {
 
   const getFilteredProperties = useCallback(() => {
     return properties.filter((property) => {
-      const roiPercentage = property.calc_roi * 100;
-      return (
-        property?.endereco?.toLowerCase().includes(enderecoFilter.toLowerCase()) &&
-        (areaMinFilter === "" ||
-          property?.area >= parseFloat(areaMinFilter)) &&
-        (areaMaxFilter === "" ||
-          property?.area <= parseFloat(areaMaxFilter)) &&
-        (precoAnunciadoMinFilter === "" ||
-          property?.preco_anunciado >= parseFloat(precoAnunciadoMinFilter)) &&
-        (precoAnunciadoMaxFilter === "" ||
-          property?.preco_anunciado <= parseFloat(precoAnunciadoMaxFilter)) &&
-        (roiMinFilter === "" || roiPercentage >= parseFloat(roiMinFilter))
-      );
-    });
+          const roiPercentage = property.calc_roi * 100;
+          return (
+            property.imovel?.endereco?.toLowerCase().includes(enderecoFilter.toLowerCase()) &&
+            (areaMinFilter === "" ||
+              property.imovel?.area >= parseFloat(areaMinFilter)) &&
+            (areaMaxFilter === "" ||
+              property.imovel?.area <= parseFloat(areaMaxFilter)) &&
+            (precoAnunciadoMinFilter === "" ||
+              property.imovel?.preco_anunciado >= parseFloat(precoAnunciadoMinFilter)) &&
+            (precoAnunciadoMaxFilter === "" ||
+              property.imovel?.preco_anunciado <= parseFloat(precoAnunciadoMaxFilter)) &&
+            (roiMinFilter === "" || roiPercentage >= parseFloat(roiMinFilter))
+          );
+        });
   }, [
     properties,
     enderecoFilter,
