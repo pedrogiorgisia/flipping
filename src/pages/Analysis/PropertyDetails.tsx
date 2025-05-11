@@ -91,7 +91,9 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
             </div>
             <div className="w-full">
               <p className="text-sm text-gray-500">Comentários</p>
-              <p className="font-medium text-gray-800 whitespace-pre-line">{property.comentarios || "-"}</p>
+              <p className="font-medium text-gray-800 whitespace-pre-line">
+                {property.comentarios || "-"}
+              </p>
             </div>
           </div>
         </div>
