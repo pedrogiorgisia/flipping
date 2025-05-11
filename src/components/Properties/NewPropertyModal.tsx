@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Property } from "../../types/property";
 import toast from "react-hot-toast";
@@ -9,6 +8,7 @@ interface NewPropertyModalProps {
   onClose: () => void;
   editingProperty?: Property | null;
   onSave: () => void;
+  isReformed?: boolean;
 }
 
 const NewPropertyModal: React.FC<NewPropertyModalProps> = ({
@@ -16,6 +16,7 @@ const NewPropertyModal: React.FC<NewPropertyModalProps> = ({
   onClose,
   editingProperty,
   onSave,
+  isReformed,
 }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState<string>("");
@@ -374,8 +375,9 @@ const NewPropertyModal: React.FC<NewPropertyModalProps> = ({
                 <input
                   name="reformado"
                   type="checkbox"
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  defaultChecked={editingProperty?.reformado || importedData?.reformado || false}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-not-allowed opacity-50"
+                  checked={isReformed ?? true}
+                  disabled
                 />
                 <span className="ml-2 text-gray-700">Reformado</span>
               </label>

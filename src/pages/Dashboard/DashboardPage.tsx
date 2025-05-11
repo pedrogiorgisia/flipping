@@ -38,6 +38,65 @@ const useEffectiveAnalysisId = () => {
   return analysisIdFromParams || analysisIdFromState || null;
 };
 
+interface NewPropertyModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: () => void;
+  isReformed: boolean;
+}
+
+const NewPropertyModal: React.FC<NewPropertyModalProps> = ({
+  isOpen,
+  onClose,
+  onSave,
+  isReformed,
+}) => {
+  const [reformado, setReformado] = useState(isReformed);
+
+  useEffect(() => {
+    setReformado(isReformed);
+  }, [isReformed]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+      <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div className="mt-3 text-center">
+          <h3 className="text-lg leading-6 font-medium text-gray-900">
+            Novo Imóvel
+          </h3>
+          <div className="mt-2 px-7 py-3">
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                className="form-checkbox h-5 w-5 text-blue-600"
+                checked={reformado}
+                disabled={true}
+              />
+              <span className="ml-2 text-gray-700">Reformado</span>
+            </label>
+          </div>
+          <div className="items-center px-4 py-3">
+            <button
+              className="px-4 py-2 bg-green-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300"
+              onClick={onSave}
+            >
+              Salvar
+            </button>
+            <button
+              className="px-4 py-2 bg-red-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 mt-2"
+              onClick={onClose}
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const DashboardPage: React.FC = () => {
   const effectiveAnalysisId = useEffectiveAnalysisId();
 
@@ -59,6 +118,7 @@ const DashboardPage: React.FC = () => {
   const [precoAnunciadoMinFilter, setPrecoAnunciadoMinFilter] = useState("");
   const [precoAnunciadoMaxFilter, setPrecoAnunciadoMaxFilter] = useState("");
   const [roiMinFilter, setRoiMinFilter] = useState("");
+    const [isNewPropertyModalOpen, setIsNewPropertyModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -330,7 +390,23 @@ const DashboardPage: React.FC = () => {
         {properties.length > 0 && (
           <PropertyList properties={getFilteredProperties()} />
         )}
+              <button
+          onClick={() => setIsNewPropertyModalOpen(true)}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Novo Imóvel
+        </button>
       </div>
+      
+      <NewPropertyModal
+          isOpen={isNewPropertyModalOpen}
+          onClose={() => setIsNewPropertyModalOpen(false)}
+          onSave={() => {
+            fetchData();
+            setIsNewPropertyModalOpen(false);
+          }}
+          isReformed={false}
+        />
     </MainLayout>
   );
 };
