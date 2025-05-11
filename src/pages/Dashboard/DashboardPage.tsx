@@ -350,7 +350,13 @@ const DashboardPage: React.FC = () => {
           isOpen={isNewPropertyModalOpen}
           onClose={() => setIsNewPropertyModalOpen(false)}
           onSave={() => {
-            fetchData();
+            // Refresh properties list
+            if (effectiveAnalysisId) {
+              fetch(`https://flippings.com.br/imoveis?id_analise=${effectiveAnalysisId}`)
+                .then(response => response.json())
+                .then(data => setProperties(data))
+                .catch(error => console.error("Error fetching properties:", error));
+            }
             setIsNewPropertyModalOpen(false);
           }}
           isReformed={false}

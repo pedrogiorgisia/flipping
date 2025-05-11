@@ -294,6 +294,7 @@ const NewPropertyModal: React.FC<NewPropertyModalProps> = ({
                   id="vagas"
                   name="vagas"
                   type="number"
+                  required
                   className="w-full px-2 py-1 border border-gray-300 rounded-md"
                   placeholder="0"
                   defaultValue={editingProperty?.vagas || importedData?.vagas || ""}
