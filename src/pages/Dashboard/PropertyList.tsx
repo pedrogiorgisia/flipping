@@ -37,13 +37,16 @@ const PropertyList: React.FC<PropertyListProps> = ({ properties, onEdit }) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(value);
   };
 
   const formatPercentage = (value: number) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "percent",
-      minimumFractionDigits: 1,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(value);
   };
 
