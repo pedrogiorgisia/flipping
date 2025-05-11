@@ -1,187 +1,87 @@
 import React from "react";
-import { Property } from "../../types/property";
 import {
-  Home,
-  DollarSign,
-  MapPin,
-  Calendar,
-  ExternalLink,
-  BedDouble,
-  Bath,
-  Car,
-  Square,
-  Info,
-  Code,
-  Building,
-} from "lucide-react";
-import Tooltip from "../Tooltip"; // Componente de tooltip a ser implementado
+  FaBed,
+  FaBath,
+  FaCar,
+  FaRulerCombined,
+  FaCalendarAlt,
+  FaBuilding,
+  FaMapMarkerAlt,
+  FaMoneyBillWave,
+  FaFileInvoiceDollar,
+  FaHashtag,
+} from "react-icons/fa";
 
 interface PropertyDetailsProps {
-  property: Property;
+  property: any;
+  formatCurrency: (value: number) => string;
 }
 
-const PropertyDetails: React.FC<PropertyDetailsProps> = ({ property }) => {
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
-  };
+const PropertyDetails: React.FC<PropertyDetailsProps> = ({
+  property,
+  formatCurrency,
+}) => {
+  if (!property) return null;
 
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("pt-BR").format(date);
-  };
+  const detailItems = [
+    { icon: <FaMapMarkerAlt />, label: "Endereço", value: property.endereco },
+    { icon: <FaRulerCombined />, label: "Área", value: `${property.area} m²` },
+    {
+      icon: <FaMoneyBillWave />,
+      label: "Preço Anunciado",
+      value: formatCurrency(property.preco_anunciado),
+    },
+    { icon: <FaBuilding />, label: "Imobiliária", value: property.imobiliaria },
+    {
+      icon: <FaCalendarAlt />,
+      label: "Data do Anúncio",
+      value: property.data_anuncio
+        ? new Date(property.data_anuncio).toLocaleDateString("pt-BR")
+        : "Não disponível",
+    },
+    {
+      icon: <FaHashtag />,
+      label: "Código de Referência",
+      value: property.codigo_ref_externo,
+    },
+    { icon: <FaBed />, label: "Quartos", value: property.quartos },
+    { icon: <FaBath />, label: "Banheiros", value: property.banheiros },
+    { icon: <FaCar />, label: "Vagas", value: property.vagas },
+    {
+      icon: <FaMoneyBillWave />,
+      label: "Condomínio Mensal",
+      value: formatCurrency(property.condominio_mensal),
+    },
+    {
+      icon: <FaFileInvoiceDollar />,
+      label: "IPTU Anual",
+      value: formatCurrency(property.iptu_anual),
+    },
+  ];
 
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
-      <div className="px-4 py-5 sm:px-6 border-b border-gray-200 bg-gray-50">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-medium text-gray-900 flex items-center">
-            <Home size={20} className="mr-2 text-blue-600" />
-            Detalhes do Imóvel
-          </h3>
-          <a
-            href={property.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:text-blue-800 flex items-center"
-          >
-            <ExternalLink size={16} className="mr-1" />
-            Ver Anúncio
-          </a>
-        </div>
+    <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">Detalhes do Imóvel</h2>
+        <a
+          href={property.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300"
+        >
+          Ver anúncio
+        </a>
       </div>
-      <div className="px-4 py-5">
-        <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-4">
-          <div className="col-span-full">
-            <dt className="text-sm font-medium text-gray-500">Preço</dt>
-            <dd className="mt-1 text-3xl font-semibold text-blue-600">
-              {formatCurrency(property.price)}
-            </dd>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {detailItems.map((item, index) => (
+          <div key={index} className="flex items-center space-x-3">
+            <div className="text-blue-600 text-xl">{item.icon}</div>
+            <div>
+              <p className="text-sm text-gray-500">{item.label}</p>
+              <p className="font-medium text-gray-800">{item.value}</p>
+            </div>
           </div>
-
-          <div>
-            <dt className="text-sm font-medium text-gray-500 flex items-center">
-              <Square size={16} className="mr-2" />
-              Área
-            </dt>
-            <dd className="mt-1 text-sm text-gray-900">{property.area} m²</dd>
-          </div>
-
-          <div>
-            <dt className="text-sm font-medium text-gray-500 flex items-center">
-              <BedDouble size={16} className="mr-2" />
-              Quartos
-            </dt>
-            <dd className="mt-1 text-sm text-gray-900">{property.bedrooms}</dd>
-          </div>
-
-          <div>
-            <dt className="text-sm font-medium text-gray-500 flex items-center">
-              <Bath size={16} className="mr-2" />
-              Banheiros
-            </dt>
-            <dd className="mt-1 text-sm text-gray-900">{property.bathrooms}</dd>
-          </div>
-
-          <div>
-            <dt className="text-sm font-medium text-gray-500 flex items-center">
-              <Car size={16} className="mr-2" />
-              Vagas
-            </dt>
-            <dd className="mt-1 text-sm text-gray-900">
-              {property.parkingSpaces}
-            </dd>
-          </div>
-
-          <div>
-            <dt className="text-sm font-medium text-gray-500 flex items-center">
-              <DollarSign size={16} className="mr-2" />
-              Condomínio
-              <Tooltip content="Valor mensal do condomínio">
-                <Info size={14} className="ml-1 text-gray-400 cursor-help" />
-              </Tooltip>
-            </dt>
-            <dd className="mt-1 text-sm text-gray-900">
-              {formatCurrency(property.condoFee)}/mês
-            </dd>
-          </div>
-
-          <div>
-            <dt className="text-sm font-medium text-gray-500 flex items-center">
-              <DollarSign size={16} className="mr-2" />
-              IPTU
-              <Tooltip content="Imposto Predial e Territorial Urbano (anual)">
-                <Info size={14} className="ml-1 text-gray-400 cursor-help" />
-              </Tooltip>
-            </dt>
-            <dd className="mt-1 text-sm text-gray-900">
-              {formatCurrency(property.yearlyTax)}/ano
-            </dd>
-          </div>
-
-          <div>
-            <dt className="text-sm font-medium text-gray-500 flex items-center">
-              <DollarSign size={16} className="mr-2" />
-              Preço/m²
-            </dt>
-            <dd className="mt-1 text-sm text-gray-900">
-              {formatCurrency(property.price / property.area)}
-            </dd>
-          </div>
-
-          <div>
-            <dt className="text-sm font-medium text-gray-500 flex items-center">
-              <Code size={16} className="mr-2" />
-              Código
-            </dt>
-            <dd className="mt-1 text-sm text-gray-900">{property.code}</dd>
-          </div>
-
-          <div>
-            <dt className="text-sm font-medium text-gray-500 flex items-center">
-              <Building size={16} className="mr-2" />
-              Imobiliária
-            </dt>
-            <dd className="mt-1 text-sm text-gray-900">{property.agency}</dd>
-          </div>
-
-          <div>
-            <dt className="text-sm font-medium text-gray-500 flex items-center">
-              <Calendar size={16} className="mr-2" />
-              Anunciado em
-            </dt>
-            <dd className="mt-1 text-sm text-gray-900">
-              {formatDate(property.createdAt)}
-            </dd>
-          </div>
-
-          <div className="col-span-full">
-            <dt className="text-sm font-medium text-gray-500 flex items-center">
-              <MapPin size={16} className="mr-2" />
-              Endereço
-            </dt>
-            <dd className="mt-1 text-sm text-gray-900">
-              <a
-                href={`https://maps.google.com/?q=${encodeURIComponent(property.address)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
-                {property.address}
-              </a>
-            </dd>
-          </div>
-
-          <div className="col-span-full">
-            <dt className="text-sm font-medium text-gray-500">Status</dt>
-            <dd className="mt-1">
-              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                Reformado
-              </span>
-            </dd>
-          </div>
-        </dl>
+        ))}
       </div>
     </div>
   );
