@@ -36,12 +36,12 @@ const Sidebar: React.FC = () => {
     {
       to: `/analysis/${analysisId}/dashboard`,
       icon: <Home size={20} />,
-      label: "Dashboard",
+      label: "Dashboard - Oportunidades",
     },
     {
       to: `/analysis/${analysisId}/properties`,
       icon: <Database size={20} />,
-      label: "Base de Imóveis",
+      label: "Reformados / Referências",
     },
     {
       to: `/analysis/${analysisId}/settings`,
