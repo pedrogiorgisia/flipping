@@ -132,19 +132,15 @@ const DashboardPage: React.FC = () => {
     return properties.filter((property) => {
       const roiPercentage = property.calc_roi * 100;
       return (
-        property.imovel.endereco
-          .toLowerCase()
-          .includes(enderecoFilter.toLowerCase()) &&
+        property?.endereco?.toLowerCase().includes(enderecoFilter.toLowerCase()) &&
         (areaMinFilter === "" ||
-          property.imovel.area >= parseFloat(areaMinFilter)) &&
+          property?.area >= parseFloat(areaMinFilter)) &&
         (areaMaxFilter === "" ||
-          property.imovel.area <= parseFloat(areaMaxFilter)) &&
+          property?.area <= parseFloat(areaMaxFilter)) &&
         (precoAnunciadoMinFilter === "" ||
-          property.imovel.preco_anunciado >=
-            parseFloat(precoAnunciadoMinFilter)) &&
+          property?.preco_anunciado >= parseFloat(precoAnunciadoMinFilter)) &&
         (precoAnunciadoMaxFilter === "" ||
-          property.imovel.preco_anunciado <=
-            parseFloat(precoAnunciadoMaxFilter)) &&
+          property?.preco_anunciado <= parseFloat(precoAnunciadoMaxFilter)) &&
         (roiMinFilter === "" || roiPercentage >= parseFloat(roiMinFilter))
       );
     });
@@ -345,7 +341,7 @@ const DashboardPage: React.FC = () => {
           <PropertyList properties={getFilteredProperties()} />
         )}
       </div>
-      
+
       <NewPropertyModal
           isOpen={isNewPropertyModalOpen}
           onClose={() => setIsNewPropertyModalOpen(false)}
