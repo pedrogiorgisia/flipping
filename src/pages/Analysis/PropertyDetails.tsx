@@ -87,11 +87,11 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
         <div className="border-t pt-4">
           <div className="flex items-start space-x-3">
             <div className="text-blue-600 text-xl mt-1">
-              <FaFileInvoiceDollar />
+              <FaFileInvoiceDollar className="text-blue-600" />
             </div>
-            <div>
+            <div className="w-full">
               <p className="text-sm text-gray-500">Comentários</p>
-              <p className="font-medium text-gray-800 whitespace-pre-line">{property.comentarios}</p>
+              <p className="font-medium text-gray-800 whitespace-pre-line">{property.comentarios || "-"}</p>
             </div>
           </div>
         </div>
