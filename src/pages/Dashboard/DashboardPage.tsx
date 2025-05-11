@@ -38,8 +38,6 @@ const useEffectiveAnalysisId = () => {
   return analysisIdFromParams || analysisIdFromState || null;
 };
 
-
-
 const DashboardPage: React.FC = () => {
   const effectiveAnalysisId = useEffectiveAnalysisId();
 
@@ -61,7 +59,7 @@ const DashboardPage: React.FC = () => {
   const [precoAnunciadoMinFilter, setPrecoAnunciadoMinFilter] = useState("");
   const [precoAnunciadoMaxFilter, setPrecoAnunciadoMaxFilter] = useState("");
   const [roiMinFilter, setRoiMinFilter] = useState("");
-    const [isNewPropertyModalOpen, setIsNewPropertyModalOpen] = useState(false);
+  const [isNewPropertyModalOpen, setIsNewPropertyModalOpen] = useState(false);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
 
   const handleEditProperty = (property: Property) => {
@@ -79,7 +77,7 @@ const DashboardPage: React.FC = () => {
       iptu_anual: property.imovel?.iptu_anual,
       codigo_ref_externo: property.imovel?.codigo_ref_externo,
       data_anuncio: property.imovel?.data_anuncio,
-      comentarios: property.imovel?.comentarios
+      comentarios: property.imovel?.comentarios,
     });
     setIsNewPropertyModalOpen(true);
   };
@@ -151,20 +149,24 @@ const DashboardPage: React.FC = () => {
 
   const getFilteredProperties = useCallback(() => {
     return properties.filter((property) => {
-          const roiPercentage = property.calc_roi * 100;
-          return (
-            property.imovel?.endereco?.toLowerCase().includes(enderecoFilter.toLowerCase()) &&
-            (areaMinFilter === "" ||
-              property.imovel?.area >= parseFloat(areaMinFilter)) &&
-            (areaMaxFilter === "" ||
-              property.imovel?.area <= parseFloat(areaMaxFilter)) &&
-            (precoAnunciadoMinFilter === "" ||
-              property.imovel?.preco_anunciado >= parseFloat(precoAnunciadoMinFilter)) &&
-            (precoAnunciadoMaxFilter === "" ||
-              property.imovel?.preco_anunciado <= parseFloat(precoAnunciadoMaxFilter)) &&
-            (roiMinFilter === "" || roiPercentage >= parseFloat(roiMinFilter))
-          );
-        });
+      const roiPercentage = property.calc_roi * 100;
+      return (
+        property.imovel?.endereco
+          ?.toLowerCase()
+          .includes(enderecoFilter.toLowerCase()) &&
+        (areaMinFilter === "" ||
+          property.imovel?.area >= parseFloat(areaMinFilter)) &&
+        (areaMaxFilter === "" ||
+          property.imovel?.area <= parseFloat(areaMaxFilter)) &&
+        (precoAnunciadoMinFilter === "" ||
+          property.imovel?.preco_anunciado >=
+            parseFloat(precoAnunciadoMinFilter)) &&
+        (precoAnunciadoMaxFilter === "" ||
+          property.imovel?.preco_anunciado <=
+            parseFloat(precoAnunciadoMaxFilter)) &&
+        (roiMinFilter === "" || roiPercentage >= parseFloat(roiMinFilter))
+      );
+    });
   }, [
     properties,
     enderecoFilter,
@@ -313,7 +315,7 @@ const DashboardPage: React.FC = () => {
               htmlFor="precoAnunciadoMinFilter"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Preço Anunciado Mín.
+              Preço Anunc. Mín.
             </label>
             <input
               type="number"
@@ -329,7 +331,7 @@ const DashboardPage: React.FC = () => {
               htmlFor="precoAnunciadoMaxFilter"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Preço Anunciado Máx.
+              Preço Anunc. Máx.
             </label>
             <input
               type="number"
@@ -359,37 +361,39 @@ const DashboardPage: React.FC = () => {
         </div>
 
         {properties.length > 0 && (
-          <PropertyList 
-            properties={getFilteredProperties()} 
+          <PropertyList
+            properties={getFilteredProperties()}
             onEdit={handleEditProperty}
           />
         )}
       </div>
 
       <NewPropertyModal
-          isOpen={isNewPropertyModalOpen}
-          onClose={() => {
+        isOpen={isNewPropertyModalOpen}
+        onClose={() => {
+          setIsNewPropertyModalOpen(false);
+          setEditingProperty(null);
+        }}
+        editingProperty={editingProperty}
+        onSave={async () => {
+          try {
+            if (effectiveAnalysisId) {
+              const response = await fetch(
+                `https://flippings.com.br/simulacoes?id_analise=${effectiveAnalysisId}&simulacao_principal=true&reformado=false`,
+              );
+              if (!response.ok) throw new Error("Erro ao carregar simulações");
+              const data = await response.json();
+              setProperties(data);
+            }
             setIsNewPropertyModalOpen(false);
             setEditingProperty(null);
-          }}
-          editingProperty={editingProperty}
-          onSave={async () => {
-            try {
-              if (effectiveAnalysisId) {
-                const response = await fetch(`https://flippings.com.br/simulacoes?id_analise=${effectiveAnalysisId}&simulacao_principal=true&reformado=false`);
-                if (!response.ok) throw new Error("Erro ao carregar simulações");
-                const data = await response.json();
-                setProperties(data);
-              }
-              setIsNewPropertyModalOpen(false);
-              setEditingProperty(null);
-            } catch (error) {
-              console.error("Error refreshing properties:", error);
-              toast.error("Erro ao atualizar lista de imóveis");
-            }
-          }}
-          isReformed={false}
-        />
+          } catch (error) {
+            console.error("Error refreshing properties:", error);
+            toast.error("Erro ao atualizar lista de imóveis");
+          }
+        }}
+        isReformed={false}
+      />
     </MainLayout>
   );
 };
