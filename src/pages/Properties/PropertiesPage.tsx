@@ -58,7 +58,7 @@ const PropertiesPage: React.FC = () => {
 
     try {
       const response = await fetch(
-        `https://flippings.com.br/imoveis?id_analise=${effectiveAnalysisId}`,
+        `https://flippings.com.br/imoveis?id_analise=${effectiveAnalysisId}&reformado=true`,
       );
       if (!response.ok) {
         throw new Error("Erro ao carregar imóveis");
