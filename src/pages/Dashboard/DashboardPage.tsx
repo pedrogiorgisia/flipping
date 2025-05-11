@@ -358,15 +358,20 @@ const DashboardPage: React.FC = () => {
             setEditingProperty(null);
           }}
           editingProperty={editingProperty}
-          onSave={() => {
-            // Refresh properties list
-            if (effectiveAnalysisId) {
-              fetch(`https://flippings.com.br/imoveis?id_analise=${effectiveAnalysisId}`)
-                .then(response => response.json())
-                .then(data => setProperties(data))
-                .catch(error => console.error("Error fetching properties:", error));
+          onSave={async () => {
+            try {
+              if (effectiveAnalysisId) {
+                const response = await fetch(`https://flippings.com.br/simulacoes?id_analise=${effectiveAnalysisId}&simulacao_principal=true&reformado=false`);
+                if (!response.ok) throw new Error("Erro ao carregar simulações");
+                const data = await response.json();
+                setProperties(data);
+              }
+              setIsNewPropertyModalOpen(false);
+              setEditingProperty(null);
+            } catch (error) {
+              console.error("Error refreshing properties:", error);
+              toast.error("Erro ao atualizar lista de imóveis");
             }
-            setIsNewPropertyModalOpen(false);
           }}
           isReformed={false}
         />
