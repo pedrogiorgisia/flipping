@@ -65,19 +65,22 @@ const DashboardPage: React.FC = () => {
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
 
   const handleEditProperty = (property: Property) => {
-    const editProperty = {
-      id: property.id_simulacao,
+    setEditingProperty({
+      id: property.id,
       url: property.imovel.url,
       endereco: property.imovel.endereco,
       area: property.imovel.area,
       preco_anunciado: property.imovel.preco_anunciado,
-      valor_compra: property.valor_compra,
-      valor_m2_compra: property.valor_m2_compra,
-      param_custo_reforma: property.param_custo_reforma,
-      valor_m2_venda: property.valor_m2_venda,
-      calc_roi: property.calc_roi
-    };
-    setEditingProperty(editProperty);
+      imobiliaria: property.imovel?.imobiliaria,
+      quartos: property.imovel?.quartos,
+      banheiros: property.imovel?.banheiros,
+      vagas: property.imovel?.vagas,
+      condominio_mensal: property.imovel?.condominio_mensal,
+      iptu_anual: property.imovel?.iptu_anual,
+      codigo_ref_externo: property.imovel?.codigo_ref_externo,
+      data_anuncio: property.imovel?.data_anuncio,
+      comentarios: property.imovel?.comentarios
+    });
     setIsNewPropertyModalOpen(true);
   };
 
