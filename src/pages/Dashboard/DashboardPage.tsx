@@ -66,7 +66,7 @@ const DashboardPage: React.FC = () => {
 
   const handleEditProperty = (property: Property) => {
     setEditingProperty({
-      id: property.id,
+      id: property.imovel.id,
       url: property.imovel.url,
       endereco: property.imovel.endereco,
       area: property.imovel.area,
