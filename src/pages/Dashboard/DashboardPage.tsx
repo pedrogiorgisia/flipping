@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import MainLayout from "../../components/Layout/MainLayout";
-import { Home, DollarSign } from "lucide-react";
+import { Home, DollarSign, Plus } from "lucide-react";
 import PropertyList from "./PropertyList";
 import toast from "react-hot-toast";
 
@@ -386,15 +386,19 @@ const DashboardPage: React.FC = () => {
           </div>
         </div>
 
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => setIsNewPropertyModalOpen(true)}
+            className="inline-flex items-center px-4 py-2 border border-transparent bg-blue-600 text-sm font-medium rounded-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            <Plus size={16} className="mr-2" />
+            Novo Imóvel
+          </button>
+        </div>
+
         {properties.length > 0 && (
           <PropertyList properties={getFilteredProperties()} />
         )}
-              <button
-          onClick={() => setIsNewPropertyModalOpen(true)}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Novo Imóvel
-        </button>
       </div>
       
       <NewPropertyModal
