@@ -24,7 +24,7 @@ interface PropertyListProps {
   onEdit?: (property: Property) => void;
 }
 
-const PropertyList: React.FC<PropertyListProps> = ({ properties }) => {
+const PropertyList: React.FC<PropertyListProps> = ({ properties, onEdit }) => {
   const navigate = useNavigate();
   const effectiveAnalysisId = useEffectiveAnalysisId();
   const { currentAnalysisId } = useAnalysisContext();
