@@ -4,6 +4,7 @@ import MainLayout from "../../components/Layout/MainLayout";
 import { Home, DollarSign, Plus } from "lucide-react";
 import PropertyList from "./PropertyList";
 import toast from "react-hot-toast";
+import NewPropertyModal from "../../components/Properties/NewPropertyModal";
 
 interface DashboardSummary {
   reformados: number;
@@ -37,64 +38,7 @@ const useEffectiveAnalysisId = () => {
   return analysisIdFromParams || analysisIdFromState || null;
 };
 
-interface NewPropertyModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: () => void;
-  isReformed: boolean;
-}
 
-const NewPropertyModal: React.FC<NewPropertyModalProps> = ({
-  isOpen,
-  onClose,
-  onSave,
-  isReformed,
-}) => {
-  const [reformado, setReformado] = useState(isReformed);
-
-  useEffect(() => {
-    setReformado(isReformed);
-  }, [isReformed]);
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
-      <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-        <div className="mt-3 text-center">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
-            Novo Imóvel
-          </h3>
-          <div className="mt-2 px-7 py-3">
-            <label className="inline-flex items-center">
-              <input
-                type="checkbox"
-                className="form-checkbox h-5 w-5 text-blue-600"
-                checked={reformado}
-                disabled={true}
-              />
-              <span className="ml-2 text-gray-700">Reformado</span>
-            </label>
-          </div>
-          <div className="items-center px-4 py-3">
-            <button
-              className="px-4 py-2 bg-green-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300"
-              onClick={onSave}
-            >
-              Salvar
-            </button>
-            <button
-              className="px-4 py-2 bg-red-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 mt-2"
-              onClick={onClose}
-            >
-              Cancelar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const DashboardPage: React.FC = () => {
   const effectiveAnalysisId = useEffectiveAnalysisId();
@@ -281,11 +225,22 @@ const DashboardPage: React.FC = () => {
       </div>
 
       <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h2 className="text-xl font-semibold mb-4">Oportunidades</h2>
-        <p className="text-gray-600 mb-4">
-          Lista de simulações de investimento para os apartamentos não
-          reformados
-        </p>
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h2 className="text-xl font-semibold">Oportunidades</h2>
+            <p className="text-gray-600">
+              Lista de simulações de investimento para os apartamentos não
+              reformados
+            </p>
+          </div>
+          <button
+            onClick={() => setIsNewPropertyModalOpen(true)}
+            className="inline-flex items-center px-4 py-2 border border-transparent bg-blue-600 text-sm font-medium rounded-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            <Plus size={16} className="mr-2" />
+            Novo Imóvel
+          </button>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-4">
           <div>
@@ -384,16 +339,6 @@ const DashboardPage: React.FC = () => {
               placeholder="ROI mínimo"
             />
           </div>
-        </div>
-
-        <div className="flex justify-end mb-4">
-          <button
-            onClick={() => setIsNewPropertyModalOpen(true)}
-            className="inline-flex items-center px-4 py-2 border border-transparent bg-blue-600 text-sm font-medium rounded-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            <Plus size={16} className="mr-2" />
-            Novo Imóvel
-          </button>
         </div>
 
         {properties.length > 0 && (
