@@ -46,18 +46,6 @@ const PropertyTable: React.FC<PropertyTableProps> = ({
               scope="col"
               className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
-              Imobiliária
-            </th>
-            <th
-              scope="col"
-              className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Reformado
-            </th>
-            <th
-              scope="col"
-              className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
               Preço Anunciado
             </th>
             <th
@@ -70,19 +58,7 @@ const PropertyTable: React.FC<PropertyTableProps> = ({
               scope="col"
               className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
-              Quartos
-            </th>
-            <th
-              scope="col"
-              className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Banheiros
-            </th>
-            <th
-              scope="col"
-              className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Vagas
+              Qts/Ban/Vag
             </th>
             <th
               scope="col"
@@ -118,22 +94,6 @@ const PropertyTable: React.FC<PropertyTableProps> = ({
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
                 <div className="text-sm text-gray-900">
-                  {property.imobiliaria || "-"}
-                </div>
-              </td>
-              <td className="px-4 py-3 whitespace-nowrap">
-                <span
-                  className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    property.reformado
-                      ? "bg-green-100 text-green-800"
-                      : "bg-yellow-100 text-yellow-800"
-                  }`}
-                >
-                  {property.reformado ? "Sim" : "Não"}
-                </span>
-              </td>
-              <td className="px-4 py-3 whitespace-nowrap">
-                <div className="text-sm text-gray-900">
                   {formatCurrency(property.preco_anunciado)}
                 </div>
               </td>
@@ -142,16 +102,8 @@ const PropertyTable: React.FC<PropertyTableProps> = ({
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
                 <div className="text-sm text-gray-900">
-                  {property.quartos}
+                  {`${property.quartos}/${property.banheiros}/${property.vagas}`}
                 </div>
-              </td>
-              <td className="px-4 py-3 whitespace-nowrap">
-                <div className="text-sm text-gray-900">
-                  {property.banheiros}
-                </div>
-              </td>
-              <td className="px-4 py-3 whitespace-nowrap">
-                <div className="text-sm text-gray-900">{property.vagas}</div>
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
                 <div className="text-sm text-gray-900">
