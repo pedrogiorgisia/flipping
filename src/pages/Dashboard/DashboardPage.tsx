@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import MainLayout from "../../components/Layout/MainLayout";
 import { Home, DollarSign } from "lucide-react";
-import DashboardStats from "./DashboardStats";
 import PropertyList from "./PropertyList";
 import toast from "react-hot-toast";
 
