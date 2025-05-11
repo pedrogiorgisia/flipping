@@ -1,7 +1,7 @@
-import React from 'react';
-import MainLayout from '../../components/Layout/MainLayout';
-import { useNavigate } from 'react-router-dom';
-import { FileText } from 'lucide-react';
+import React from "react";
+import MainLayout from "../../components/Layout/MainLayout";
+import { useNavigate } from "react-router-dom";
+import { FileText } from "lucide-react";
 
 interface Analysis {
   id: string;
@@ -20,40 +20,42 @@ const IndividualAnalysisPage: React.FC = () => {
 
   const analyses: Analysis[] = [
     {
-      id: '1',
-      propertyName: 'Apartamento Pinheiros',
-      address: 'Rua dos Pinheiros, 1000',
+      id: "1",
+      propertyName: "Apartamento Pinheiros",
+      address: "Rua dos Pinheiros, 1000",
       purchasePrice: 720000,
       area: 68,
       bedrooms: 2,
       bathrooms: 1,
       parkingSpaces: 1,
-      createdAt: new Date('2024-01-15')
+      createdAt: new Date("2024-01-15"),
     },
     {
-      id: '2',
-      propertyName: 'Apartamento Vila Mariana',
-      address: 'Rua Vergueiro, 2000',
+      id: "2",
+      propertyName: "Apartamento Vila Mariana",
+      address: "Rua Vergueiro, 2000",
       purchasePrice: 950000,
       area: 85,
       bedrooms: 3,
       bathrooms: 2,
       parkingSpaces: 1,
-      createdAt: new Date('2024-02-01')
-    }
+      createdAt: new Date("2024-02-01"),
+    },
   ];
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
   return (
     <MainLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Análises Individuais</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">
+          Análises Individuais
+        </h1>
 
         <div className="bg-white shadow-sm rounded-lg overflow-hidden">
           <table className="min-w-full divide-y divide-gray-200">
@@ -84,17 +86,21 @@ const IndividualAnalysisPage: React.FC = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {analyses.map((analysis) => (
-                <tr 
+                <tr
                   key={analysis.id}
                   className="hover:bg-gray-50 cursor-pointer"
                   onClick={() => navigate(`/analysis/${analysis.id}/property`)}
                 >
                   <td className="px-6 py-4">{analysis.propertyName}</td>
                   <td className="px-6 py-4">{analysis.address}</td>
-                  <td className="px-6 py-4">{formatCurrency(analysis.purchasePrice)}</td>
+                  <td className="px-6 py-4">
+                    {formatCurrency(analysis.purchasePrice)}
+                  </td>
                   <td className="px-6 py-4">{analysis.area}m²</td>
                   <td className="px-6 py-4">{analysis.bedrooms}</td>
-                  <td className="px-6 py-4">{analysis.createdAt.toLocaleDateString('pt-BR')}</td>
+                  <td className="px-6 py-4">
+                    {analysis.createdAt.toLocaleDateString("pt-BR")}
+                  </td>
                   <td className="px-6 py-4 text-right">
                     <button
                       className="text-blue-600 hover:text-blue-800"
