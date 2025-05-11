@@ -21,6 +21,7 @@ interface Property {
 
 interface PropertyListProps {
   properties: Property[];
+  onEdit?: (property: Property) => void;
 }
 
 const PropertyList: React.FC<PropertyListProps> = ({ properties }) => {
@@ -172,6 +173,15 @@ const PropertyList: React.FC<PropertyListProps> = ({ properties }) => {
                   >
                     <FileText size={16} />
                   </button>
+                  {onEdit && (
+                    <button
+                      onClick={() => onEdit(property)}
+                      className="text-gray-500 hover:text-blue-600"
+                      title="Editar imóvel"
+                    >
+                      <Pencil size={16} />
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

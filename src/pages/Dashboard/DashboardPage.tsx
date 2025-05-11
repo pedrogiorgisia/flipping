@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import MainLayout from "../../components/Layout/MainLayout";
-import { Home, DollarSign, Plus } from "lucide-react";
+import { Home, DollarSign, Plus, Pencil } from "lucide-react";
 import PropertyList from "./PropertyList";
 import toast from "react-hot-toast";
 import NewPropertyModal from "../../components/Properties/NewPropertyModal";
@@ -62,6 +62,12 @@ const DashboardPage: React.FC = () => {
   const [precoAnunciadoMaxFilter, setPrecoAnunciadoMaxFilter] = useState("");
   const [roiMinFilter, setRoiMinFilter] = useState("");
     const [isNewPropertyModalOpen, setIsNewPropertyModalOpen] = useState(false);
+  const [editingProperty, setEditingProperty] = useState<Property | null>(null);
+
+  const handleEditProperty = (property: Property) => {
+    setEditingProperty(property);
+    setIsNewPropertyModalOpen(true);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -338,13 +344,20 @@ const DashboardPage: React.FC = () => {
         </div>
 
         {properties.length > 0 && (
-          <PropertyList properties={getFilteredProperties()} />
+          <PropertyList 
+            properties={getFilteredProperties()} 
+            onEdit={handleEditProperty}
+          />
         )}
       </div>
 
       <NewPropertyModal
           isOpen={isNewPropertyModalOpen}
-          onClose={() => setIsNewPropertyModalOpen(false)}
+          onClose={() => {
+            setIsNewPropertyModalOpen(false);
+            setEditingProperty(null);
+          }}
+          editingProperty={editingProperty}
           onSave={() => {
             // Refresh properties list
             if (effectiveAnalysisId) {
