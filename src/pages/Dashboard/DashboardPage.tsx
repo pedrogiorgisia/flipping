@@ -219,8 +219,13 @@ const DashboardPage: React.FC = () => {
   return (
     <MainLayout>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-1">Visão geral da sua análise</p>
+        <h1 className="text-2xl font-bold text-gray-900">
+          Dashboard de oportunidades
+        </h1>
+        <p className="text-gray-600 mt-1">
+          Aqui estão todos os imóveis que foram adicionados para análise se é
+          uma oportunidade ou não
+        </p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">

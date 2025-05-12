@@ -383,8 +383,14 @@ const PropertiesPage: React.FC = () => {
   return (
     <MainLayout>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Base de Imóveis</h1>
-        <p className="text-gray-600 mt-1">Gerencie os imóveis da sua análise</p>
+        <h1 className="text-2xl font-bold text-gray-900">
+          Base de imóveis reformados / referências
+        </h1>
+        <p className="text-gray-600 mt-1">
+          Estes são os imóveis que são utilizados como referência para cálculo
+          do preço sugerido de venda dos imóveis que estão sendo analisados como
+          possíveis oportunidades
+        </p>
       </div>
 
       <div className="bg-white rounded-lg shadow mb-6">
@@ -397,7 +403,6 @@ const PropertiesPage: React.FC = () => {
               <Plus size={16} className="mr-2" />
               Novo Imóvel
             </button>
-
           </div>
           <div className="flex flex-wrap items-center gap-4">
             <div className="grid grid-cols-3 gap-4">
@@ -547,7 +552,6 @@ const PropertiesPage: React.FC = () => {
         editingProperty={editingProperty}
         onSave={fetchProperties}
       />
-
     </MainLayout>
   );
 };
