@@ -48,7 +48,19 @@ const AnalysisListPage: React.FC = () => {
         },
         body: JSON.stringify({
           id_usuario: userId,
-          nome: wizardData.nome.trim()
+          nome: wizardData.nome.trim(),
+          margem_area_pct: wizardData.margem_area_pct,
+          reducao_pct: wizardData.reducao_pct,
+          param_entrada_pct: wizardData.param_entrada_pct,
+          param_itbi_pct: wizardData.param_itbi_pct,
+          param_avaliacao_bancaria: wizardData.param_avaliacao_bancaria,
+          param_registro_cartorio_pct: wizardData.param_registro_cartorio_pct,
+          param_custo_reforma_pct: wizardData.param_custo_reforma_pct,
+          param_taxa_cet: wizardData.param_taxa_cet,
+          param_prazo_financiamento: wizardData.param_prazo_financiamento,
+          param_tempo_venda: wizardData.param_tempo_venda,
+          param_corretagem_venda_pct: wizardData.param_corretagem_venda_pct,
+          param_desconto_valor_compra: wizardData.param_desconto_valor_compra
         })
       });
 
