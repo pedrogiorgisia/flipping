@@ -124,8 +124,11 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
 
   const corretagemVenda =
     simulacao.param_valor_venda * (simulacao.param_corretagem_venda_pct / 100);
+  const quitacaoFinanciamento = saldoDevedor;
   const custosVenda =
-    saldoDevedor + corretagemVenda + parseFloat(simulacao.imposto_renda || 0);
+    quitacaoFinanciamento + corretagemVenda + parseFloat(simulacao.imposto_renda || 0);
+
+  simulacao.calc_quitacao_financiamento = quitacaoFinanciamento;
 
   const lucroLiquido =
     parseFloat(simulacao.param_valor_venda) - investimentoTotal - custosVenda;
@@ -181,7 +184,7 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
       items: [
         {
           label: "Quitação do Financiamento",
-          value: parseFloat(simulacao.calc_quitacao_financiamento),
+          value: quitacaoFinanciamento,
         },
         { label: "Corretagem", value: corretagemVenda },
         {
