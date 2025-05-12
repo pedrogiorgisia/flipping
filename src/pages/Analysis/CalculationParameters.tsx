@@ -233,9 +233,23 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
     <div className="bg-white rounded-lg shadow-md p-6">
       {/* ROI Card */}
       <div className="bg-blue-100 p-4 rounded-lg mb-4">
-        <p className="text-sm font-semibold text-blue-800">ROI da Operação</p>
-        <p className="text-3xl font-bold text-blue-600">
-          {(roi * 100).toFixed(2)}%
+        <div className="flex justify-between items-start mb-2">
+          <div>
+            <p className="text-sm font-semibold text-blue-800">ROI da Operação</p>
+            <p className="text-3xl font-bold text-blue-600">
+              {(roi * 100).toFixed(2)}%
+            </p>
+          </div>
+          <button
+            onClick={() => setShowDetails(true)}
+            className="text-blue-600 hover:text-blue-800 flex items-center text-sm"
+          >
+            <FaInfoCircle className="mr-1" />
+            Ver detalhes
+          </button>
+        </div>
+        <p className="text-xs text-blue-600/70 mt-1">
+          Clique em "Ver detalhes" para análise completa de viabilidade
         </p>
       </div>
 
