@@ -68,7 +68,42 @@ const AnalysisWizard: React.FC<AnalysisWizardProps> = ({ isOpen, onClose, onComp
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const validateCurrentStep = () => {
+    switch (currentStep) {
+      case 0:
+        return formData.nome.trim() !== '';
+      case 1:
+        return formData.margem_area_pct > 0 && formData.reducao_pct > 0;
+      case 2:
+        return (
+          formData.param_entrada_pct > 0 &&
+          formData.param_avaliacao_bancaria >= 0 &&
+          formData.param_taxa_cet > 0 &&
+          formData.param_prazo_financiamento > 0
+        );
+      case 3:
+        return (
+          formData.param_itbi_pct > 0 &&
+          formData.param_registro_cartorio_pct > 0 &&
+          formData.param_custo_reforma_pct > 0
+        );
+      case 4:
+        return (
+          formData.param_tempo_venda > 0 &&
+          formData.param_corretagem_venda_pct > 0 &&
+          formData.param_desconto_valor_compra > 0
+        );
+      default:
+        return false;
+    }
+  };
+
   const handleNext = () => {
+    if (!validateCurrentStep()) {
+      toast.error('Por favor, preencha todos os campos obrigatórios');
+      return;
+    }
+
     if (currentStep === steps.length - 1) {
       onComplete(formData);
     } else {
@@ -244,7 +279,7 @@ const AnalysisWizard: React.FC<AnalysisWizardProps> = ({ isOpen, onClose, onComp
               </button>
               <button
                 onClick={handleNext}
-                disabled={currentStep === 0 && !formData.nome.trim()}
+                disabled={!validateCurrentStep()}
                 className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {currentStep === steps.length - 1 ? 'Concluir' : 'Próximo'}
