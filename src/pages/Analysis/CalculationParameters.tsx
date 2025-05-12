@@ -101,7 +101,7 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
   const prazoFinanciamento = simulacao.param_prazo_financiamento;
   const amortizacaoMensal = valorFinanciado / prazoFinanciamento;
   const tempoVenda = simulacao.param_tempo_venda;
-  
+
   let totalParcelas = 0;
   let saldoDevedor = valorFinanciado;
   for (let i = 0; i < tempoVenda; i++) {
@@ -182,7 +182,7 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
           label: "Quitação do Financiamento",
           value: parseFloat(simulacao.calc_quitacao_financiamento),
         },
-        { label: "Corretagem", value: parseFloat(simulacao.calc_corretagem) },
+        { label: "Corretagem", value: corretagemVenda },
         {
           label: "Imposto de Renda",
           value: parseFloat(simulacao.calc_imposto_renda),
