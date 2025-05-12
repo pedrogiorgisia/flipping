@@ -125,10 +125,23 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
   const corretagemVenda =
     simulacao.param_valor_venda * (simulacao.param_corretagem_venda_pct / 100);
   const quitacaoFinanciamento = saldoDevedor;
+  
+  // Base de cálculo do IR: Valor venda - (Custos aquisição + Quitação + Corretagem + 75% das parcelas pagas + Reforma)
+  const baseCalculoIR = 
+    simulacao.param_valor_venda - 
+    (custosAquisicao + 
+    quitacaoFinanciamento + 
+    corretagemVenda + 
+    (totalParcelas * 0.75) + 
+    parseFloat(simulacao.param_custo_reforma));
+    
+  const impostoRenda = simulacao.param_incide_ir ? Math.max(0, baseCalculoIR * 0.15) : 0;
+  
   const custosVenda =
-    quitacaoFinanciamento + corretagemVenda + parseFloat(simulacao.imposto_renda || 0);
+    quitacaoFinanciamento + corretagemVenda + impostoRenda;
 
   simulacao.calc_quitacao_financiamento = quitacaoFinanciamento;
+  simulacao.calc_imposto_renda = impostoRenda;
 
   const lucroLiquido =
     parseFloat(simulacao.param_valor_venda) - investimentoTotal - custosVenda;
@@ -189,7 +202,7 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
         { label: "Corretagem", value: corretagemVenda },
         {
           label: "Imposto de Renda",
-          value: parseFloat(simulacao.calc_imposto_renda),
+          value: simulacao.calc_imposto_renda,
         },
       ],
       total: custosVenda,
