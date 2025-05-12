@@ -93,14 +93,22 @@ const AnalysisWizard: React.FC<AnalysisWizardProps> = ({ isOpen, onClose, onComp
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!validateCurrentStep()) {
       toast.error('Por favor, preencha todos os campos obrigatórios');
       return;
     }
 
     if (currentStep === steps.length - 1) {
-      onComplete(formData);
+      try {
+        await onComplete(formData);
+      } catch (error: any) {
+        if (error.response?.data?.detail) {
+          toast.error(error.response.data.detail);
+        } else {
+          toast.error('Erro ao criar análise');
+        }
+      }
     } else {
       setCurrentStep(prev => prev + 1);
     }
