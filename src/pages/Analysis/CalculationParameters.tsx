@@ -121,6 +121,7 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
   const investimentoTotal = custosAquisicao + custosAteVenda;
 
   const corretagemVenda = simulacao.param_valor_venda * (simulacao.param_corretagem_venda_pct / 100);
+  const corretagemVenda = simulacao.param_valor_venda * (simulacao.param_corretagem_venda_pct / 100);
   const custosVenda =
     saldoDevedor +
     corretagemVenda +
@@ -153,7 +154,7 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
       items: [
         {
           label: "Parcelas Financiamento",
-          value: parseFloat(simulacao.calc_quitacao_financiamento),
+          value: totalParcelas,
         },
         {
           label: "Condomínio",
