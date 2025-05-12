@@ -386,7 +386,7 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
           </div>
         </div>
       )}
-    
+    </div>
   );
 };
 
