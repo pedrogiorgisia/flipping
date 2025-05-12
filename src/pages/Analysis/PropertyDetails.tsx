@@ -1,3 +1,4 @@
+
 import React from "react";
 import { FaBed, FaBath, FaCar, FaRulerCombined } from "react-icons/fa";
 
@@ -14,23 +15,24 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <h2 className="text-3xl font-bold text-gray-800">
-            {formatCurrency(property.preco_anunciado)}
-          </h2>
-        </div>
+      <div className="mb-4">
+        <h2 className="text-3xl font-bold text-gray-800">
+          {formatCurrency(property.preco_anunciado)}
+        </h2>
         <a
           href={property.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300"
+          className="inline-block mt-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300"
         >
           Ver anúncio
         </a>
       </div>
 
-      <p className="text-gray-600 mb-2">{property.endereco}</p>
+      <div className="mb-4">
+        <p className="font-bold text-gray-700 mb-1">Endereço</p>
+        <p className="text-gray-600">{property.endereco}</p>
+      </div>
 
       <div className="flex items-center space-x-4 mb-4">
         <div className="flex items-center">
