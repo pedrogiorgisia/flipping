@@ -73,26 +73,21 @@ const AnalysisWizard: React.FC<AnalysisWizardProps> = ({ isOpen, onClose, onComp
       case 0:
         return formData.nome.trim() !== '';
       case 1:
-        return formData.margem_area_pct > 0 && formData.reducao_pct > 0;
+        return formData.margem_area_pct !== undefined && formData.margem_area_pct !== null &&
+               formData.reducao_pct !== undefined && formData.reducao_pct !== null;
       case 2:
-        return (
-          formData.param_entrada_pct > 0 &&
-          formData.param_avaliacao_bancaria >= 0 &&
-          formData.param_taxa_cet > 0 &&
-          formData.param_prazo_financiamento > 0
-        );
+        return formData.param_entrada_pct !== undefined && formData.param_entrada_pct !== null &&
+               formData.param_avaliacao_bancaria !== undefined && formData.param_avaliacao_bancaria !== null &&
+               formData.param_taxa_cet !== undefined && formData.param_taxa_cet !== null &&
+               formData.param_prazo_financiamento !== undefined && formData.param_prazo_financiamento !== null;
       case 3:
-        return (
-          formData.param_itbi_pct > 0 &&
-          formData.param_registro_cartorio_pct > 0 &&
-          formData.param_custo_reforma_pct > 0
-        );
+        return formData.param_itbi_pct !== undefined && formData.param_itbi_pct !== null &&
+               formData.param_registro_cartorio_pct !== undefined && formData.param_registro_cartorio_pct !== null &&
+               formData.param_custo_reforma_pct !== undefined && formData.param_custo_reforma_pct !== null;
       case 4:
-        return (
-          formData.param_tempo_venda > 0 &&
-          formData.param_corretagem_venda_pct > 0 &&
-          formData.param_desconto_valor_compra > 0
-        );
+        return formData.param_tempo_venda !== undefined && formData.param_tempo_venda !== null &&
+               formData.param_corretagem_venda_pct !== undefined && formData.param_corretagem_venda_pct !== null &&
+               formData.param_desconto_valor_compra !== undefined && formData.param_desconto_valor_compra !== null;
       default:
         return false;
     }
