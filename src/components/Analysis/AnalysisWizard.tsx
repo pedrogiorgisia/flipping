@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, HelpCircle } from 'lucide-react';
+import * as Tooltip from '@radix-ui/react-tooltip';
 
 interface WizardStep {
   title: string;
@@ -21,6 +21,33 @@ interface AnalysisWizardProps {
   onComplete: (data: any) => void;
 }
 
+const FormField = ({ label, tooltip, children }: { label: string; tooltip: string; children: React.ReactNode }) => (
+  <div className="mb-4">
+    <div className="flex items-center gap-2 mb-1">
+      <label className="block text-sm font-medium text-gray-700">{label}</label>
+      <Tooltip.Provider>
+        <Tooltip.Root>
+          <Tooltip.Trigger asChild>
+            <button className="text-gray-400 hover:text-gray-600">
+              <HelpCircle size={16} />
+            </button>
+          </Tooltip.Trigger>
+          <Tooltip.Portal>
+            <Tooltip.Content
+              className="max-w-xs p-2 text-sm text-white bg-gray-900 rounded shadow-lg"
+              sideOffset={5}
+            >
+              {tooltip}
+              <Tooltip.Arrow className="fill-gray-900" />
+            </Tooltip.Content>
+          </Tooltip.Portal>
+        </Tooltip.Root>
+      </Tooltip.Provider>
+    </div>
+    {children}
+  </div>
+);
+
 const AnalysisWizard: React.FC<AnalysisWizardProps> = ({ isOpen, onClose, onComplete }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
@@ -28,8 +55,8 @@ const AnalysisWizard: React.FC<AnalysisWizardProps> = ({ isOpen, onClose, onComp
     margem_area_pct: 10,
     reducao_pct: 8,
     param_entrada_pct: 20,
-    param_avaliacao_bancaria: 2500,
-    param_taxa_cet: 9.5,
+    param_avaliacao_bancaria: 0,
+    param_taxa_cet: 11.5,
     param_prazo_financiamento: 420,
     param_itbi_pct: 3,
     param_registro_cartorio_pct: 1.5,
@@ -53,179 +80,116 @@ const AnalysisWizard: React.FC<AnalysisWizardProps> = ({ isOpen, onClose, onComp
     }
   };
 
+  const renderInput = (id: string, value: string | number, onChange: (value: string | number) => void, type: string = "number") => (
+    <input
+      type={type}
+      value={value}
+      onChange={(e) => onChange(type === "number" ? parseFloat(e.target.value) || 0 : e.target.value)}
+      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+    />
+  );
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
         return (
-          <div className="space-y-4">
-            <label className="block">
-              <span className="text-gray-700">Nome da Análise</span>
-              <input
-                type="text"
-                value={formData.nome}
-                onChange={(e) => handleChange('nome', e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                placeholder="Ex: Análise Pinheiros I"
-              />
-            </label>
-          </div>
+          <FormField
+            label="Nome da Análise"
+            tooltip="Digite um nome descritivo para identificar sua análise"
+          >
+            {renderInput('nome', formData.nome, (value) => handleChange('nome', value), 'text')}
+          </FormField>
         );
       case 1:
         return (
           <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Margem de Área (%)
-                <input
-                  type="number"
-                  value={formData.margem_area_pct}
-                  onChange={(e) => handleChange('margem_area_pct', parseFloat(e.target.value))}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </label>
-              <p className="mt-1 text-sm text-gray-500">
-                Variação percentual permitida na área do imóvel ao buscar propriedades comparáveis.
-              </p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Redução no Preço de Referência (%)
-                <input
-                  type="number"
-                  value={formData.reducao_pct}
-                  onChange={(e) => handleChange('reducao_pct', parseFloat(e.target.value))}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </label>
-              <p className="mt-1 text-sm text-gray-500">
-                Percentual de redução aplicado ao preço médio das propriedades de referência.
-              </p>
-            </div>
+            <FormField
+              label="Margem de Área (%)"
+              tooltip="Este percentual define a variação permitida na área do imóvel ao buscar propriedades comparáveis. Por exemplo: Se escolher 10% e o imóvel tem 100m², serão considerados imóveis de 90m² a 110m²."
+            >
+              {renderInput('margem_area_pct', formData.margem_area_pct, (value) => handleChange('margem_area_pct', value))}
+            </FormField>
+            <FormField
+              label="Redução no Preço de Referência (%)"
+              tooltip="Percentual de redução aplicado ao preço médio das propriedades de referência para calcular o valor sugerido de venda. Por exemplo: Se os imóveis similares têm média de R$ 1.000.000 e esse percentual for 8%, o preço sugerido será R$ 920.000."
+            >
+              {renderInput('reducao_pct', formData.reducao_pct, (value) => handleChange('reducao_pct', value))}
+            </FormField>
           </div>
         );
       case 2:
         return (
           <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Percentual de Entrada (%)
-                <input
-                  type="number"
-                  value={formData.param_entrada_pct}
-                  onChange={(e) => handleChange('param_entrada_pct', parseFloat(e.target.value))}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </label>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Avaliação Bancária (R$)
-                <input
-                  type="number"
-                  value={formData.param_avaliacao_bancaria}
-                  onChange={(e) => handleChange('param_avaliacao_bancaria', parseFloat(e.target.value))}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </label>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Taxa CET (% a.a.)
-                <input
-                  type="number"
-                  value={formData.param_taxa_cet}
-                  onChange={(e) => handleChange('param_taxa_cet', parseFloat(e.target.value))}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </label>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Prazo de Financiamento (meses)
-                <input
-                  type="number"
-                  value={formData.param_prazo_financiamento}
-                  onChange={(e) => handleChange('param_prazo_financiamento', parseInt(e.target.value))}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </label>
-            </div>
+            <FormField
+              label="Percentual de Entrada (%)"
+              tooltip="Percentual do valor do imóvel exigido como entrada no financiamento. Atualmente, os bancos praticam entre 20% e 30%."
+            >
+              {renderInput('param_entrada_pct', formData.param_entrada_pct, (value) => handleChange('param_entrada_pct', value))}
+            </FormField>
+            <FormField
+              label="Avaliação Bancária (R$)"
+              tooltip="Custo cobrado pelo banco para realizar a avaliação do imóvel no processo de financiamento."
+            >
+              {renderInput('param_avaliacao_bancaria', formData.param_avaliacao_bancaria, (value) => handleChange('param_avaliacao_bancaria', value))}
+            </FormField>
+            <FormField
+              label="Taxa CET (% a.a.)"
+              tooltip="Custo Efetivo Total da operação, que representa a taxa de juros total aplicada pelo banco no financiamento."
+            >
+              {renderInput('param_taxa_cet', formData.param_taxa_cet, (value) => handleChange('param_taxa_cet', value))}
+            </FormField>
+            <FormField
+              label="Prazo de Financiamento (meses)"
+              tooltip="Duração total do financiamento imobiliário em meses. O padrão é 420 meses (35 anos)."
+            >
+              {renderInput('param_prazo_financiamento', formData.param_prazo_financiamento, (value) => handleChange('param_prazo_financiamento', value))}
+            </FormField>
           </div>
         );
       case 3:
         return (
           <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                ITBI (%)
-                <input
-                  type="number"
-                  value={formData.param_itbi_pct}
-                  onChange={(e) => handleChange('param_itbi_pct', parseFloat(e.target.value))}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </label>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Registro em Cartório (%)
-                <input
-                  type="number"
-                  value={formData.param_registro_cartorio_pct}
-                  onChange={(e) => handleChange('param_registro_cartorio_pct', parseFloat(e.target.value))}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </label>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Custo de Reforma (%)
-                <input
-                  type="number"
-                  value={formData.param_custo_reforma_pct}
-                  onChange={(e) => handleChange('param_custo_reforma_pct', parseFloat(e.target.value))}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </label>
-            </div>
+            <FormField
+              label="ITBI (%)"
+              tooltip="Imposto sobre Transmissão de Bens Imóveis, cobrado na transferência do imóvel."
+            >
+              {renderInput('param_itbi_pct', formData.param_itbi_pct, (value) => handleChange('param_itbi_pct', value))}
+            </FormField>
+            <FormField
+              label="Registro em Cartório (%)"
+              tooltip="Percentual cobrado pelo cartório para registro da transferência do imóvel."
+            >
+              {renderInput('param_registro_cartorio_pct', formData.param_registro_cartorio_pct, (value) => handleChange('param_registro_cartorio_pct', value))}
+            </FormField>
+            <FormField
+              label="Custo de Reforma (%)"
+              tooltip="Estimativa do custo de reforma como percentual do valor do imóvel."
+            >
+              {renderInput('param_custo_reforma_pct', formData.param_custo_reforma_pct, (value) => handleChange('param_custo_reforma_pct', value))}
+            </FormField>
           </div>
         );
       case 4:
         return (
           <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Tempo Estimado de Venda (meses)
-                <input
-                  type="number"
-                  value={formData.param_tempo_venda}
-                  onChange={(e) => handleChange('param_tempo_venda', parseInt(e.target.value))}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </label>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Corretagem de Venda (%)
-                <input
-                  type="number"
-                  value={formData.param_corretagem_venda_pct}
-                  onChange={(e) => handleChange('param_corretagem_venda_pct', parseFloat(e.target.value))}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </label>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Desconto na Compra (%)
-                <input
-                  type="number"
-                  value={formData.param_desconto_valor_compra}
-                  onChange={(e) => handleChange('param_desconto_valor_compra', parseFloat(e.target.value))}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </label>
-            </div>
+            <FormField
+              label="Tempo Estimado de Venda (meses)"
+              tooltip="Estimativa do tempo necessário para vender o imóvel após a conclusão da reforma."
+            >
+              {renderInput('param_tempo_venda', formData.param_tempo_venda, (value) => handleChange('param_tempo_venda', value))}
+            </FormField>
+            <FormField
+              label="Corretagem de Venda (%)"
+              tooltip="Percentual cobrado pelo corretor para intermediar a venda do imóvel."
+            >
+              {renderInput('param_corretagem_venda_pct', formData.param_corretagem_venda_pct, (value) => handleChange('param_corretagem_venda_pct', value))}
+            </FormField>
+            <FormField
+              label="Desconto na Compra (%)"
+              tooltip="Desconto estimado a ser negociado no valor de compra do imóvel. Recomenda-se entre 5% e 8%."
+            >
+              {renderInput('param_desconto_valor_compra', formData.param_desconto_valor_compra, (value) => handleChange('param_desconto_valor_compra', value))}
+            </FormField>
           </div>
         );
       default:
