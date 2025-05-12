@@ -107,14 +107,26 @@ const AnalysisWizard: React.FC<AnalysisWizardProps> = ({ isOpen, onClose, onComp
       try {
         await onComplete(formData);
       } catch (error: any) {
-        const errorMessage = error.response?.data?.detail || error.message || 'Erro ao criar análise';
+        let errorMessage = 'Erro ao criar análise';
+        
+        if (error.response) {
+          // Erro da API com resposta
+          errorMessage = typeof error.response.data === 'string' ? 
+            error.response.data : 
+            error.response.data?.detail || 'Erro ao criar análise';
+        } else if (error.message) {
+          // Erro com mensagem
+          errorMessage = error.message;
+        }
+        
         toast.error(errorMessage, {
-          duration: 4000,
+          duration: 5000,
           position: 'top-center',
           style: {
             background: '#fee2e2',
             color: '#991b1b',
             fontWeight: 'bold',
+            padding: '16px',
           },
         });
       }
