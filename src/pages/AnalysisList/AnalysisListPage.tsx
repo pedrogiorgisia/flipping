@@ -69,9 +69,11 @@ const AnalysisListPage: React.FC = () => {
         fetchAnalyses();
         toast.success('Análise criada com sucesso');
       } else {
-        toast.error('Erro ao criar análise');
+        const errorData = await response.json();
+        toast.error(errorData.detail || 'Erro ao criar análise');
       }
     } catch (error) {
+      console.error('Erro ao criar análise:', error);
       toast.error('Erro ao criar análise');
     } finally {
       setIsLoading(false);
