@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, HelpCircle } from 'lucide-react';
 import * as Tooltip from '@radix-ui/react-tooltip';
+import toast from 'react-hot-toast';
 
 interface WizardStep {
   title: string;
@@ -95,7 +96,10 @@ const AnalysisWizard: React.FC<AnalysisWizardProps> = ({ isOpen, onClose, onComp
 
   const handleNext = async () => {
     if (!validateCurrentStep()) {
-      toast.error('Por favor, preencha todos os campos obrigatórios');
+      toast.error('Por favor, preencha todos os campos obrigatórios', {
+        duration: 4000,
+        position: 'top-center',
+      });
       return;
     }
 
@@ -103,11 +107,16 @@ const AnalysisWizard: React.FC<AnalysisWizardProps> = ({ isOpen, onClose, onComp
       try {
         await onComplete(formData);
       } catch (error: any) {
-        if (error.response?.data?.detail) {
-          toast.error(error.response.data.detail);
-        } else {
-          toast.error('Erro ao criar análise');
-        }
+        const errorMessage = error.response?.data?.detail || error.message || 'Erro ao criar análise';
+        toast.error(errorMessage, {
+          duration: 4000,
+          position: 'top-center',
+          style: {
+            background: '#fee2e2',
+            color: '#991b1b',
+            fontWeight: 'bold',
+          },
+        });
       }
     } else {
       setCurrentStep(prev => prev + 1);
