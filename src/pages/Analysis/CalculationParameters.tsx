@@ -125,7 +125,7 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
   const corretagemVenda =
     simulacao.param_valor_venda * (simulacao.param_corretagem_venda_pct / 100);
   const quitacaoFinanciamento = saldoDevedor;
-  
+
   // Base de cálculo do IR: Valor venda - (Custos aquisição + Quitação + Corretagem + 75% das parcelas pagas + Reforma)
   const baseCalculoIR = 
     simulacao.param_valor_venda - 
@@ -134,9 +134,9 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
     corretagemVenda + 
     (totalParcelas * 0.75) + 
     parseFloat(simulacao.param_custo_reforma));
-    
+
   const impostoRenda = simulacao.param_incide_ir ? Math.max(0, baseCalculoIR * 0.15) : 0;
-  
+
   const custosVenda =
     quitacaoFinanciamento + corretagemVenda + impostoRenda;
 
@@ -265,14 +265,18 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
         ))}
       </div>
 
-      {/* Viability Analysis Details Button */}
-      <button
-        onClick={() => setShowDetails(true)}
-        className="w-full mb-6 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out"
-      >
-        <FaInfoCircle className="inline-block mr-2" />
-        Ver detalhes de cálculo de viabilidade
-      </button>
+      
+</div>
+
+      {/* Separator */}
+      <div className="relative my-8">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-300"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 text-gray-500 bg-white">Parâmetros de Cálculo</span>
+        </div>
+      </div>
 
       {/* Parameters */}
       <div className="space-y-6">
@@ -385,7 +389,7 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
           </div>
         </div>
       )}
-    </div>
+    
   );
 };
 
