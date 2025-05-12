@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, FolderOpen } from 'lucide-react';
+import AnalysisWizard from '../../components/Analysis/AnalysisWizard';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 
@@ -13,8 +14,7 @@ const AnalysisListPage: React.FC = () => {
   const { userId } = useAuth();
   const navigate = useNavigate();
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
-  const [isNewAnalysisModalOpen, setIsNewAnalysisModalOpen] = useState(false);
-  const [newAnalysisName, setNewAnalysisName] = useState('');
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchAnalyses = async () => {
@@ -38,9 +38,7 @@ const AnalysisListPage: React.FC = () => {
     fetchAnalyses();
   }, [userId]);
 
-  const handleCreateAnalysis = async () => {
-    if (!newAnalysisName.trim()) return;
-
+  const handleCreateAnalysis = async (wizardData: any) => {
     setIsLoading(true);
     try {
       const response = await fetch('https://flippings.com.br/analises', {
@@ -50,13 +48,12 @@ const AnalysisListPage: React.FC = () => {
         },
         body: JSON.stringify({
           id_usuario: userId,
-          nome: newAnalysisName.trim()
+          nome: wizardData.nome.trim()
         })
       });
 
       if (response.ok) {
-        setIsNewAnalysisModalOpen(false);
-        setNewAnalysisName('');
+        setIsWizardOpen(false);
         fetchAnalyses();
         toast.success('Análise criada com sucesso');
       } else {
@@ -80,7 +77,7 @@ const AnalysisListPage: React.FC = () => {
             </p>
           </div>
           <button
-            onClick={() => setIsNewAnalysisModalOpen(true)}
+            onClick={() => setIsWizardOpen(true)}
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             <Plus size={20} className="mr-2" />
@@ -112,44 +109,11 @@ const AnalysisListPage: React.FC = () => {
         </div>
       </div>
 
-      {/* New Analysis Modal */}
-      {isNewAnalysisModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Nova Análise</h2>
-
-            <div>
-              <label htmlFor="analysis-name" className="block text-sm font-medium text-gray-700 mb-1">
-                Nome da Análise
-              </label>
-              <input
-                type="text"
-                id="analysis-name"
-                value={newAnalysisName}
-                onChange={(e) => setNewAnalysisName(e.target.value)}
-                className="w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Ex: Análise Pinheiros I"
-              />
-            </div>
-
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                onClick={() => setIsNewAnalysisModalOpen(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleCreateAnalysis}
-                disabled={!newAnalysisName.trim() || isLoading}
-                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isLoading ? 'Criando...' : 'Criar Análise'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AnalysisWizard
+        isOpen={isWizardOpen}
+        onClose={() => setIsWizardOpen(false)}
+        onComplete={handleCreateAnalysis}
+      />
     </div>
   );
 };
