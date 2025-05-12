@@ -23,9 +23,10 @@ const AnalysisListPage: React.FC = () => {
       const response = await fetch(`https://flippings.com.br/analises?usuario_id=${userId}`);
       if (response.ok) {
         const data = await response.json();
-        setAnalyses(data);
+        setAnalyses(Array.isArray(data) ? data : []);
       } else {
         toast.error('Erro ao carregar análises');
+        setAnalyses([]);
       }
     } catch (error) {
       toast.error('Erro ao carregar análises');
