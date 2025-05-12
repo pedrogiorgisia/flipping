@@ -1,0 +1,22 @@
+Ao criar uma análise, eu quero fazer tipo um wizard bonito sabe? Aquelas de configuração, onde vai passando a tela, vai mostrando o progresso do passo a passo. 
+<passo a passo>
+1. Nome da Análise
+2. Parâmetros para cálculo de preço de vendas com base em imóveis similares
+	Margem de Área - (Variação percentual permitida na área do imóvel ao buscar propriedades comparáveis. Explicar que esse parâmetro será usado para encontrar imóveis com uma metragem que possui uma variação de um percentual abaixo ou acima deste percentual. Ex: Se escolher = 10% e o imóvel tem 100m2, vai procurar como referência imóveis de 90 a 110m2.
+	Redução no Preço de Referência - (Percentual de redução aplicado ao preço médio das propriedades de referência. Explicar que esse parâmetro será usado para calcular o valor sugerido de venda com base nos imóveis de referência. O sistema calcula a média dos imóveis similares e desconta o % estipulado nesse parâmetro. Ex: Se os imóveis similares possuem uma média de preço de 1.000.000,00 e esse percentual for = 8%, então o preço sugerido de venda será = 920.000
+3. Parâmetros de financiamento
+	Percentual de Entrada - % de entrada que vai dar no apartamento no financiamento. No cenário atual, os bancos estão praticando 20 ou 30%
+	Avaliação Bancária - Custo estimado de avaliação bancária no financiamento que é cobrado pelo banco
+	Taxa CET - Custo efetivo total da taxa de juros aplicada pelo banco no financiamento
+	Prazo de Financiamento - Duração do financiamento imobiliário. Padrão 420 meses
+4. Custos gerais
+	ITBI - Percentual do Imposto sobre Transmissão de Bens Imóveis.
+	Registro em Cartório - Padrão: 1,5%
+	Custo de Reforma - Percentual sobre o valor do imóvel estimado para custos de reforma. Sugerido: 15%
+5. Outros parâmetros
+	Tempo Estimado de Venda - Em quanto tempo você estima vender o apartamento após a entrega das chaves?
+	Corretagem de Venda - Percentual cobrado pelo corretor na venda do imóvel. Padrão 6%
+	Desconto na Compra - Normalmente o valor anunciado não é pelo mesmo valor que se compra. Sugestão é deixar entre 5 a 8% de desconto
+</passo a passo>
+
+Por enquanto pode montar toda a estrutura do front end, continuando chamando só a API de criar análise. Depois que fecharmos o front end bonito e com bom Ux, explico como mudamos a chamada do backend
