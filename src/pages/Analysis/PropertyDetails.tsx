@@ -23,6 +23,10 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
 }) => {
   const [showDetails, setShowDetails] = useState(false);
 
+  if (!simulacao || typeof simulacao.param_valor_venda === 'undefined') {
+    return <div className="p-4">Carregando dados da simulação...</div>;
+  }
+
   const parameters = [
     {
       label: "Valor de compra",
