@@ -4,15 +4,37 @@ import { useParams } from "react-router-dom";
 import MainLayout from "../../components/Layout/MainLayout";
 import { Save, HelpCircle } from "lucide-react";
 import * as Tooltip from '@radix-ui/react-tooltip';
+import toast from 'react-hot-toast';
 import {
   getParametrosAnalise,
   updateParametrosAnalise,
   ParametrosAnalise,
 } from "../../api";
 
-const parameterDescriptions: {
-  [key: string]: { label: string; description: string; unit: string };
-} = {
+const parameterGroups = [
+  {
+    title: "Parâmetros Básicos",
+    description: "Configurações fundamentais da análise",
+    parameters: ["margem_area_pct", "reducao_pct"]
+  },
+  {
+    title: "Parâmetros de Financiamento",
+    description: "Configurações relacionadas ao financiamento do imóvel",
+    parameters: ["param_entrada_pct", "param_taxa_cet", "param_prazo_financiamento"]
+  },
+  {
+    title: "Custos de Transação",
+    description: "Custos envolvidos na compra e registro do imóvel",
+    parameters: ["param_itbi_pct", "param_avaliacao_bancaria", "param_registro_cartorio_pct", "param_custo_reforma_pct"]
+  },
+  {
+    title: "Parâmetros de Venda",
+    description: "Configurações relacionadas à venda do imóvel",
+    parameters: ["param_tempo_venda", "param_corretagem_venda_pct", "param_desconto_valor_compra"]
+  }
+];
+
+const parameterDescriptions = {
   margem_area_pct: {
     label: "Margem de Área",
     description: "Este percentual define a variação permitida na área do imóvel ao buscar propriedades comparáveis. Por exemplo: Se escolher 10% e o imóvel tem 100m², serão considerados imóveis de 90m² a 110m².",
@@ -83,7 +105,7 @@ const FormField = ({ id, value, onChange, label, description, unit }: {
   description: string;
   unit: string;
 }) => (
-  <div className="mb-6 bg-white p-4 rounded-lg shadow">
+  <div className="mb-4">
     <div className="flex items-center gap-2 mb-1">
       <label className="block text-sm font-medium text-gray-700">{label}</label>
       <Tooltip.Root delayDuration={0}>
@@ -101,22 +123,17 @@ const FormField = ({ id, value, onChange, label, description, unit }: {
         </Tooltip.Content>
       </Tooltip.Root>
     </div>
-    <div className="mt-1 relative rounded-md shadow-sm">
-      {unit === "R$" && (
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <span className="text-gray-500 sm:text-sm">R$</span>
-        </div>
-      )}
+    <div className="relative">
       <input
         type="number"
         id={id}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+        className="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
       />
-      {unit !== "R$" && (
+      {unit && (
         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-          <span className="text-gray-500 sm:text-sm">{unit}</span>
+          <span className="text-gray-500 text-sm">{unit}</span>
         </div>
       )}
     </div>
@@ -218,26 +235,34 @@ const SettingsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {Object.entries(settings).map(([key, value]) => {
-                const description = parameterDescriptions[key];
-                if (description) {
-                  return (
-                    <FormField
-                      key={key}
-                      id={key}
-                      value={value}
-                      onChange={(value) => handleChange(key, value)}
-                      label={description.label}
-                      description={description.description}
-                      unit={description.unit}
-                    />
-                  );
-                }
-                return null;
-              })}
-            </div>
+          <div className="space-y-8">
+            {parameterGroups.map((group) => (
+              <div key={group.title} className="bg-white rounded-lg shadow overflow-hidden">
+                <div className="px-6 py-4 border-b border-gray-200">
+                  <h3 className="text-lg font-medium text-gray-900">{group.title}</h3>
+                  <p className="mt-1 text-sm text-gray-500">{group.description}</p>
+                </div>
+                <div className="px-6 py-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {group.parameters.map((paramKey) => {
+                    const description = parameterDescriptions[paramKey];
+                    if (description) {
+                      return (
+                        <FormField
+                          key={paramKey}
+                          id={paramKey}
+                          value={settings[paramKey]}
+                          onChange={(value) => handleChange(paramKey, value)}
+                          label={description.label}
+                          description={description.description}
+                          unit={description.unit}
+                        />
+                      );
+                    }
+                    return null;
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </Tooltip.Provider>
