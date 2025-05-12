@@ -87,25 +87,44 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
     ],
   ];
 
+  const valorEntrada = simulacao.param_valor_compra * (simulacao.param_entrada_pct / 100);
+  const valorItbi = simulacao.param_valor_compra * (simulacao.param_itbi_pct / 100);
+  const registroCartorio = simulacao.param_valor_compra * (simulacao.param_registro_cartorio_pct / 100);
   const custosAquisicao =
-    parseFloat(simulacao.calc_entrada) +
-    parseFloat(simulacao.calc_itbi) +
+    valorEntrada +
+    valorItbi +
     parseFloat(simulacao.param_avaliacao_bancaria) +
-    parseFloat(simulacao.calc_registro_cartorio);
+    registroCartorio;
+
+  const taxaCETMensal = simulacao.param_taxa_cet / 100 / 12;
+  const valorFinanciado = simulacao.param_valor_compra - valorEntrada;
+  const prazoFinanciamento = simulacao.param_prazo_financiamento;
+  const amortizacaoMensal = valorFinanciado / prazoFinanciamento;
+  const tempoVenda = simulacao.param_tempo_venda;
+  
+  let totalParcelas = 0;
+  let saldoDevedor = valorFinanciado;
+  for (let i = 0; i < tempoVenda; i++) {
+    const jurosMensal = saldoDevedor * taxaCETMensal;
+    const parcela = amortizacaoMensal + jurosMensal;
+    totalParcelas += parcela;
+    saldoDevedor -= amortizacaoMensal;
+  }
 
   const custosAteVenda =
-    parseFloat(simulacao.calc_quitacao_financiamento) +
-    simulacao.imovel.condominio_mensal * simulacao.param_tempo_venda +
-    (simulacao.imovel.iptu_anual / 12) * simulacao.param_tempo_venda +
-    parseFloat(simulacao.param_contas_gerais) * simulacao.param_tempo_venda +
+    totalParcelas +
+    simulacao.imovel.condominio_mensal * tempoVenda +
+    (simulacao.imovel.iptu_anual / 12) * tempoVenda +
+    parseFloat(simulacao.param_contas_gerais) * tempoVenda +
     parseFloat(simulacao.param_custo_reforma);
 
   const investimentoTotal = custosAquisicao + custosAteVenda;
 
+  const corretagemVenda = simulacao.param_valor_venda * (simulacao.param_corretagem_venda_pct / 100);
   const custosVenda =
-    parseFloat(simulacao.calc_quitacao_financiamento) +
-    parseFloat(simulacao.calc_corretagem) +
-    parseFloat(simulacao.calc_imposto_renda);
+    saldoDevedor +
+    corretagemVenda +
+    parseFloat(simulacao.imposto_renda || 0);
 
   const lucroLiquido =
     parseFloat(simulacao.param_valor_venda) - investimentoTotal - custosVenda;
