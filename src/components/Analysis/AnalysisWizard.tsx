@@ -107,28 +107,29 @@ const AnalysisWizard: React.FC<AnalysisWizardProps> = ({ isOpen, onClose, onComp
       try {
         await onComplete(formData);
       } catch (error: any) {
+        console.error('Erro completo:', error);
         let errorMessage = 'Erro ao criar análise';
         
-        if (error.response) {
-          // Erro da API com resposta
-          errorMessage = typeof error.response.data === 'string' ? 
-            error.response.data : 
-            error.response.data?.detail || 'Erro ao criar análise';
+        if (error.response?.data) {
+          errorMessage = typeof error.response.data === 'string' 
+            ? error.response.data 
+            : error.response.data.detail || error.response.data.message || 'Erro ao criar análise';
         } else if (error.message) {
-          // Erro com mensagem
           errorMessage = error.message;
         }
         
         toast.error(errorMessage, {
-          duration: 5000,
+          duration: 6000,
           position: 'top-center',
           style: {
             background: '#fee2e2',
             color: '#991b1b',
             fontWeight: 'bold',
             padding: '16px',
+            fontSize: '14px',
           },
         });
+        console.error('Mensagem de erro:', errorMessage);
       }
     } else {
       setCurrentStep(prev => prev + 1);
