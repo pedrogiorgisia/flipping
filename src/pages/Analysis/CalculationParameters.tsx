@@ -131,9 +131,6 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
 
   const roi = lucroLiquido / investimentoTotal;
 
-  const registroCartorio = simulacao.param_valor_compra * (simulacao.param_registro_cartorio_pct / 100);
-  const corretagemVenda = simulacao.param_valor_venda * (simulacao.param_corretagem_venda_pct / 100);
-
   const viabilityAnalysis = [
     {
       title: "Custos de Aquisição",
