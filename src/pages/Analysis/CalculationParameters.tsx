@@ -105,18 +105,6 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
     saldoDevedor -= valorFinanciado / simulacao.param_prazo_financiamento;
   }
 
-  const custosAteVenda =
-    totalParcelas +
-    simulacao.imovel.condominio_mensal * simulacao.param_tempo_venda +
-    (simulacao.imovel.iptu_anual / 12) * simulacao.param_tempo_venda +
-    simulacao.param_contas_gerais * simulacao.param_tempo_venda +
-    simulacao.param_custo_reforma;
-
-  const corretagemVenda = simulacao.param_valor_venda * (simulacao.param_corretagem_venda_pct / 100);
-  const custosVenda =
-    saldoDevedor +
-    corretagemVenda +
-    (simulacao.param_incide_ir ? simulacao.imposto_renda : 0);
   const prazoFinanciamento = simulacao.param_prazo_financiamento;
   const amortizacaoMensal = valorFinanciado / prazoFinanciamento;
   const tempoVenda = simulacao.param_tempo_venda;
@@ -129,6 +117,19 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
     totalParcelas += parcela;
     saldoDevedor -= amortizacaoMensal;
   }
+
+  const custosAteVenda =
+    totalParcelas +
+    simulacao.imovel.condominio_mensal * simulacao.param_tempo_venda +
+    (simulacao.imovel.iptu_anual / 12) * simulacao.param_tempo_venda +
+    simulacao.param_contas_gerais * simulacao.param_tempo_venda +
+    simulacao.param_custo_reforma;
+
+  const corretagemVenda = simulacao.param_valor_venda * (simulacao.param_corretagem_venda_pct / 100);
+  const custosVenda =
+    saldoDevedor +
+    corretagemVenda +
+    (simulacao.param_incide_ir ? simulacao.imposto_renda : 0);
 
   const custosAteVenda =
     totalParcelas +
