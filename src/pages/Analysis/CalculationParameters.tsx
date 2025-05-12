@@ -95,16 +95,6 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
 
   const taxaCETMensal = simulacao.param_taxa_cet / 100 / 12;
   const valorFinanciado = simulacao.param_valor_compra - valorEntrada;
-  
-  let totalParcelas = 0;
-  let saldoDevedor = valorFinanciado;
-  for (let i = 0; i < simulacao.param_tempo_venda; i++) {
-    const jurosMensal = saldoDevedor * taxaCETMensal;
-    const parcela = (valorFinanciado / simulacao.param_prazo_financiamento) + jurosMensal;
-    totalParcelas += parcela;
-    saldoDevedor -= valorFinanciado / simulacao.param_prazo_financiamento;
-  }
-
   const prazoFinanciamento = simulacao.param_prazo_financiamento;
   const amortizacaoMensal = valorFinanciado / prazoFinanciamento;
   const tempoVenda = simulacao.param_tempo_venda;
@@ -117,13 +107,6 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
     totalParcelas += parcela;
     saldoDevedor -= amortizacaoMensal;
   }
-
-  const custosAteVenda =
-    totalParcelas +
-    simulacao.imovel.condominio_mensal * simulacao.param_tempo_venda +
-    (simulacao.imovel.iptu_anual / 12) * simulacao.param_tempo_venda +
-    simulacao.param_contas_gerais * simulacao.param_tempo_venda +
-    simulacao.param_custo_reforma;
 
   const corretagemVenda = simulacao.param_valor_venda * (simulacao.param_corretagem_venda_pct / 100);
   const custosVenda =
@@ -139,12 +122,6 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
     parseFloat(simulacao.param_custo_reforma);
 
   const investimentoTotal = custosAquisicao + custosAteVenda;
-
-  const corretagemVenda = simulacao.param_valor_venda * (simulacao.param_corretagem_venda_pct / 100);
-  const custosVenda =
-    saldoDevedor +
-    corretagemVenda +
-    parseFloat(simulacao.imposto_renda || 0);
 
   const lucroLiquido =
     parseFloat(simulacao.param_valor_venda) - investimentoTotal - custosVenda;
