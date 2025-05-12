@@ -25,24 +25,20 @@ const FormField = ({ label, tooltip, children }: { label: string; tooltip: strin
   <div className="mb-4">
     <div className="flex items-center gap-2 mb-1">
       <label className="block text-sm font-medium text-gray-700">{label}</label>
-      <Tooltip.Provider>
-        <Tooltip.Root>
-          <Tooltip.Trigger asChild>
-            <button className="text-gray-400 hover:text-gray-600">
-              <HelpCircle size={16} />
-            </button>
-          </Tooltip.Trigger>
-          <Tooltip.Portal>
-            <Tooltip.Content
-              className="max-w-xs p-2 text-sm text-white bg-gray-900 rounded shadow-lg"
-              sideOffset={5}
-            >
-              {tooltip}
-              <Tooltip.Arrow className="fill-gray-900" />
-            </Tooltip.Content>
-          </Tooltip.Portal>
-        </Tooltip.Root>
-      </Tooltip.Provider>
+      <Tooltip.Root delayDuration={0}>
+        <Tooltip.Trigger asChild>
+          <button type="button" className="text-gray-400 hover:text-gray-600">
+            <HelpCircle size={16} />
+          </button>
+        </Tooltip.Trigger>
+        <Tooltip.Content
+          className="max-w-xs p-2 text-sm text-white bg-gray-900 rounded shadow-lg z-50"
+          sideOffset={5}
+        >
+          {tooltip}
+          <Tooltip.Arrow className="fill-gray-900" />
+        </Tooltip.Content>
+      </Tooltip.Root>
     </div>
     {children}
   </div>
@@ -198,64 +194,66 @@ const AnalysisWizard: React.FC<AnalysisWizardProps> = ({ isOpen, onClose, onComp
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl">
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Nova Análise</h2>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-500">
-              <X size={24} />
-            </button>
-          </div>
+    <Tooltip.Provider>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl">
+          <div className="p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-gray-900">Nova Análise</h2>
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-500">
+                <X size={24} />
+              </button>
+            </div>
 
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              {steps.map((step, index) => (
-                <div key={index} className="flex items-center">
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      index <= currentStep ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
-                    }`}
-                  >
-                    {index + 1}
-                  </div>
-                  {index < steps.length - 1 && (
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                {steps.map((step, index) => (
+                  <div key={index} className="flex items-center">
                     <div
-                      className={`h-1 w-12 mx-2 ${
-                        index < currentStep ? 'bg-blue-600' : 'bg-gray-200'
+                      className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        index <= currentStep ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
                       }`}
-                    />
-                  )}
-                </div>
-              ))}
+                    >
+                      {index + 1}
+                    </div>
+                    {index < steps.length - 1 && (
+                      <div
+                        className={`h-1 w-12 mx-2 ${
+                          index < currentStep ? 'bg-blue-600' : 'bg-gray-200'
+                        }`}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div className="text-center mb-6">
+                <h3 className="text-lg font-medium text-gray-900">{steps[currentStep].title}</h3>
+                <p className="text-sm text-gray-500">{steps[currentStep].description}</p>
+              </div>
             </div>
-            <div className="text-center mb-6">
-              <h3 className="text-lg font-medium text-gray-900">{steps[currentStep].title}</h3>
-              <p className="text-sm text-gray-500">{steps[currentStep].description}</p>
+
+            <div className="mb-8">{renderStepContent()}</div>
+
+            <div className="flex justify-between">
+              <button
+                onClick={() => setCurrentStep(prev => prev - 1)}
+                disabled={currentStep === 0}
+                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Voltar
+              </button>
+              <button
+                onClick={handleNext}
+                disabled={currentStep === 0 && !formData.nome.trim()}
+                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {currentStep === steps.length - 1 ? 'Concluir' : 'Próximo'}
+              </button>
             </div>
-          </div>
-
-          <div className="mb-8">{renderStepContent()}</div>
-
-          <div className="flex justify-between">
-            <button
-              onClick={() => setCurrentStep(prev => prev - 1)}
-              disabled={currentStep === 0}
-              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Voltar
-            </button>
-            <button
-              onClick={handleNext}
-              disabled={currentStep === 0 && !formData.nome.trim()}
-              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {currentStep === steps.length - 1 ? 'Concluir' : 'Próximo'}
-            </button>
           </div>
         </div>
       </div>
-    </div>
+    </Tooltip.Provider>
   );
 };
 
