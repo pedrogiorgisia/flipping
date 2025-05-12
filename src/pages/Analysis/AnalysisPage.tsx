@@ -25,85 +25,102 @@ const AnalysisPage: React.FC = () => {
   const [referenciasSimulacao, setReferenciasSimulacao] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"calculator" | "references">("calculator");
-
-  const handleParameterChange = useCallback(
-    (field: keyof any, value: any) => {
-      setSimulacao((prev: any | null) => {
-        if (!prev) return null;
-        let updatedValue;
-        if (field === "param_incide_ir") {
-          updatedValue = Boolean(value);
-        } else {
-          updatedValue = parseFloat(value) || 0;
-        }
-        const updatedSimulacao = { ...prev, [field]: updatedValue };
-
-        const valorCompra = updatedSimulacao.param_valor_compra;
-        const valorVenda = updatedSimulacao.param_valor_venda;
-        const entradaPct = updatedSimulacao.param_entrada_pct;
-        const itbiPct = updatedSimulacao.param_itbi_pct;
-        const registroCartorioPct = updatedSimulacao.param_registro_cartorio_pct;
-        const taxaCET = updatedSimulacao.param_taxa_cet / 100 / 12;
-        const prazoFinanciamento = updatedSimulacao.param_prazo_financiamento;
-        const tempoVenda = updatedSimulacao.param_tempo_venda;
-        const reformaRS = updatedSimulacao.param_custo_reforma;
-        const avaliacaoBancaria = updatedSimulacao.param_avaliacao_bancaria;
-        const contasGerais = updatedSimulacao.param_contas_gerais;
-        const corretagemVendaPct = updatedSimulacao.param_corretagem_venda_pct;
-
-        const valorEntrada = valorCompra * (entradaPct / 100);
-        const valorItbi = valorCompra * (itbiPct / 100);
-        const valorRegistroCartorio = valorCompra * (registroCartorioPct / 100);
-        const custoAquisicao = valorEntrada + valorItbi + avaliacaoBancaria + valorRegistroCartorio;
-
-        const valorFinanciado = valorCompra - valorEntrada;
-        const amortizacaoMensal = valorFinanciado / prazoFinanciamento;
-
-        let totalParcelas = 0;
-        let saldoDevedor = valorFinanciado;
-        for (let i = 0; i < tempoVenda; i++) {
-          const jurosMensal = saldoDevedor * taxaCET;
-          const parcela = amortizacaoMensal + jurosMensal;
-          totalParcelas += parcela;
-          saldoDevedor -= amortizacaoMensal;
-        }
-
-        const quitacao = saldoDevedor;
-        const totalCondominio = (updatedSimulacao.imovel?.condominio_mensal || 0) * tempoVenda;
-        const iptuTotal = ((updatedSimulacao.imovel?.iptu_anual || 0) / 12) * tempoVenda;
-        const contasGeraisTotal = contasGerais * tempoVenda;
-        const custosAteVenda = totalParcelas + totalCondominio + iptuTotal + contasGeraisTotal + reformaRS;
-
-        const corretagem = valorVenda * (corretagemVendaPct / 100);
-        const baseCalculoIR = valorVenda - custoAquisicao - quitacao - corretagem - (totalParcelas * 3) / 4 - reformaRS;
-        const impostoRenda = updatedSimulacao.param_incide_ir ? Math.max(0, baseCalculoIR * 0.15) : 0;
-
-        const investimentoTotal = custoAquisicao + custosAteVenda;
-        const lucroLiquido = valorVenda - investimentoTotal - quitacao - corretagem - impostoRenda;
-        const roi = investimentoTotal > 0 ? lucroLiquido / investimentoTotal : 0;
-
-        return {
-          ...updatedSimulacao,
-          calc_entrada: valorEntrada,
-          calc_itbi: valorItbi,
-          valor_registro_cartorio: valorRegistroCartorio,
-          calc_parcelas_rs: totalParcelas,
-          calc_quitacao_rs: quitacao,
-          calc_condominio_rs: totalCondominio,
-          roi_liquido: roi,
-          investimento_total: investimentoTotal,
-          lucro_liquido: lucroLiquido,
-          imposto_renda: impostoRenda,
-          iptu_total: iptuTotal,
-          contas_gerais_total: contasGeraisTotal,
-          valor_compra: valorCompra,
-          valor_venda: valorVenda,
-        };
-      });
-    },
-    []
+  const [activeTab, setActiveTab] = useState<"calculator" | "references">(
+    "calculator",
   );
+
+  const handleParameterChange = useCallback((field: keyof any, value: any) => {
+    setSimulacao((prev: any | null) => {
+      if (!prev) return null;
+      let updatedValue;
+      if (field === "param_incide_ir") {
+        updatedValue = Boolean(value);
+      } else {
+        updatedValue = parseFloat(value) || 0;
+      }
+      const updatedSimulacao = { ...prev, [field]: updatedValue };
+
+      // Cálculos
+      const valorCompra = updatedSimulacao.param_valor_compra;
+      const valorVenda = updatedSimulacao.param_valor_venda;
+      const entradaPct = updatedSimulacao.param_entrada_pct;
+      const itbiPct = updatedSimulacao.param_itbi_pct;
+      const registroCartorioPct = updatedSimulacao.param_registro_cartorio_pct;
+      const taxaCET = updatedSimulacao.param_taxa_cet / 100 / 12;
+      const prazoFinanciamento = updatedSimulacao.param_prazo_financiamento;
+      const tempoVenda = updatedSimulacao.param_tempo_venda;
+      const reformaRS = updatedSimulacao.param_custo_reforma;
+      const avaliacaoBancaria = updatedSimulacao.param_avaliacao_bancaria;
+      const contasGerais = updatedSimulacao.param_contas_gerais;
+      const corretagemVendaPct = updatedSimulacao.param_corretagem_venda_pct;
+
+      const valorEntrada = valorCompra * (entradaPct / 100);
+      const valorItbi = valorCompra * (itbiPct / 100);
+      const valorRegistroCartorio = valorCompra * (registroCartorioPct / 100);
+      const custoAquisicao =
+        valorEntrada + valorItbi + avaliacaoBancaria + valorRegistroCartorio;
+
+      const valorFinanciado = valorCompra - valorEntrada;
+      const amortizacaoMensal = valorFinanciado / prazoFinanciamento;
+
+      let totalParcelas = 0;
+      let saldoDevedor = valorFinanciado;
+      for (let i = 0; i < tempoVenda; i++) {
+        const jurosMensal = saldoDevedor * taxaCET;
+        const parcela = amortizacaoMensal + jurosMensal;
+        totalParcelas += parcela;
+        saldoDevedor -= amortizacaoMensal;
+      }
+
+      const quitacao = saldoDevedor;
+      const totalCondominio =
+        (updatedSimulacao.imovel?.condominio_mensal || 0) * tempoVenda;
+      const iptuTotal =
+        ((updatedSimulacao.imovel?.iptu_anual || 0) / 12) * tempoVenda;
+      const contasGeraisTotal = contasGerais * tempoVenda;
+      const custosAteVenda =
+        totalParcelas +
+        totalCondominio +
+        iptuTotal +
+        contasGeraisTotal +
+        reformaRS;
+
+      const corretagem = valorVenda * (corretagemVendaPct / 100);
+      const baseCalculoIR =
+        valorVenda -
+        custoAquisicao -
+        quitacao -
+        corretagem -
+        (totalParcelas * 3) / 4 -
+        reformaRS;
+      const impostoRenda = updatedSimulacao.param_incide_ir
+        ? Math.max(0, baseCalculoIR * 0.15)
+        : 0;
+
+      const investimentoTotal = custoAquisicao + custosAteVenda;
+      const lucroLiquido =
+        valorVenda - investimentoTotal - quitacao - corretagem - impostoRenda;
+      const roi = investimentoTotal > 0 ? lucroLiquido / investimentoTotal : 0;
+
+      return {
+        ...updatedSimulacao,
+        calc_entrada: valorEntrada,
+        calc_itbi: valorItbi,
+        valor_registro_cartorio: valorRegistroCartorio,
+        calc_parcelas_rs: totalParcelas,
+        calc_quitacao_rs: quitacao,
+        calc_condominio_rs: totalCondominio,
+        roi_liquido: roi,
+        investimento_total: investimentoTotal,
+        lucro_liquido: lucroLiquido,
+        imposto_renda: impostoRenda,
+        iptu_total: iptuTotal,
+        contas_gerais_total: contasGeraisTotal,
+        valor_compra: valorCompra,
+        valor_venda: valorVenda,
+      };
+    });
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -127,7 +144,7 @@ const AnalysisPage: React.FC = () => {
       } catch (err) {
         console.error("Erro ao buscar dados:", err);
         setError(
-          `Erro ao carregar os dados da simulação: ${(err as Error).message}`
+          `Erro ao carregar os dados da simulação: ${(err as Error).message}`,
         );
       } finally {
         setLoading(false);
@@ -168,8 +185,10 @@ const AnalysisPage: React.FC = () => {
   };
 
   if (loading) return <div className="text-center py-8">Carregando...</div>;
-  if (error) return <div className="text-center py-8 text-red-600">{error}</div>;
-  if (!simulacao) return <div className="text-center py-8">Nenhuma simulação encontrada</div>;
+  if (error)
+    return <div className="text-center py-8 text-red-600">{error}</div>;
+  if (!simulacao)
+    return <div className="text-center py-8">Nenhuma simulação encontrada</div>;
 
   return (
     <MainLayout>
@@ -212,7 +231,7 @@ const AnalysisPage: React.FC = () => {
                 </button>
               </div>
               <div className="p-6">
-                {activeTab === "calculator" && simulacao && (
+                {activeTab === "calculator" && (
                   <CalculationParameters
                     simulacao={simulacao}
                     handleParameterChange={handleParameterChange}

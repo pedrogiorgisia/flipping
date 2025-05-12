@@ -14,11 +14,10 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
   salvarSimulacao,
   formatCurrency,
 }) => {
-  const [showDetails, setShowDetails] = useState(false);
+  console.log("Simulação:", simulacao);
+  console.log("Investimento total:", simulacao.investimento_total);
 
-  if (!simulacao) {
-    return <div>Carregando dados da simulação...</div>;
-  }
+  const [showDetails, setShowDetails] = useState(false);
 
   const parameters = [
     [
@@ -88,100 +87,110 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
     ],
   ];
 
-  const kpis = [
-    { label: "Preço de venda", value: simulacao.param_valor_venda },
-    { label: "Investimento total", value: simulacao.investimento_total },
-    {
-      label: "Custo de venda",
-      value:
-        simulacao.calc_quitacao_rs +
-        simulacao.param_valor_venda *
-          (simulacao.param_corretagem_venda_pct / 100) +
-        simulacao.imposto_renda,
-    },
-    { label: "Lucro líquido", value: simulacao.lucro_liquido },
-  ];
+  const custosAquisicao =
+    parseFloat(simulacao.calc_entrada) +
+    parseFloat(simulacao.calc_itbi) +
+    parseFloat(simulacao.param_avaliacao_bancaria) +
+    parseFloat(simulacao.calc_registro_cartorio);
+
+  const custosAteVenda =
+    parseFloat(simulacao.calc_quitacao_financiamento) +
+    simulacao.imovel.condominio_mensal * simulacao.param_tempo_venda +
+    (simulacao.imovel.iptu_anual / 12) * simulacao.param_tempo_venda +
+    parseFloat(simulacao.param_contas_gerais) * simulacao.param_tempo_venda +
+    parseFloat(simulacao.param_custo_reforma);
+
+  const investimentoTotal = custosAquisicao + custosAteVenda;
+
+  const custosVenda =
+    parseFloat(simulacao.calc_quitacao_financiamento) +
+    parseFloat(simulacao.calc_corretagem) +
+    parseFloat(simulacao.calc_imposto_renda);
+
+  const lucroLiquido =
+    parseFloat(simulacao.param_valor_venda) - investimentoTotal - custosVenda;
+
+  const roi = lucroLiquido / investimentoTotal;
 
   const viabilityAnalysis = [
     {
       title: "Custos de Aquisição",
       items: [
-        { label: "Entrada", value: simulacao.calc_entrada },
-        { label: "ITBI", value: simulacao.calc_itbi },
+        { label: "Entrada", value: parseFloat(simulacao.calc_entrada) },
+        { label: "ITBI", value: parseFloat(simulacao.calc_itbi) },
         {
           label: "Avaliação do Banco",
-          value: simulacao.param_avaliacao_bancaria,
+          value: parseFloat(simulacao.param_avaliacao_bancaria),
         },
-        { label: "Registro", value: simulacao.valor_registro_cartorio },
+        {
+          label: "Registro",
+          value: parseFloat(simulacao.calc_registro_cartorio),
+        },
       ],
-      total:
-        simulacao.calc_entrada +
-        simulacao.calc_itbi +
-        simulacao.param_avaliacao_bancaria +
-        simulacao.valor_registro_cartorio,
+      total: custosAquisicao,
     },
     {
       title: "Custos até a venda",
       items: [
-        { label: "Parcelas Financiamento", value: simulacao.calc_parcelas_rs },
-        { label: "Condomínio", value: simulacao.calc_condominio_rs },
-        { label: "IPTU", value: simulacao.iptu_total },
-        { label: "Contas gerais", value: simulacao.contas_gerais_total },
-        { label: "Reforma", value: simulacao.param_custo_reforma },
+        {
+          label: "Parcelas Financiamento",
+          value: parseFloat(simulacao.calc_quitacao_financiamento),
+        },
+        {
+          label: "Condomínio",
+          value:
+            simulacao.imovel.condominio_mensal * simulacao.param_tempo_venda,
+        },
+        {
+          label: "IPTU",
+          value:
+            (simulacao.imovel.iptu_anual / 12) * simulacao.param_tempo_venda,
+        },
+        {
+          label: "Contas gerais",
+          value:
+            parseFloat(simulacao.param_contas_gerais) *
+            simulacao.param_tempo_venda,
+        },
+        { label: "Reforma", value: parseFloat(simulacao.param_custo_reforma) },
       ],
-      total:
-        simulacao.calc_parcelas_rs +
-        simulacao.calc_condominio_rs +
-        simulacao.iptu_total +
-        simulacao.contas_gerais_total +
-        simulacao.param_custo_reforma,
+      total: custosAteVenda,
     },
     {
       title: "Custos de Venda",
       items: [
         {
           label: "Quitação do Financiamento",
-          value: simulacao.calc_quitacao_rs,
+          value: parseFloat(simulacao.calc_quitacao_financiamento),
         },
+        { label: "Corretagem", value: parseFloat(simulacao.calc_corretagem) },
         {
-          label: "Corretagem",
-          value:
-            simulacao.param_valor_venda *
-            (simulacao.param_corretagem_venda_pct / 100),
+          label: "Imposto de Renda",
+          value: parseFloat(simulacao.calc_imposto_renda),
         },
-        { label: "Imposto de Renda", value: simulacao.imposto_renda },
       ],
-      total:
-        simulacao.calc_quitacao_rs +
-        simulacao.param_valor_venda *
-          (simulacao.param_corretagem_venda_pct / 100) +
-        simulacao.imposto_renda,
+      total: custosVenda,
     },
     {
       title: "Resultados",
       items: [
-        { label: "Preço de venda (+)", value: simulacao.param_valor_venda },
         {
-          label: "Investimento total (-)",
-          value: -simulacao.investimento_total,
+          label: "Preço de venda (+)",
+          value: parseFloat(simulacao.param_valor_venda),
         },
-        {
-          label: "Custo de venda (-)",
-          value: -(
-            simulacao.calc_quitacao_rs +
-            simulacao.param_valor_venda *
-              (simulacao.param_corretagem_venda_pct / 100) +
-            simulacao.imposto_renda
-          ),
-        },
-        { label: "Lucro líquido (=)", value: simulacao.lucro_liquido },
-        {
-          label: "ROI (=)",
-          value: simulacao.roi_liquido * 100,
-          isPercentage: true,
-        },
+        { label: "Investimento total (-)", value: -investimentoTotal },
+        { label: "Custo de venda (-)", value: -custosVenda },
+        { label: "Lucro líquido (=)", value: lucroLiquido },
+        { label: "ROI (=)", value: roi, isPercentage: true },
       ],
     },
+  ];
+
+  const kpis = [
+    { label: "Preço de venda", value: parseFloat(simulacao.param_valor_venda) },
+    { label: "Investimento total", value: investimentoTotal },
+    { label: "Custo de venda", value: custosVenda },
+    { label: "Lucro líquido", value: lucroLiquido },
   ];
 
   return (
