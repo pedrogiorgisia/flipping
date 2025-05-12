@@ -128,13 +128,23 @@ const ReferenceProperties: React.FC<ReferencePropertiesProps> = ({
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 inline-block">
-          <p className="text-xs font-medium text-gray-500 mb-1">
-            Preço de Venda Sugerido
-          </p>
-          <p className="text-sm font-bold text-gray-900">
-            {formatCurrency(calculateAveragePrice())}
-          </p>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-xs font-medium text-gray-500 mb-1">
+                Preço de Venda Sugerido
+              </p>
+              <p className="text-sm font-bold text-gray-900">
+                {formatCurrency(calculateAveragePrice())}
+              </p>
+            </div>
+            <div className="text-xs text-gray-500 ml-4 max-w-[200px]">
+              <p>Média dos imóveis de referência com redução de {parameters?.reducao_pct || 0}%</p>
+              <p className="mt-1 text-gray-400">
+                ({references.length} {references.length === 1 ? 'imóvel' : 'imóveis'} de referência)
+              </p>
+            </div>
+          </div>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
