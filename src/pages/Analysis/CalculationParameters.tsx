@@ -90,11 +90,8 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
   const valorEntrada = simulacao.param_valor_compra * (simulacao.param_entrada_pct / 100);
   const valorItbi = simulacao.param_valor_compra * (simulacao.param_itbi_pct / 100);
   const registroCartorio = simulacao.param_valor_compra * (simulacao.param_registro_cartorio_pct / 100);
-  const custosAquisicao =
-    valorEntrada +
-    valorItbi +
-    parseFloat(simulacao.param_avaliacao_bancaria) +
-    registroCartorio;
+  const avaliacaoBancaria = parseFloat(simulacao.param_avaliacao_bancaria) || 0;
+  const custosAquisicao = valorEntrada + valorItbi + avaliacaoBancaria + registroCartorio;
 
   const taxaCETMensal = simulacao.param_taxa_cet / 100 / 12;
   const valorFinanciado = simulacao.param_valor_compra - valorEntrada;
