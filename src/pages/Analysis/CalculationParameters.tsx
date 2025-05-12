@@ -87,11 +87,16 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
     ],
   ];
 
-  const valorEntrada = simulacao.param_valor_compra * (simulacao.param_entrada_pct / 100);
-  const valorItbi = simulacao.param_valor_compra * (simulacao.param_itbi_pct / 100);
-  const registroCartorio = simulacao.param_valor_compra * (simulacao.param_registro_cartorio_pct / 100);
+  const valorEntrada =
+    simulacao.param_valor_compra * (simulacao.param_entrada_pct / 100);
+  const valorItbi =
+    simulacao.param_valor_compra * (simulacao.param_itbi_pct / 100);
+  const registroCartorio =
+    simulacao.param_valor_compra *
+    (simulacao.param_registro_cartorio_pct / 100);
   const avaliacaoBancaria = parseFloat(simulacao.param_avaliacao_bancaria) || 0;
-  const custosAquisicao = valorEntrada + valorItbi + avaliacaoBancaria + registroCartorio;
+  const custosAquisicao =
+    valorEntrada + valorItbi + avaliacaoBancaria + registroCartorio;
 
   const taxaCETMensal = simulacao.param_taxa_cet / 100 / 12;
   const valorFinanciado = simulacao.param_valor_compra - valorEntrada;
@@ -117,11 +122,10 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
 
   const investimentoTotal = custosAquisicao + custosAteVenda;
 
-  const corretagemVenda = simulacao.param_valor_venda * (simulacao.param_corretagem_venda_pct / 100);
+  const corretagemVenda =
+    simulacao.param_valor_venda * (simulacao.param_corretagem_venda_pct / 100);
   const custosVenda =
-    saldoDevedor +
-    corretagemVenda +
-    parseFloat(simulacao.imposto_renda || 0);
+    saldoDevedor + corretagemVenda + parseFloat(simulacao.imposto_renda || 0);
 
   const lucroLiquido =
     parseFloat(simulacao.param_valor_venda) - investimentoTotal - custosVenda;
@@ -143,7 +147,7 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
           value: registroCartorio,
         },
       ],
-      total: custosAquisicao + registroCartorio,
+      total: custosAquisicao,
     },
     {
       title: "Custos até a venda",
