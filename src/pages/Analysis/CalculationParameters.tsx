@@ -195,8 +195,6 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Calculadora ROI</h2>
-
       {/* ROI Card */}
       <div className="bg-blue-100 p-4 rounded-lg mb-4">
         <p className="text-sm font-semibold text-blue-800">ROI da Operação</p>
@@ -223,7 +221,7 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
         className="w-full mb-6 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out"
       >
         <FaInfoCircle className="inline-block mr-2" />
-        Ver detalhes da análise de viabilidade
+        Ver detalhes de cálculo de viabilidade
       </button>
 
       {/* Parameters */}
