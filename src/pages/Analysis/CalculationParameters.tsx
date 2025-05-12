@@ -201,7 +201,7 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
       <div className="bg-blue-100 p-4 rounded-lg mb-4">
         <p className="text-sm font-semibold text-blue-800">ROI da Operação</p>
         <p className="text-3xl font-bold text-blue-600">
-          {(simulacao.roi_liquido * 100).toFixed(2)}%
+          {(roi * 100).toFixed(2)}%
         </p>
       </div>
 
