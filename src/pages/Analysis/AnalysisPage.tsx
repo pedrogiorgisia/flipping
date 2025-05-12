@@ -212,7 +212,7 @@ const AnalysisPage: React.FC = () => {
                 </button>
               </div>
               <div className="p-6">
-                {activeTab === "calculator" && (
+                {activeTab === "calculator" && simulacao && (
                   <CalculationParameters
                     simulacao={simulacao}
                     handleParameterChange={handleParameterChange}
