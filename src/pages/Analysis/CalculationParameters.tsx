@@ -16,6 +16,10 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
 }) => {
   const [showDetails, setShowDetails] = useState(false);
 
+  if (!simulacao) {
+    return <div>Carregando dados da simulação...</div>;
+  }
+
   const parameters = [
     [
       {
