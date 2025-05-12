@@ -265,9 +265,6 @@ const CalculationParameters: React.FC<CalculationParametersProps> = ({
         ))}
       </div>
 
-      
-</div>
-
       {/* Separator */}
       <div className="relative my-8">
         <div className="absolute inset-0 flex items-center">
