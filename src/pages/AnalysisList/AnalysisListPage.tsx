@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Plus, FolderOpen } from 'lucide-react';
-import AnalysisWizard from '../../components/Analysis/AnalysisWizard';
-import toast from 'react-hot-toast';
-import { useAuth } from '../../context/AuthContext';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Plus, FolderOpen } from "lucide-react";
+import AnalysisWizard from "../../components/Analysis/AnalysisWizard";
+import toast from "react-hot-toast";
+import { useAuth } from "../../context/AuthContext";
 
 interface Analysis {
   id: string;
@@ -20,16 +20,18 @@ const AnalysisListPage: React.FC = () => {
   const fetchAnalyses = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`https://flippings.com.br/analises?usuario_id=${userId}`);
+      const response = await fetch(
+        `https://flippings.com.br/analises?usuario_id=${userId}`,
+      );
       if (response.ok) {
         const data = await response.json();
         setAnalyses(data.analises || []);
       } else {
-        toast.error('Erro ao carregar análises');
+        toast.error("Erro ao carregar análises");
         setAnalyses([]);
       }
     } catch (error) {
-      toast.error('Erro ao carregar análises');
+      toast.error("Erro ao carregar análises");
     } finally {
       setIsLoading(false);
     }
@@ -42,10 +44,10 @@ const AnalysisListPage: React.FC = () => {
   const handleCreateAnalysis = async (wizardData: any) => {
     setIsLoading(true);
     try {
-      const response = await fetch('https://flippings.com.br/analises', {
-        method: 'POST',
+      const response = await fetch("https://flippings.com.br/analises", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           id_usuario: userId,
@@ -61,21 +63,21 @@ const AnalysisListPage: React.FC = () => {
           param_prazo_financiamento: wizardData.param_prazo_financiamento,
           param_tempo_venda: wizardData.param_tempo_venda,
           param_corretagem_venda_pct: wizardData.param_corretagem_venda_pct,
-          param_desconto_valor_compra: wizardData.param_desconto_valor_compra
-        })
+          param_desconto_valor_compra: wizardData.param_desconto_valor_compra,
+        }),
       });
 
       if (response.ok) {
         setIsWizardOpen(false);
         fetchAnalyses();
-        toast.success('Análise criada com sucesso');
+        toast.success("Análise criada com sucesso");
       } else {
         const errorData = await response.json();
-        toast.error(errorData.detail || 'Erro ao criar análise');
+        toast.error(errorData.detail || "Erro ao criar análise");
       }
     } catch (error) {
-      console.error('Erro ao criar análise:', error);
-      toast.error('Erro ao criar análise');
+      console.error("Erro ao criar análise:", error);
+      toast.error("Erro ao criar análise");
     } finally {
       setIsLoading(false);
     }
@@ -86,7 +88,9 @@ const AnalysisListPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Minhas Análises</h1>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Minhas Análises
+            </h1>
             <p className="mt-1 text-sm text-gray-500">
               Gerencie suas análises de oportunidades
             </p>
@@ -105,7 +109,11 @@ const AnalysisListPage: React.FC = () => {
             <div
               key={analysis.id}
               className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow cursor-pointer"
-              onClick={() => navigate(`/analysis/${analysis.id}/dashboard`, { state: { id_analise: analysis.id } })}
+              onClick={() =>
+                navigate(`/analysis/${analysis.id}/dashboard`, {
+                  state: { id_analise: analysis.id },
+                })
+              }
             >
               <div className="p-5">
                 <div className="flex items-center">

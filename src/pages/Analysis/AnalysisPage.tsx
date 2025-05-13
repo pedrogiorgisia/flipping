@@ -142,7 +142,7 @@ const AnalysisPage: React.FC = () => {
         setSimulacao(simulacaoData);
         setReferenciasSimulacao(referenciasData);
       } catch (err) {
-        console.error("Erro ao buscar dados:", err);
+        console.error("Erro ao buscar dados :", err);
         setError(
           `Erro ao carregar os dados da simulação: ${(err as Error).message}`,
         );
