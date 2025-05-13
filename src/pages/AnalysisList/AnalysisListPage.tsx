@@ -10,12 +10,33 @@ interface Analysis {
   nome: string;
 }
 
+interface UserLimits {
+  limite_analises: number;
+  data_expiracao: string;
+}
+
 const AnalysisListPage: React.FC = () => {
   const { userId } = useAuth();
   const navigate = useNavigate();
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
+  const [totalAnalyses, setTotalAnalyses] = useState(0);
+  const [userLimits, setUserLimits] = useState<UserLimits | null>(null);
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const fetchUserLimits = async () => {
+    try {
+      const response = await fetch(`https://flippings.com.br/usuarios/${userId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setUserLimits(data);
+      } else {
+        toast.error("Erro ao carregar limites do usuário");
+      }
+    } catch (error) {
+      toast.error("Erro ao carregar limites do usuário");
+    }
+  };
 
   const fetchAnalyses = async () => {
     setIsLoading(true);
@@ -26,6 +47,7 @@ const AnalysisListPage: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
         setAnalyses(data.analises || []);
+        setTotalAnalyses(data.total || 0);
       } else {
         toast.error("Erro ao carregar análises");
         setAnalyses([]);
@@ -38,8 +60,13 @@ const AnalysisListPage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchAnalyses();
+    if (userId) {
+      fetchAnalyses();
+      fetchUserLimits();
+    }
   }, [userId]);
+
+  const isLimitReached = userLimits && totalAnalyses >= userLimits.limite_analises;
 
   const handleCreateAnalysis = async (wizardData: any) => {
     setIsLoading(true);
@@ -97,7 +124,13 @@ const AnalysisListPage: React.FC = () => {
           </div>
           <button
             onClick={() => setIsWizardOpen(true)}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            disabled={isLimitReached}
+            title={isLimitReached ? "Limite de análises atingido" : ""}
+            className={`inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+              isLimitReached 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+            }`}
           >
             <Plus size={20} className="mr-2" />
             Nova Análise
