@@ -122,11 +122,10 @@ const AnalysisListPage: React.FC = () => {
               Gerencie suas análises de oportunidades
             </p>
           </div>
-          <div>
+          <div className="relative group">
             <button
               onClick={() => setIsWizardOpen(true)}
               disabled={isLimitReached}
-              title={isLimitReached ? "Limite de análises atingido" : ""}
               className={`inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
                 isLimitReached 
                   ? 'bg-gray-400 cursor-not-allowed' 
@@ -137,9 +136,9 @@ const AnalysisListPage: React.FC = () => {
               Nova Análise
             </button>
             {isLimitReached && (
-              <p className="text-red-600 text-sm mt-2">
-                Você atingiu o limite máximo de análises. Para adquirir mais análises, entre em contato com um representante.
-              </p>
+              <div className="absolute right-0 mt-2 w-64 px-2 py-1 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                Limite máximo de análises atingido. Entre em contato para mais informações.
+              </div>
             )}
           </div>
         </div>
