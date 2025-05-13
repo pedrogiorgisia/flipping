@@ -122,19 +122,26 @@ const AnalysisListPage: React.FC = () => {
               Gerencie suas análises de oportunidades
             </p>
           </div>
-          <button
-            onClick={() => setIsWizardOpen(true)}
-            disabled={isLimitReached}
-            title={isLimitReached ? "Limite de análises atingido" : ""}
-            className={`inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-              isLimitReached 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-            }`}
-          >
-            <Plus size={20} className="mr-2" />
-            Nova Análise
-          </button>
+          <div>
+            <button
+              onClick={() => setIsWizardOpen(true)}
+              disabled={isLimitReached}
+              title={isLimitReached ? "Limite de análises atingido" : ""}
+              className={`inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+                isLimitReached 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+              }`}
+            >
+              <Plus size={20} className="mr-2" />
+              Nova Análise
+            </button>
+            {isLimitReached && (
+              <p className="text-red-600 text-sm mt-2">
+                Você atingiu o limite máximo de análises. Para adquirir mais análises, entre em contato com um representante.
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
